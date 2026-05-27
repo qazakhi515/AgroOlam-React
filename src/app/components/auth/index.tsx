@@ -68,7 +68,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
     if (e.key === "Enter" && signupOpen) {
       handleSignupRequest().then();
     } else if (e.key === "Enter" && loginOpen) {
-      handleSignupRequest().then();
+      handleLoginRequest().then();
     }
   };
 

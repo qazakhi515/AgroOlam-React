@@ -1,6 +1,5 @@
 import { serverApi } from "../../lib/config";
 import axios from "axios";
-import { Product, ProductInquiry } from "../../lib/types/product";
 import {
   LoginInput,
   Member,
@@ -8,24 +7,27 @@ import {
   MemberUpdateInput,
 } from "../../lib/types/member";
 class MemberService {
-  path: any;
-  public async updateMember(
-    memberUpdateInput: MemberUpdateInput,
-  ): Promise<Member> {
-    try {
-      const url = `${this.path}/member/update`;
-
-      const result = await axios.post(url, memberUpdateInput, {
-        withCredentials: true,
-      });
-
-      console.log("updateMember:", result);
-      return result.data;
-    } catch (err) {
-      console.log("Error. updateMember:", err);
-      throw err;
-    }
+  private readonly path: string;
+  constructor() {
+    this.path = serverApi;
   }
+  // public async updateMember(
+  //   memberUpdateInput: MemberUpdateInput,
+  // ): Promise<Member> {
+  //   try {
+  //     const url = `${this.path}/member/update`;
+
+  //     const result = await axios.post(url, memberUpdateInput, {
+  //       withCredentials: true,
+  //     });
+
+  //     console.log("updateMember:", result);
+  //     return result.data;
+  //   } catch (err) {
+  //     console.log("Error. updateMember:", err);
+  //     throw err;
+  //   }
+  // }
 
   public async getTopUsers(): Promise<Member[]> {
     try {
@@ -95,6 +97,30 @@ class MemberService {
       localStorage.removeItem("memberData");
     } catch (err) {
       console.log("Error, logout:", err);
+      throw err;
+    }
+  }
+  public async updateMember(input: MemberUpdateInput): Promise<Member> {
+    try {
+      const formData = new FormData();
+      formData.append("memberNick", input.memberNick || "");
+      formData.append("memberPhone", input.memberPhone || "");
+      formData.append("memberAddress", input.memberAddress || "");
+      formData.append("memberDesc", input.memberDesc || "");
+      if (input.memberImage) {
+        formData.append("memberImage", input.memberImage);
+      }
+      const url = this.path + "/member/update";
+      const result = await axios.post(url, formData, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      const member: Member = result.data.member;
+      localStorage.setItem("memberData", JSON.stringify(member));
+      return member;
+    } catch (err) {
+      console.log("Error, updateMember:", err);
       throw err;
     }
   }
