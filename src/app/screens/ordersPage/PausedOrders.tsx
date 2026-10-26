@@ -15,6 +15,7 @@ import { OrderStatus } from "../../../lib/enums/order.enum";
 import { Message } from "@mui/icons-material";
 import { useGlobals } from "../../components/hooks/useGlobals";
 import OrderService from "../../services/OrdersService";
+import PaymentModal from "../../components/payment/PaymentModal";
 
 const pausedOrdersRetriever = createSelector(
   retrievePausedOrders,
@@ -28,6 +29,8 @@ export default function PausedOrders(props: PausedOrdersProps) {
   const { authMember, setOrderBuilder } = useGlobals();
   const { setValue } = props;
   const { pausedOrders } = useSelector(pausedOrdersRetriever);
+  const [selectedOrderForPay, setSelectedOrderForPay] = React.useState<Order | null>(null);
+  const [isPaymentOpen, setIsPaymentOpen] = React.useState<boolean>(false);
 
   const deleteOrderHandler = async (e: T) => {
     try {
@@ -38,11 +41,11 @@ export default function PausedOrders(props: PausedOrdersProps) {
         orderStatus: OrderStatus.DELETE,
       };
 
-      const confirmation = window.confirm("want to delete the order");
+      const confirmation = window.confirm("Want to delete this order?");
       if (confirmation) {
         const order = new OrderService();
         await order.updateOrder(input);
-        setValue("2");
+        setValue("1");
         setOrderBuilder(new Date());
       }
     } catch (err) {
@@ -51,22 +54,22 @@ export default function PausedOrders(props: PausedOrdersProps) {
     }
   };
 
-  const processOrderHandler = async (e: T) => {
+  const handleOpenPayment = (order: Order) => {
+    setSelectedOrderForPay(order);
+    setIsPaymentOpen(true);
+  };
+
+  const handlePaymentSuccess = async (orderId: string) => {
     try {
       if (!authMember) throw new Error(Messages.error2);
-      const orderId = e.target.value;
       const input: OrderUpdateInput = {
         orderId: orderId,
         orderStatus: OrderStatus.PROCESS,
       };
-
-      const confirmation = window.confirm("want to proceed Payment");
-      if (confirmation) {
-        const order = new OrderService();
-        await order.updateOrder(input);
-        setValue("2");
-        setOrderBuilder(new Date());
-      }
+      const order = new OrderService();
+      await order.updateOrder(input);
+      setValue("2");
+      setOrderBuilder(new Date());
     } catch (err) {
       console.log(err);
       sweetErrorHandling(err).then();
@@ -131,7 +134,7 @@ export default function PausedOrders(props: PausedOrdersProps) {
                   value={order._id}
                   variant="contained"
                   className={"pay-button"}
-                  onClick={processOrderHandler}
+                  onClick={() => handleOpenPayment(order)}
                 >
                   Payment
                 </Button>
@@ -139,6 +142,13 @@ export default function PausedOrders(props: PausedOrdersProps) {
             </Box>
           );
         })}
+
+        <PaymentModal
+          open={isPaymentOpen}
+          order={selectedOrderForPay}
+          onClose={() => setIsPaymentOpen(false)}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
 
         {!pausedOrders ||
           (pausedOrders.length === 0 && (

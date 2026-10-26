@@ -9,16 +9,54 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Button from "@mui/material/Button";
 import TabContext from "@mui/lab/TabContext";
 import TabPanel from "@mui/lab/TabPanel";
+import CircularProgress from "@mui/material/CircularProgress";
+import axios from "axios";
+import { serverApi } from "../../../lib/config";
+import { sweetErrorHandling, sweetTopSuccessAlert } from "../../../lib/sweetAlert";
 import "../../../css/help.css";
 import { faq } from "../../../lib/data/faq";
 import { terms } from "../../../lib/data/terms";
 
 export default function HelpPage() {
   const [value, setValue] = React.useState("1");
+  const [contactName, setContactName] = React.useState("");
+  const [contactEmail, setContactEmail] = React.useState("");
+  const [contactPhone, setContactPhone] = React.useState("");
+  const [contactMessage, setContactMessage] = React.useState("");
+  const [contactLoading, setContactLoading] = React.useState(false);
 
   /** HANDLERS **/
   const handleChange = (e: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
+  };
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contactName.trim() || !contactEmail.trim() || !contactMessage.trim()) {
+      await sweetErrorHandling(
+        new Error("Please fill in your name, email and message."),
+      );
+      return;
+    }
+    setContactLoading(true);
+    try {
+      await axios.post(`${serverApi}/contact`, {
+        name: contactName,
+        email: contactEmail,
+        phone: contactPhone,
+        message: contactMessage,
+      });
+      await sweetTopSuccessAlert("Thank you! Your message has been sent.", 1500);
+      setContactName("");
+      setContactEmail("");
+      setContactPhone("");
+      setContactMessage("");
+    } catch (err) {
+      console.error("Error sending contact message:", err);
+      sweetErrorHandling(err);
+    } finally {
+      setContactLoading(false);
+    }
   };
 
   return (
@@ -78,31 +116,50 @@ export default function HelpPage() {
                       <p>Fill out below form to send a message!</p>
                     </Box>
                     <form
-                      action={"#"}
-                      method={"POST"}
+                      onSubmit={handleContactSubmit}
                       className={"admin-letter-frame"}
                     >
                       <div className={"admin-input-box"}>
-                        <label>Your name</label>
+                        <label>Your name *</label>
                         <input
                           type={"text"}
                           name={"memberNick"}
                           placeholder={"Type your name here"}
+                          value={contactName}
+                          onChange={(e) => setContactName(e.target.value)}
+                          required
                         />
                       </div>
                       <div className={"admin-input-box"}>
-                        <label>Your email</label>
+                        <label>Your email *</label>
                         <input
-                          type={"text"}
+                          type={"email"}
                           name={"memberEmail"}
                           placeholder={"Type your email here"}
+                          value={contactEmail}
+                          onChange={(e) => setContactEmail(e.target.value)}
+                          required
                         />
                       </div>
                       <div className={"admin-input-box"}>
-                        <label>Message</label>
+                        <label>Phone number (optional)</label>
+                        <input
+                          type={"text"}
+                          name={"memberPhone"}
+                          placeholder={"+998 90 123 45 67"}
+                          value={contactPhone}
+                          onChange={(e) => setContactPhone(e.target.value)}
+                        />
+                      </div>
+                      <div className={"admin-input-box"}>
+                        <label>Message *</label>
                         <textarea
                           name={"memberMsg"}
-                          placeholder={"Your message"}
+                          placeholder={"Your question, order inquiry, or agro consultation message"}
+                          value={contactMessage}
+                          onChange={(e) => setContactMessage(e.target.value)}
+                          rows={4}
+                          required
                         ></textarea>
                       </div>
                       <Box
@@ -110,8 +167,21 @@ export default function HelpPage() {
                         justifyContent={"flex-end"}
                         sx={{ mt: "30px" }}
                       >
-                        <Button type={"submit"} variant="contained">
-                          Send
+                        <Button
+                          type={"submit"}
+                          variant="contained"
+                          disabled={contactLoading}
+                          sx={{
+                            bgcolor: "#2e7d32",
+                            "&:hover": { bgcolor: "#1b5e20" },
+                            minWidth: "120px",
+                          }}
+                        >
+                          {contactLoading ? (
+                            <CircularProgress size={20} sx={{ color: "#fff" }} />
+                          ) : (
+                            "Send Message"
+                          )}
                         </Button>
                       </Box>
                     </form>
