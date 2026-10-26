@@ -13,6 +13,8 @@ import { sweetErrorHandling } from "../../../lib/sweetAlert";
 import { useGlobals } from "../hooks/useGlobals";
 import { Message } from "@mui/icons-material";
 import OrderService from "../../services/OrdersService";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { chemicalIncompatibilities, ChemicalRule } from "../../../lib/data/agroRules";
 interface BasketProps {
   cartItems: CartItem[];
   onAdd: (item: CartItem) => void;
@@ -34,6 +36,32 @@ export default function Basket(props: BasketProps) {
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  // Check chemical incompatibilities (Domain Moat)
+  const detectedConflicts: ChemicalRule[] = React.useMemo(() => {
+    if (cartItems.length < 2) return [];
+    const itemTexts = cartItems.map((it) => it.name.toLowerCase());
+    const conflicts: ChemicalRule[] = [];
+
+    for (const rule of chemicalIncompatibilities) {
+      const satisfied = rule.substances.filter((sub) => {
+        return itemTexts.some((text) => {
+          if (sub === "copper") return text.includes("copper") || text.includes("mis") || text.includes("kupro");
+          if (sub === "sulfur") return text.includes("sulfur") || text.includes("oltingugurt") || text.includes("thiovit");
+          if (sub === "captan") return text.includes("captan") || text.includes("kaptan") || text.includes("merpan");
+          if (sub === "mineral_oil") return text.includes("oil") || text.includes("moy") || text.includes("mineral");
+          if (sub === "calcium") return text.includes("calcium") || text.includes("kalsiy") || text.includes("selitra");
+          if (sub === "phosphate") return text.includes("phosphate") || text.includes("fosfat") || text.includes("ammophos");
+          return text.includes(sub);
+        });
+      });
+
+      if (satisfied.length >= rule.substances.length) {
+        conflicts.push(rule);
+      }
+    }
+    return conflicts;
+  }, [cartItems]);
 
   /** HANDLERS **/
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -160,6 +188,51 @@ export default function Basket(props: BasketProps) {
               })}
             </Box>
           </Box>
+
+          {detectedConflicts.length > 0 && (
+            <Box sx={{ px: 2, py: 1, maxWidth: 360 }}>
+              {detectedConflicts.map((conflict, idx) => (
+                <Box
+                  key={idx}
+                  sx={{
+                    p: 1.5,
+                    mb: 1,
+                    borderRadius: "8px",
+                    bgcolor: conflict.severity === "DANGER" ? "#ffebee" : "#fff8e1",
+                    border:
+                      conflict.severity === "DANGER"
+                        ? "1px solid #ef5350"
+                        : "1px solid #ffa726",
+                    fontSize: 12,
+                  }}
+                >
+                  <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mb: 0.5 }}>
+                    <WarningAmberIcon
+                      sx={{
+                        color: conflict.severity === "DANGER" ? "#d32f2f" : "#f57c00",
+                        fontSize: 18,
+                      }}
+                    />
+                    <strong
+                      style={{
+                        color: conflict.severity === "DANGER" ? "#d32f2f" : "#e65100",
+                        fontSize: 12,
+                      }}
+                    >
+                      {conflict.title}
+                    </strong>
+                  </Stack>
+                  <div style={{ color: "#333", marginBottom: 4, lineHeight: 1.3 }}>
+                    {conflict.reason}
+                  </div>
+                  <div style={{ color: "#2e7d32", fontWeight: 600, fontSize: 11 }}>
+                    💡 {conflict.recommendation}
+                  </div>
+                </Box>
+              ))}
+            </Box>
+          )}
+
           {cartItems.length !== 0 ? (
             <Box className={"basket-order"}>
               <span className={"price"}>

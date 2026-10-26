@@ -14,6 +14,8 @@ import { serverApi } from "../../../lib/config";
 import { CartItem } from "../../../lib/types/search";
 import { useGlobals } from "../hooks/useGlobals";
 import Basket from "./Basket";
+import LanguageSelector from "./LanguageSelector";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 interface OtherNavbarProps {
   cartItems: CartItem[];
@@ -44,6 +46,9 @@ export default function OtherNavbar(props: OtherNavbarProps) {
     handleLogoutRequest,
   } = props;
   const { authMember } = useGlobals();
+  const lang = getSavedLanguage();
+  const t = translations[lang].nav;
+
   return (
     <div className="other-navbar">
       <Container className="navbar-container">
@@ -55,35 +60,35 @@ export default function OtherNavbar(props: OtherNavbarProps) {
           </Box>
           <Stack className="links">
             <Box className={"hover-line"}>
-              <NavLink to="/">Home</NavLink>
+              <NavLink to="/">{t.home}</NavLink>
             </Box>
             <Box className={"hover-line"}>
               <NavLink to="/products" activeClassName={"underline"}>
-                Products
+                {t.products}
               </NavLink>
             </Box>
             <Box className={"hover-line"}>
               <NavLink to="/news" activeClassName={"underline"}>
-                Yangiliklar
+                {t.news}
               </NavLink>
             </Box>
             {authMember ? (
               <Box className={"hover-line"}>
                 <NavLink to="/orders" activeClassName={"underline"}>
-                  Orders
+                  {t.orders}
                 </NavLink>
               </Box>
             ) : null}
             {authMember ? (
               <Box className={"hover-line"}>
                 <NavLink to="/member-page" activeClassName={"underline"}>
-                  My Page
+                  {t.myPage}
                 </NavLink>
               </Box>
             ) : null}
             <Box className={"hover-line"}>
               <NavLink to="/help" activeClassName={"underline"}>
-                Help
+                {t.help}
               </NavLink>
             </Box>
             <Basket
@@ -94,6 +99,8 @@ export default function OtherNavbar(props: OtherNavbarProps) {
               onDeleteAll={onDeleteAll}
             />
 
+            <LanguageSelector />
+
             {!authMember ? (
               <Box>
                 <Button
@@ -101,7 +108,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                   className="login-button"
                   onClick={() => setLoginOpen(true)}
                 >
-                  Login
+                  {t.login}
                 </Button>
               </Box>
             ) : (
@@ -156,7 +163,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                 <ListItemIcon>
                   <Logout fontSize="small" style={{ color: "blue" }} />
                 </ListItemIcon>
-                Logout
+                {t.logout}
               </MenuItem>
             </Menu>
           </Stack>

@@ -1,6 +1,8 @@
-import { Box, Button, Container, Stack } from "@mui/material";
+import { Box, Button, Container, Stack, Chip, CircularProgress } from "@mui/material";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import Badge from "@mui/material/Badge";
 import Pagination from "@mui/material/Pagination";
 import PaginationItem from "@mui/material/PaginationItem";
@@ -12,12 +14,14 @@ import { createSelector } from "@reduxjs/toolkit";
 import { retrieveProducts } from "./selector";
 import { Dispatch } from "@reduxjs/toolkit";
 import { ChangeEvent, useEffect, useState } from "react";
+import axios from "axios";
 import ProductService from "../../services/ProductService";
 import { ProductCollection } from "../../../lib/enums/product.enum";
 import { useDispatch, useSelector } from "react-redux";
 import { serverApi } from "../../../lib/config";
 import { useHistory } from "react-router-dom";
 import { CartItem } from "../../../lib/types/search";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 const actionDispatch = (dispatch: Dispatch) => ({
   setProducts: (data: Product[]) => dispatch(setProducts(data)),
@@ -35,15 +39,21 @@ export default function Products(props: ProductsProps) {
 
   const { setProducts } = actionDispatch(useDispatch());
   const { products } = useSelector(productsRetriever); //product larni chaqirish
+  const lang = getSavedLanguage();
+  const t = translations[lang];
+
   const [productSearch, setProductSearch] = useState<ProductInquiry>({
     page: 1,
     limit: 8,
     order: "createdAt",
-    productCollection: ProductCollection.PLANTS,
-    search: " ",
+    productCollection: undefined,
+    search: "",
   });
   const [searchText, setSearchText] = useState<string>("");
+  const [aiLoading, setAiLoading] = useState<boolean>(false);
+  const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const history = useHistory();
+
   useEffect(() => {
     //Backend server data request => data
     const product = new ProductService();
@@ -63,11 +73,13 @@ export default function Products(props: ProductsProps) {
   }, [searchText]);
 
   //** Handler */
-  const searchCollectionHandler = (collection: ProductCollection) => {
+  const searchCollectionHandler = (collection?: ProductCollection) => {
     productSearch.page = 1;
     productSearch.productCollection = collection;
+    setAiExplanation(null);
     setProductSearch({ ...productSearch });
   };
+
   //** Search Order Handler */
   const searchOrderHandler = (order: string) => {
     productSearch.page = 1;
@@ -77,7 +89,47 @@ export default function Products(props: ProductsProps) {
 
   const searchProductHandler = () => {
     productSearch.search = searchText;
+    productSearch.page = 1;
+    setAiExplanation(null);
     setProductSearch({ ...productSearch });
+  };
+
+  /** AI Natural Language Search */
+  const handleAISearch = async (queryOverride?: string) => {
+    const prompt = (queryOverride !== undefined ? queryOverride : searchText).trim();
+    if (!prompt) return;
+    setSearchText(prompt);
+    setAiLoading(true);
+    try {
+      const res = await axios.post(`${serverApi}/ai/search`, { prompt });
+      const { productCollection, search, order, explanation } = res.data;
+      setAiExplanation(explanation || `AI Search: "${prompt}"`);
+      setProductSearch({
+        page: 1,
+        limit: 8,
+        order: order || "createdAt",
+        productCollection: (productCollection as ProductCollection) || undefined,
+        search: search || "",
+      });
+    } catch (err) {
+      console.log("Error in handleAISearch:", err);
+      // Fallback to normal search
+      searchProductHandler();
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const handleResetFilters = () => {
+    setSearchText("");
+    setAiExplanation(null);
+    setProductSearch({
+      page: 1,
+      limit: 8,
+      order: "createdAt",
+      productCollection: undefined,
+      search: "",
+    });
   };
 
   const paginationHandler = (e: ChangeEvent<any>, value: number) => {
@@ -89,29 +141,158 @@ export default function Products(props: ProductsProps) {
     history.push(`/products/${id}`);
   };
 
+  const aiSuggestions: Record<string, string[]> = {
+    en: [
+      "Cheap cucumber seeds",
+      "Powdery mildew medicine",
+      "Bio tomato fertilizer",
+      "Smart greenhouse tools",
+    ],
+    ko: [
+      "저렴한 오이 씨앗",
+      "흰가루병 방제 살균제",
+      "토마토 친환경 비료",
+      "스마트 온실 농기구",
+    ],
+    uz: [
+      "Arzon bodring urug'i",
+      "Un-shudringga qarshi dori",
+      "Pomidor uchun o'g'it",
+      "Issiqxona asboblari",
+    ],
+  };
+
+  const activeSuggestions = aiSuggestions[lang] || aiSuggestions.en;
+
   return (
     <div className={"products"}>
       <Container>
         <Stack flexDirection={"column"} alignItems={"center"}>
           <Stack className={"avatar-big-box"}>
-            <Box className="main-title">Agrivia Agro Mahsulotlar Bozori</Box>
-            <div className="mclain-input">
+            <Box className="main-title">
+              {lang === "ko"
+                ? "Agrivia 스마트 농자재 마켓"
+                : lang === "uz"
+                ? "Agrivia Agro Mahsulotlar Bozori"
+                : "Agrivia Smart Agro Marketplace"}
+            </Box>
+            <div className="mclain-input" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
               <input
                 type="text"
-                placeholder="Type here..."
+                placeholder={
+                  lang === "ko"
+                    ? "예: 저렴한 오이 씨앗, 흰가루병 방제약..."
+                    : lang === "uz"
+                    ? "Masalan: arzon bodring urug'i, pomidor dorisi..."
+                    : "e.g. cheap cucumber seeds, powdery mildew..."
+                }
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") searchProductHandler();
+                  if (e.key === "Enter") handleAISearch();
                 }}
+                style={{ flex: 1 }}
               />
               <button
                 className="main-input-button"
                 onClick={searchProductHandler}
+                style={{ minWidth: "80px" }}
               >
-                Search{" "}
+                Search
+              </button>
+              <button
+                className="main-input-button"
+                onClick={() => handleAISearch()}
+                disabled={aiLoading}
+                style={{
+                  background: "linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)",
+                  color: "#fff",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "0 18px",
+                  borderRadius: "20px",
+                  fontWeight: 700,
+                  boxShadow: "0 4px 12px rgba(46,125,50,0.3)",
+                }}
+              >
+                {aiLoading ? (
+                  <CircularProgress size={18} sx={{ color: "#fff" }} />
+                ) : (
+                  <AutoAwesomeIcon sx={{ fontSize: 18 }} />
+                )}
+                AI Search
               </button>
             </div>
+
+            {/* Quick AI Suggestion Chips */}
+            <Stack
+              direction="row"
+              spacing={1}
+              flexWrap="wrap"
+              justifyContent="center"
+              sx={{ mt: 1.5, gap: "6px" }}
+            >
+              <span style={{ fontSize: "12px", color: "#666", alignSelf: "center" }}>
+                💡 {lang === "ko" ? "AI 추천 검색:" : lang === "uz" ? "AI tavsiya:" : "Try AI Search:"}
+              </span>
+              {activeSuggestions.map((sug, idx) => (
+                <Chip
+                  key={idx}
+                  label={sug}
+                  size="small"
+                  onClick={() => handleAISearch(sug)}
+                  sx={{
+                    bgcolor: "#edf7ee",
+                    color: "#2e7d32",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    "&:hover": { bgcolor: "#c8e6c9" },
+                  }}
+                />
+              ))}
+            </Stack>
+
+            {/* AI Search Feedback Banner */}
+            {aiExplanation && (
+              <Box
+                sx={{
+                  mt: 2,
+                  px: 2,
+                  py: 1,
+                  bgcolor: "#e8f5e9",
+                  border: "1px solid #81c784",
+                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 2,
+                  maxWidth: "600px",
+                  width: "100%",
+                }}
+              >
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <AutoAwesomeIcon sx={{ color: "#2e7d32", fontSize: 20 }} />
+                  <span style={{ fontSize: "13px", color: "#1b5e20", fontWeight: 600 }}>
+                    {aiExplanation}
+                  </span>
+                </Stack>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={handleResetFilters}
+                  startIcon={<RestartAltIcon sx={{ fontSize: 16 }} />}
+                  sx={{
+                    fontSize: "11px",
+                    color: "#2e7d32",
+                    borderColor: "#81c784",
+                    textTransform: "none",
+                  }}
+                >
+                  Reset
+                </Button>
+              </Box>
+            )}
           </Stack>
 
           <Stack className={"dishes-frame-section"}>
@@ -158,29 +339,36 @@ export default function Products(props: ProductsProps) {
               <div className={"category-main"}>
                 <Button
                   variant={"contained"}
-                  color={
-                    productSearch.productCollection === ProductCollection.OTHER
-                      ? "primary"
-                      : "secondary"
-                  }
-                  onClick={() =>
-                    searchCollectionHandler(ProductCollection.OTHER)
-                  }
+                  color={!productSearch.productCollection ? "primary" : "secondary"}
+                  onClick={() => searchCollectionHandler(undefined)}
                 >
-                  Other
+                  {t.categories.all}
                 </Button>
                 <Button
                   variant={"contained"}
                   color={
-                    productSearch.productCollection === ProductCollection.TOOLS
+                    productSearch.productCollection === ProductCollection.PLANTS
                       ? "primary"
                       : "secondary"
                   }
                   onClick={() =>
-                    searchCollectionHandler(ProductCollection.TOOLS)
+                    searchCollectionHandler(ProductCollection.PLANTS)
                   }
                 >
-                  Tools
+                  {t.categories.plants}
+                </Button>
+                <Button
+                  variant={"contained"}
+                  color={
+                    productSearch.productCollection === ProductCollection.SEEDS
+                      ? "primary"
+                      : "secondary"
+                  }
+                  onClick={() =>
+                    searchCollectionHandler(ProductCollection.SEEDS)
+                  }
+                >
+                  {t.categories.seeds}
                 </Button>
                 <Button
                   variant={"contained"}
@@ -194,33 +382,33 @@ export default function Products(props: ProductsProps) {
                     searchCollectionHandler(ProductCollection.FERTILIZERS)
                   }
                 >
-                  Fertilizers
+                  {t.categories.fertilizers}
                 </Button>
                 <Button
                   variant={"contained"}
                   color={
-                    productSearch.productCollection === ProductCollection.SEEDS
+                    productSearch.productCollection === ProductCollection.TOOLS
                       ? "primary"
                       : "secondary"
                   }
                   onClick={() =>
-                    searchCollectionHandler(ProductCollection.SEEDS)
+                    searchCollectionHandler(ProductCollection.TOOLS)
                   }
                 >
-                  Seeds
+                  {t.categories.tools}
                 </Button>
                 <Button
                   variant={"contained"}
                   color={
-                    productSearch.productCollection === ProductCollection.PLANTS
+                    productSearch.productCollection === ProductCollection.OTHER
                       ? "primary"
                       : "secondary"
                   }
                   onClick={() =>
-                    searchCollectionHandler(ProductCollection.PLANTS)
+                    searchCollectionHandler(ProductCollection.OTHER)
                   }
                 >
-                  Plants
+                  {t.categories.other}
                 </Button>
               </div>
             </Stack>

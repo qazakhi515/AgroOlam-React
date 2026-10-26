@@ -12,6 +12,7 @@ import NewsPage from "./screens/newsPage";
 import ChosenArticle from "./screens/newsPage/ChosenArticle";
 import useBasket from "./components/hooks/useBasket";
 import AuthenticationModal from "./components/auth";
+import AIAgronomistChat from "./components/ai/AIAgronomistChat";
 import "../css/app.css";
 import "../css/navbar.css";
 import "../css/footer.css";
@@ -111,6 +112,7 @@ function App() {
         handleLoginClose={handleLoginClose}
         handleSignupClose={handleSignupClose}
       />
+      <AIAgronomistChat onAdd={onAdd} />
     </>
   );
 }
