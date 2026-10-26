@@ -12,6 +12,7 @@ import { createSelector } from "reselect";
 import { retrievePopularProducts } from "./selector";
 import { Product } from "../../../lib/types/product";
 import { serverApi } from "../../../lib/config";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 const popularProductsRetriever = createSelector(
   retrievePopularProducts,
@@ -20,12 +21,15 @@ const popularProductsRetriever = createSelector(
 
 export default function PopularProducts() {
   const { popularProducts } = useSelector(popularProductsRetriever);
+  const lang = getSavedLanguage();
 
   return (
     <div className={"popular-dishes-frame"}>
       <Container>
         <Stack className={"popular-section"}>
-          <Box className={"category-title"}>Popular Agro Products</Box>
+          <Box className={"category-title"}>
+            {translations[lang].home.popularTitle}
+          </Box>
           <Stack className={"cards-frame"}>
             {popularProducts && popularProducts.length !== 0 ? (
               popularProducts.map((ele: Product) => {

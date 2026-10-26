@@ -2,6 +2,8 @@ import React from "react";
 import { Box, Container, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
+import { useGlobals } from "../hooks/useGlobals";
 
 const Footers = styled.div`
   width: 100%;
@@ -13,20 +15,20 @@ const Footers = styled.div`
 `;
 
 export default function Footer() {
-  const authMember = null;
+  const { authMember } = useGlobals();
+  const lang = getSavedLanguage();
+  const t = translations[lang].footer;
 
   return (
     <Footers>
       <Container>
-        <Stack flexDirection={"row"} sx={{ mt: "80px" }} justifyContent="space-between">
-          <Stack flexDirection={"column"} style={{ width: "360px" }}>
+        <Stack flexDirection={"row"} sx={{ mt: "80px", flexWrap: { xs: "wrap", md: "nowrap" } }} justifyContent="space-between">
+          <Stack flexDirection={"column"} style={{ width: "360px", maxWidth: "100%" }}>
             <Box>
-              <img width={"140px"} src={"/icons/agrivia-logo.svg"} alt="Agrivia" />
+              <img width={"140px"} src={"/icons/agrivia-logo.svg"} alt="AgroPlant" />
             </Box>
             <Box className={"foot-desc-txt"} sx={{ mt: 2, color: "#a0aec0", lineHeight: 1.6 }}>
-              Agrivia — Qishloq xo'jaligi, zamonaviy urug'chilik, agro-kimyo va sifatli
-              dorilar yetkazib beruvchi yetakchi agro-platforma. Dehqon va fermerlarga
-              har qadamda ishonchli hamroh.
+              {t.desc}
             </Box>
             <Box className="sns-context" sx={{ mt: 3 }}>
               <img src={"/icons/facebook.svg"} alt="facebook" />
@@ -36,18 +38,18 @@ export default function Footer() {
             </Box>
           </Stack>
 
-          <Stack sx={{ ml: "80px" }} flexDirection={"row"} gap="80px">
+          <Stack sx={{ ml: { xs: 0, md: "80px" }, mt: { xs: 4, md: 0 } }} flexDirection={"row"} gap="80px">
             <Stack>
               <Box>
                 <Box className={"foot-category-title"} sx={{ color: "#fff", fontWeight: 700, mb: 2 }}>
-                  Bo'limlar
+                  {t.sectionsTitle}
                 </Box>
                 <Box className={"foot-category-link"}>
-                  <Link to="/">Bosh sahifa</Link>
-                  <Link to="/products">Mahsulotlar</Link>
-                  <Link to="/news">Yangiliklar & Maslahatlar</Link>
-                  {authMember && <Link to="/orders">Buyurtmalar</Link>}
-                  <Link to="/help">Yordam & FAQ</Link>
+                  <Link to="/">{t.home}</Link>
+                  <Link to="/products">{t.products}</Link>
+                  <Link to="/news">{t.news}</Link>
+                  {authMember && <Link to="/orders">{t.orders}</Link>}
+                  <Link to="/help">{t.help}</Link>
                 </Box>
               </Box>
             </Stack>
@@ -55,7 +57,7 @@ export default function Footer() {
             <Stack>
               <Box>
                 <Box className={"foot-category-title"} sx={{ color: "#fff", fontWeight: 700, mb: 2 }}>
-                  Bog'lanish
+                  {t.contactTitle}
                 </Box>
                 <Box
                   flexDirection={"column"}
@@ -64,19 +66,19 @@ export default function Footer() {
                 >
                   <Box flexDirection={"row"} className={"find-us"}>
                     <span>L.</span>
-                    <div>Toshkent shahri, O'zbekiston</div>
+                    <div>{t.location}</div>
                   </Box>
                   <Box className={"find-us"}>
                     <span>P.</span>
-                    <div>+998 71 200 00 00</div>
+                    <div>{t.phone}</div>
                   </Box>
                   <Box className={"find-us"}>
                     <span>E.</span>
-                    <div>info@agrivia.uz</div>
+                    <div>{t.email}</div>
                   </Box>
                   <Box className={"find-us"}>
                     <span>H.</span>
-                    <div>Har kuni: 08:00 - 20:00</div>
+                    <div>{t.hours}</div>
                   </Box>
                 </Box>
               </Box>
@@ -88,7 +90,7 @@ export default function Footer() {
           sx={{ mt: "60px" }}
         ></Stack>
         <Stack className={"copyright-txt"} sx={{ textAlign: "center", mt: 3, color: "#a0aec0", fontSize: 14 }}>
-          © 2026 Agrivia AgroPlatformasi. Barcha huquqlar himoyalangan.
+          {t.copyright}
         </Stack>
       </Container>
     </Footers>

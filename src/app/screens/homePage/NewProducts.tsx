@@ -13,6 +13,7 @@ import { retrieveNewProducts } from "./selector";
 import { Product } from "../../../lib/types/product";
 import { serverApi } from "../../../lib/config";
 import { ProductCollection } from "../../../lib/enums/product.enum";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 const newProductsRetriever = createSelector(retrieveNewProducts, (newProducts) => ({
   newProducts,
@@ -20,12 +21,15 @@ const newProductsRetriever = createSelector(retrieveNewProducts, (newProducts) =
 
 export default function NewProducts() {
   const { newProducts } = useSelector(newProductsRetriever);
+  const lang = getSavedLanguage();
 
   return (
     <div className={"new-products-frame"}>
       <Container>
         <Stack className={"main"}>
-          <Box className={"category-title"}>New Arrivals</Box>
+          <Box className={"category-title"}>
+            {translations[lang].home.newTitle}
+          </Box>
           <Stack className={"cards-frame"}>
             <CssVarsProvider>
               {newProducts && newProducts.length !== 0 ? (
