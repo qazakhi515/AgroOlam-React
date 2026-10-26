@@ -17,6 +17,8 @@ import { OrderStatus } from "../../../lib/enums/order.enum";
 import OrderService from "../../services/OrdersService";
 import { useGlobals } from "../../components/hooks/useGlobals";
 import { useHistory } from "react-router-dom";
+import { serverApi } from "../../../lib/config";
+import TelegramAlertCard from "../../components/telegram/TelegramAlertCard";
 
 //** redux slice and selector **//
 
@@ -104,7 +106,11 @@ export default function OrdersPage() {
             <Box className={"member-box"}>
               <div className={"order-user-img"}>
                 <img
-                  src={"/icons/default-user.svg"}
+                  src={
+                    authMember?.memberImage
+                      ? `${serverApi}/${authMember.memberImage}`
+                      : "/icons/default-user.svg"
+                  }
                   className={"order-user-avatar"}
                   alt="user"
                 />
@@ -117,44 +123,26 @@ export default function OrdersPage() {
                 </div>
               </div>
 
-              <span className={"order-user-name"}>Justin</span>
-              <span className={"order-user-prof"}>User</span>
+              <span className={"order-user-name"}>
+                {authMember?.memberNick || "Farmer"}
+              </span>
+              <span className={"order-user-prof"}>
+                {authMember?.memberType || "USER"}
+              </span>
             </Box>
 
             <Box className={"liner"} />
 
             <Box className={"order-user-address"}>
               <LocationOnIcon />
-              <span className={"spec-address-txt"}>Busan, Korea</span>
+              <span className={"spec-address-txt"}>
+                {authMember?.memberAddress || "Agro Farm"}
+              </span>
             </Box>
           </Box>
 
-          <Box className={"order-info-box"}>
-            <input
-              className={"card-input"}
-              placeholder="Card number : **** 4090 2002 7495"
-            />
-
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <input className={"card-half-input"} placeholder="07 / 24" />
-              <input className={"card-half-input"} placeholder="CVV : 010" />
-            </Box>
-
-            <input className={"card-input"} placeholder="Justin Robertson" />
-
-            <Box className={"cards-box"}>
-              <img src={"/icons/western-card.svg"} alt="western union" />
-              <img src={"/icons/master-card.svg"} alt="mastercard" />
-              <img src={"/icons/paypal-card.svg"} alt="paypal" />
-              <img src={"/icons/visa-card.svg"} alt="visa" />
-            </Box>
-          </Box>
+          {/* TELEGRAM AGRO REMINDER CARD */}
+          <TelegramAlertCard />
         </Stack>
       </Container>
     </div>

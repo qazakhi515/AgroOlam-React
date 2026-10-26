@@ -8,6 +8,7 @@ import { useGlobals } from "../../components/hooks/useGlobals";
 import { useHistory } from "react-router-dom";
 import { MemberType } from "../../../lib/enums/member.enum";
 import { serverApi } from "../../../lib/config";
+import TelegramAlertCard from "../../components/telegram/TelegramAlertCard";
 import "../../../css/userPage.css";
 
 export default function UserPage() {
@@ -80,6 +81,9 @@ export default function UserPage() {
                   : "no description"}
               </p>
             </Box>
+
+            {/* Telegram Agro-Alerts Card */}
+            <TelegramAlertCard />
           </Stack>
         </Stack>
       </Container>

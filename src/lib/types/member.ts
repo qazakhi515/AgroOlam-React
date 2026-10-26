@@ -11,6 +11,8 @@ export interface Member {
   memberDesc?: string;
   memberImage?: string;
   memberPoints: number;
+  telegramChatId?: string;
+  telegramUsername?: string;
   createAd: Date;
   updateAd: Date;
 }
@@ -41,4 +43,6 @@ export interface MemberUpdateInput {
   memberAddress?: string;
   memberDesc?: string;
   memberImage?: string;
+  telegramChatId?: string;
+  telegramUsername?: string;
 }
