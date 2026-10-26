@@ -15,6 +15,8 @@ import { CartItem } from "../../../lib/types/search";
 import { useGlobals } from "../hooks/useGlobals";
 import Basket from "./Basket";
 import LanguageSelector from "./LanguageSelector";
+import PlantDoctorModal from "../ai/PlantDoctorModal";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 interface OtherNavbarProps {
@@ -48,6 +50,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
   const { authMember } = useGlobals();
   const lang = getSavedLanguage();
   const t = translations[lang].nav;
+  const [isDoctorOpen, setIsDoctorOpen] = React.useState(false);
 
   return (
     <div className="other-navbar">
@@ -91,6 +94,32 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                 {t.help}
               </NavLink>
             </Box>
+            <Button
+              size="small"
+              startIcon={<PhotoCameraIcon sx={{ fontSize: 16 }} />}
+              onClick={() => setIsDoctorOpen(true)}
+              sx={{
+                bgcolor: "#2e7d32",
+                color: "#fff",
+                borderRadius: "20px",
+                px: 1.6,
+                py: 0.5,
+                fontWeight: 700,
+                fontSize: 12,
+                textTransform: "none",
+                boxShadow: "0 2px 8px rgba(46,125,50,0.3)",
+                "&:hover": { bgcolor: "#1b5e20" },
+              }}
+            >
+              {lang === "ko" ? "AI 닥터" : lang === "uz" ? "AI Shifokor" : "Plant Doctor"}
+            </Button>
+
+            <PlantDoctorModal
+              open={isDoctorOpen}
+              onClose={() => setIsDoctorOpen(false)}
+              onAdd={onAdd}
+            />
+
             <Basket
               cartItems={cartItems}
               onAdd={onAdd}

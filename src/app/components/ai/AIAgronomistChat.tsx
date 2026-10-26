@@ -12,6 +12,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import PlantDoctorModal from "./PlantDoctorModal";
 import axios from "axios";
 import { serverApi } from "../../../lib/config";
 import { CartItem } from "../../../lib/types/search";
@@ -35,6 +37,7 @@ export default function AIAgronomistChat({ onAdd }: AIAgronomistChatProps) {
   const [lang, setLang] = useState<Language>(getSavedLanguage());
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isDoctorOpen, setIsDoctorOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const t = translations[lang].aiChat;
@@ -406,6 +409,17 @@ export default function AIAgronomistChat({ onAdd }: AIAgronomistChatProps) {
               }}
             />
             <IconButton
+              onClick={() => setIsDoctorOpen(true)}
+              title="Camera Scan Leaf Pathology"
+              sx={{
+                background: "#e8f5e9",
+                color: "#2e7d32",
+                "&:hover": { background: "#c8e6c9" },
+              }}
+            >
+              <PhotoCameraIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+            <IconButton
               color="success"
               onClick={() => handleSendMessage()}
               disabled={isLoading || !inputMessage.trim()}
@@ -421,6 +435,12 @@ export default function AIAgronomistChat({ onAdd }: AIAgronomistChatProps) {
           </Box>
         </Box>
       )}
+
+      <PlantDoctorModal
+        open={isDoctorOpen}
+        onClose={() => setIsDoctorOpen(false)}
+        onAdd={onAdd}
+      />
     </>
   );
 }
