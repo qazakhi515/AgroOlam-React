@@ -91,8 +91,24 @@ export default function ChosenProduct(props: ChosenProductProps) {
             <strong className={"product-name"}>
               {chosenProduct?.productName}
             </strong>
-            <span className={"resto-name"}>{restaurant?.memberNick}</span>
-            <span className={"resto-name"}>{restaurant?.memberPhone}</span>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ my: 1, flexWrap: "wrap", gap: 1 }}>
+              <Box
+                sx={{
+                  bgcolor: "#e8f5e9",
+                  color: "#1b5e20",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  px: 1.5,
+                  py: 0.4,
+                  borderRadius: "12px",
+                }}
+              >
+                Sertifikatlangan Agro-Yetkazib beruvchi
+              </Box>
+              <span style={{ fontSize: 13, color: "#475569" }}>
+                Do'kon: {restaurant?.memberNick || "AgroPlant Official Store"}
+              </span>
+            </Stack>
             <Box className={"rating-box"}>
               <Rating name="half-rating" defaultValue={2.5} precision={0.5} />
               <div className={"evaluation-box"}>

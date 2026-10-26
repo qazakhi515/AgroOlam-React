@@ -511,19 +511,74 @@ export default function Products(props: ProductsProps) {
 
       <div className={"brands-logo"}>
         <Container className="family-brands">
-          <Box className="category-title">Our Family Brands</Box>
-          <Stack className="brand-list">
-            <Box className="review-box">
-              <img src="/img/gurme.webp" />
+          <Box className="category-title">Sertifikatlangan Agro-Hamkorlar & Texnologiyalar</Box>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            sx={{ width: "100%", justifyContent: "space-between", mt: 3 }}
+          >
+            <Box
+              sx={{
+                flex: 1,
+                p: 2.5,
+                bgcolor: "#ffffff",
+                borderRadius: "16px",
+                border: "1px solid #e2e8f0",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
+                textAlign: "center",
+              }}
+            >
+              <Box sx={{ fontSize: 24, mb: 0.5 }}>🌱</Box>
+              <Box sx={{ fontWeight: 800, color: "#166534", fontSize: 16 }}>Syngenta Agro</Box>
+              <Box sx={{ fontSize: 12, color: "#64748b", mt: 0.5 }}>Gibrid Urug'lar & Fungitsidlar</Box>
             </Box>
-            <Box className="review-box">
-              <img src="/img/seafood.webp" />
+
+            <Box
+              sx={{
+                flex: 1,
+                p: 2.5,
+                bgcolor: "#ffffff",
+                borderRadius: "16px",
+                border: "1px solid #e2e8f0",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
+                textAlign: "center",
+              }}
+            >
+              <Box sx={{ fontSize: 24, mb: 0.5 }}>🔬</Box>
+              <Box sx={{ fontWeight: 800, color: "#1e40af", fontSize: 16 }}>Bayer CropScience</Box>
+              <Box sx={{ fontSize: 12, color: "#64748b", mt: 0.5 }}>Innovatsion O'simlik Himoyasi</Box>
             </Box>
-            <Box className="review-box">
-              <img src="/img/sweets.webp" />
+
+            <Box
+              sx={{
+                flex: 1,
+                p: 2.5,
+                bgcolor: "#ffffff",
+                borderRadius: "16px",
+                border: "1px solid #e2e8f0",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
+                textAlign: "center",
+              }}
+            >
+              <Box sx={{ fontSize: 24, mb: 0.5 }}>🌾</Box>
+              <Box sx={{ fontWeight: 800, color: "#854d0e", fontSize: 16 }}>Yara International</Box>
+              <Box sx={{ fontSize: 12, color: "#64748b", mt: 0.5 }}>Mineral & Organik O'g'itlar</Box>
             </Box>
-            <Box className="review-box">
-              <img src="/img/doner.webp" />
+
+            <Box
+              sx={{
+                flex: 1,
+                p: 2.5,
+                bgcolor: "#ffffff",
+                borderRadius: "16px",
+                border: "1px solid #e2e8f0",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
+                textAlign: "center",
+              }}
+            >
+              <Box sx={{ fontSize: 24, mb: 0.5 }}>🤖</Box>
+              <Box sx={{ fontWeight: 800, color: "#065f46", fontSize: 16 }}>AgroPlant Vision AI</Box>
+              <Box sx={{ fontSize: 12, color: "#64748b", mt: 0.5 }}>Avtomatik Dorilash & Eslatmalar</Box>
             </Box>
           </Stack>
         </Container>

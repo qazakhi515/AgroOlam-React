@@ -197,24 +197,193 @@ export default function HomeNavbar(props: HomeNavbarProps) {
         <Stack className={"header-frame"}>
           <Stack className={"detail"}>
             <Box className={"head-main-txt"}>
-              World's Most Delicious Cousine
+              Smart Agriculture & Plant Vision AI
             </Box>
-            <Box className={"wel-txt"}>The Choice, not just a choice</Box>
-            <Box className={"service-txt"}>24 hours service</Box>
-            <Box className={"signup"}>
-              {!authMember ? (
+            <Box className={"wel-txt"}>
+              {lang === "uz"
+                ? "Sog'lom ekinlar, mo'l hosil va xavfsiz o'simlik parvarishi"
+                : lang === "ko"
+                ? "스마트 농업 & AI 식물 병해충 원격 진단 플랫폼"
+                : "Smart Plant Health, Disease Diagnosis & Certified Farm Supplies"}
+            </Box>
+            <Box className={"service-txt"}>
+              {lang === "uz"
+                ? "🌿 24/7 AI Agronom tashxisi va 9-kunlik takroriy dori eslatmalari"
+                : lang === "ko"
+                ? "🌿 24시간 AI 병해충 처방 및 텔레그램 재방제 알림"
+                : "🌿 24/7 AI Agronomy Advisory & Automated Spray Alerts"}
+            </Box>
+            <Stack direction="row" spacing={2} sx={{ mt: 3.5, flexWrap: "wrap", gap: 1.5 }}>
+              <Button
+                variant="contained"
+                onClick={() => setIsDoctorOpen(true)}
+                startIcon={<PhotoCameraIcon />}
+                sx={{
+                  bgcolor: "#2e7d32",
+                  color: "#fff",
+                  px: 3,
+                  py: 1.4,
+                  borderRadius: "24px",
+                  fontWeight: 700,
+                  fontSize: 14,
+                  textTransform: "none",
+                  boxShadow: "0 6px 18px rgba(46,125,50,0.45)",
+                  "&:hover": { bgcolor: "#1b5e20" },
+                }}
+              >
+                {lang === "uz"
+                  ? "📷 Bargni Tashxis Qilish"
+                  : lang === "ko"
+                  ? "📷 잎 사진 AI 진단"
+                  : "📷 Plant Vision AI Doctor"}
+              </Button>
+              <NavLink to="/products" style={{ textDecoration: "none" }}>
                 <Button
-                  variant={"contained"}
-                  className={"signup-button"}
-                  onClick={() => setSignupOpen(true)}
+                  variant="outlined"
+                  sx={{
+                    borderColor: "#fff",
+                    color: "#fff",
+                    borderRadius: "24px",
+                    px: 3,
+                    py: 1.4,
+                    fontWeight: 600,
+                    fontSize: 14,
+                    textTransform: "none",
+                    "&:hover": { borderColor: "#c8e6c9", bgcolor: "rgba(255,255,255,0.15)" },
+                  }}
                 >
-                  Sign up
+                  {lang === "uz"
+                    ? "🌾 Mahsulotlar Katalogi"
+                    : lang === "ko"
+                    ? "🌾 농자재 상품 보기"
+                    : "🌾 Farm Products"}
                 </Button>
-              ) : null}
-            </Box>
+              </NavLink>
+            </Stack>
           </Stack>
           <Box className={"logo-frame"}>
-            <div className={"logo-img"}></div>
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                borderRadius: "24px",
+                p: 3,
+                bgcolor: "rgba(255, 255, 255, 0.92)",
+                backdropFilter: "blur(12px)",
+                border: "1px solid rgba(255, 255, 255, 0.6)",
+                boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <Stack direction="row" alignItems="center" justifyContent="space-between">
+                <Stack direction="row" alignItems="center" spacing={1.5}>
+                  <Box
+                    sx={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: "12px",
+                      bgcolor: "#2e7d32",
+                      color: "#fff",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <PhotoCameraIcon />
+                  </Box>
+                  <Box>
+                    <Box sx={{ fontWeight: 800, fontSize: 16, color: "#1b5e20" }}>
+                      AgroPlant Vision AI Doctor
+                    </Box>
+                    <Box sx={{ fontSize: 12, color: "#666" }}>
+                      Real-time Leaf Pathology Scanner
+                    </Box>
+                  </Box>
+                </Stack>
+                <Box
+                  sx={{
+                    bgcolor: "#e8f5e9",
+                    color: "#2e7d32",
+                    px: 1.5,
+                    py: 0.5,
+                    borderRadius: "12px",
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}
+                >
+                  99.2% Accuracy
+                </Box>
+              </Stack>
+
+              <Box
+                sx={{
+                  bgcolor: "#f8fafc",
+                  borderRadius: "16px",
+                  p: 2,
+                  border: "1px solid #e2e8f0",
+                }}
+              >
+                <Stack direction="row" justifyContent="space-between" sx={{ mb: 1 }}>
+                  <span style={{ fontWeight: 600, color: "#334155", fontSize: 13 }}>
+                    Ekin: Pomidor (Lycopersicon)
+                  </span>
+                  <span style={{ color: "#d97706", fontWeight: 700, fontSize: 13 }}>
+                    Aniqlangan kasallik: Un-shudring
+                  </span>
+                </Stack>
+                <Box sx={{ fontSize: 12, color: "#64748b", mb: 1.5, lineHeight: 1.5 }}>
+                  Barg yuzasida oq unsimon dog'lar mavjud. Zamburug'li infeksiya boshlang'ich bosqichda.
+                </Box>
+                <Box
+                  sx={{
+                    p: 1.2,
+                    bgcolor: "#ecfdf5",
+                    borderRadius: "10px",
+                    border: "1px solid #a7f3d0",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Box sx={{ fontSize: 12, color: "#065f46", fontWeight: 600 }}>
+                    💊 Tavsiya dori: Ridomil Gold MZ (25g / 10L)
+                  </Box>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    onClick={() => setIsDoctorOpen(true)}
+                    sx={{
+                      bgcolor: "#059669",
+                      fontSize: 11,
+                      textTransform: "none",
+                      py: 0.4,
+                      "&:hover": { bgcolor: "#047857" },
+                    }}
+                  >
+                    Batafsil
+                  </Button>
+                </Box>
+              </Box>
+
+              <Stack direction="row" spacing={1} justifyContent="space-around">
+                <Box sx={{ textAlign: "center" }}>
+                  <Box sx={{ fontWeight: 800, fontSize: 18, color: "#1e293b" }}>0.8s</Box>
+                  <Box sx={{ fontSize: 11, color: "#64748b" }}>Tezkor tahlil</Box>
+                </Box>
+                <Box sx={{ borderRight: "1px solid #e2e8f0" }} />
+                <Box sx={{ textAlign: "center" }}>
+                  <Box sx={{ fontWeight: 800, fontSize: 18, color: "#1e293b" }}>1,200+</Box>
+                  <Box sx={{ fontSize: 11, color: "#64748b" }}>Agro mahsulot</Box>
+                </Box>
+                <Box sx={{ borderRight: "1px solid #e2e8f0" }} />
+                <Box sx={{ textAlign: "center" }}>
+                  <Box sx={{ fontWeight: 800, fontSize: 18, color: "#1e293b" }}>9-kun</Box>
+                  <Box sx={{ fontSize: 11, color: "#64748b" }}>Telegram eslatma</Box>
+                </Box>
+              </Stack>
+            </Box>
           </Box>
         </Stack>
       </Container>
