@@ -5,10 +5,11 @@ import styled from "styled-components";
 
 const Footers = styled.div`
   width: 100%;
-  height: 590px;
+  min-height: 520px;
   display: flex;
-  background: #343434;
+  background: #1e261f;
   background-size: cover;
+  padding-bottom: 40px;
 `;
 
 export default function Footer() {
@@ -17,59 +18,65 @@ export default function Footer() {
   return (
     <Footers>
       <Container>
-        <Stack flexDirection={"row"} sx={{ mt: "94px" }}>
-          <Stack flexDirection={"column"} style={{ width: "340px" }}>
+        <Stack flexDirection={"row"} sx={{ mt: "80px" }} justifyContent="space-between">
+          <Stack flexDirection={"column"} style={{ width: "360px" }}>
             <Box>
-              <img width={"100px"} src={"/icons/burak.svg"} />
+              <img width={"140px"} src={"/icons/agrivia-logo.svg"} alt="Agrivia" />
             </Box>
-            <Box className={"foot-desc-txt"}>
-              Focusing on the gourmet Turkish breakfast as well as the youth
-              society, CZN Burak Gurme aims to bring Turkish cuisine back. CZN
-              Burak Gurme creates an illusion with its cuisine.
+            <Box className={"foot-desc-txt"} sx={{ mt: 2, color: "#a0aec0", lineHeight: 1.6 }}>
+              Agrivia — Qishloq xo'jaligi, zamonaviy urug'chilik, agro-kimyo va sifatli
+              dorilar yetkazib beruvchi yetakchi agro-platforma. Dehqon va fermerlarga
+              har qadamda ishonchli hamroh.
             </Box>
-            <Box className="sns-context">
-              <img src={"/icons/facebook.svg"} />
-              <img src={"/icons/twitter.svg"} />
-              <img src={"/icons/instagram.svg"} />
-              <img src={"/icons/youtube.svg"} />
+            <Box className="sns-context" sx={{ mt: 3 }}>
+              <img src={"/icons/facebook.svg"} alt="facebook" />
+              <img src={"/icons/twitter.svg"} alt="twitter" />
+              <img src={"/icons/instagram.svg"} alt="instagram" />
+              <img src={"/icons/youtube.svg"} alt="youtube" />
             </Box>
           </Stack>
-          <Stack sx={{ ml: "288px" }} flexDirection={"row"}>
+
+          <Stack sx={{ ml: "80px" }} flexDirection={"row"} gap="80px">
             <Stack>
               <Box>
-                <Box className={"foot-category-title"}>Bo'limlar</Box>
+                <Box className={"foot-category-title"} sx={{ color: "#fff", fontWeight: 700, mb: 2 }}>
+                  Bo'limlar
+                </Box>
                 <Box className={"foot-category-link"}>
-                  <Link to="/">Home</Link>
-                  <Link to="/products">Products</Link>
-                  {authMember && <Link to="/orders">Orders</Link>}
-                  <Link to="/help">Help</Link>
+                  <Link to="/">Bosh sahifa</Link>
+                  <Link to="/products">Mahsulotlar</Link>
+                  <Link to="/news">Yangiliklar & Maslahatlar</Link>
+                  {authMember && <Link to="/orders">Buyurtmalar</Link>}
+                  <Link to="/help">Yordam & FAQ</Link>
                 </Box>
               </Box>
             </Stack>
-            <Stack sx={{ ml: "100px" }}>
+
+            <Stack>
               <Box>
-                <Box className={"foot-category-title"}>Find us</Box>
+                <Box className={"foot-category-title"} sx={{ color: "#fff", fontWeight: 700, mb: 2 }}>
+                  Bog'lanish
+                </Box>
                 <Box
                   flexDirection={"column"}
-                  sx={{ mt: "20px" }}
                   className={"foot-category-link"}
                   justifyContent={"space-between"}
                 >
                   <Box flexDirection={"row"} className={"find-us"}>
                     <span>L.</span>
-                    <div>Downtown, Dubai</div>
+                    <div>Toshkent shahri, O'zbekiston</div>
                   </Box>
                   <Box className={"find-us"}>
                     <span>P.</span>
-                    <div>+971 4 554 7777</div>
+                    <div>+998 71 200 00 00</div>
                   </Box>
                   <Box className={"find-us"}>
                     <span>E.</span>
-                    <div>devexuz@gmail.com</div>
+                    <div>info@agrivia.uz</div>
                   </Box>
                   <Box className={"find-us"}>
                     <span>H.</span>
-                    <div>Visit 24 hours</div>
+                    <div>Har kuni: 08:00 - 20:00</div>
                   </Box>
                 </Box>
               </Box>
@@ -77,11 +84,11 @@ export default function Footer() {
           </Stack>
         </Stack>
         <Stack
-          style={{ border: "1px solid #C5C8C9", width: "100%", opacity: "0.2" }}
-          sx={{ mt: "80px" }}
+          style={{ border: "1px solid #4a5568", width: "100%", opacity: "0.4" }}
+          sx={{ mt: "60px" }}
         ></Stack>
-        <Stack className={"copyright-txt"}>
-          © Copyright Devex Global, All rights reserved.
+        <Stack className={"copyright-txt"} sx={{ textAlign: "center", mt: 3, color: "#a0aec0", fontSize: 14 }}>
+          © 2026 Agrivia AgroPlatformasi. Barcha huquqlar himoyalangan.
         </Stack>
       </Container>
     </Footers>

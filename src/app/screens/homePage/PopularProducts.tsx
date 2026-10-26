@@ -5,38 +5,36 @@ import Card from "@mui/joy/Card";
 import CardCover from "@mui/joy/CardCover";
 import CardContent from "@mui/joy/CardContent";
 import Typography from "@mui/joy/Typography";
-import CardOverflow from "@mui/joy/CardOverflow";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DescriptionOutlined from "@mui/icons-material/DescriptionOutlined";
-
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
-import { retrievePopularDishes } from "./selector";
+import { retrievePopularProducts } from "./selector";
 import { Product } from "../../../lib/types/product";
 import { serverApi } from "../../../lib/config";
 
-const popularDishesRetriever = createSelector(
-  retrievePopularDishes,
-  (popularDishes) => ({ popularDishes }),
+const popularProductsRetriever = createSelector(
+  retrievePopularProducts,
+  (popularProducts) => ({ popularProducts })
 );
 
-export default function PopularDishes() {
-  const { popularDishes } = useSelector(popularDishesRetriever);
-  // Selector
+export default function PopularProducts() {
+  const { popularProducts } = useSelector(popularProductsRetriever);
+
   return (
     <div className={"popular-dishes-frame"}>
       <Container>
         <Stack className={"popular-section"}>
-          <Box className={"category-title"}>PopularDishes</Box>
+          <Box className={"category-title"}>Popular Agro Products</Box>
           <Stack className={"cards-frame"}>
-            {popularDishes.length !== 0 ? (
-              popularDishes.map((ele: Product) => {
+            {popularProducts && popularProducts.length !== 0 ? (
+              popularProducts.map((ele: Product) => {
                 const imagePath = `${serverApi}/${ele.productImages[0]}`;
                 return (
                   <CssVarsProvider key={ele._id}>
                     <Card className={"card"}>
                       <CardCover>
-                        <img src={imagePath} alt="" />
+                        <img src={imagePath} alt={ele.productName} />
                       </CardCover>
                       <CardCover className={"card-cover"} />
                       <CardContent sx={{ justifyContent: "flex-end" }}>
@@ -66,30 +64,26 @@ export default function PopularDishes() {
                             />
                           </Typography>
                         </Stack>
-                      </CardContent>
-                      <CardOverflow
-                        sx={{
-                          display: "flex",
-                          gap: 1.5,
-                          py: 1.5,
-                          px: "var(--Card-padding)",
-                          borderTop: "1px solid",
-                          height: "top",
-                        }}
-                      >
                         <Typography
-                          startDecorator={<DescriptionOutlined />}
-                          textColor="neutral.100"
+                          sx={{
+                            fontWeight: "md",
+                            color: "neutral.300",
+                            alignItems: "center",
+                            display: "flex",
+                          }}
                         >
-                          {ele.productDesc}
+                          <div className={"dish-desc-text"}>
+                            <DescriptionOutlined />
+                            {ele.productDesc}
+                          </div>
                         </Typography>
-                      </CardOverflow>
+                      </CardContent>
                     </Card>
                   </CssVarsProvider>
                 );
               })
             ) : (
-              <Box className="no-data">New products are not available</Box>
+              <Box className={"no-data"}>Popular products are not available!</Box>
             )}
           </Stack>
         </Stack>
@@ -97,3 +91,4 @@ export default function PopularDishes() {
     </div>
   );
 }
+

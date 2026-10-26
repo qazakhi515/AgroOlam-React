@@ -7,39 +7,34 @@ import Typography from "@mui/material/Typography";
 import { CssVarsProvider } from "@mui/joy/styles";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Divider from "../../components/divider";
-
 import { useSelector } from "react-redux";
-import { Dispatch } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
-import { retrieveNewDishes } from "./selector";
-import { setPopularDishes } from "./slice"; // bular bizni actionlarimiz
+import { retrieveNewProducts } from "./selector";
 import { Product } from "../../../lib/types/product";
 import { serverApi } from "../../../lib/config";
 import { ProductCollection } from "../../../lib/enums/product.enum";
 
-const actionDispatch = (dispatch: Dispatch) => ({
-  setPopularDishes: (data: Product[]) => dispatch(setPopularDishes(data)),
-});
-const newDishesRetriever = createSelector(retrieveNewDishes, (newDishes) => ({
-  newDishes,
+const newProductsRetriever = createSelector(retrieveNewProducts, (newProducts) => ({
+  newProducts,
 }));
-export default function NewDishes() {
-  const { newDishes } = useSelector(newDishesRetriever);
+
+export default function NewProducts() {
+  const { newProducts } = useSelector(newProductsRetriever);
 
   return (
     <div className={"new-products-frame"}>
       <Container>
         <Stack className={"main"}>
-          <Box className={"category-title"}>Fresh Menu</Box>
+          <Box className={"category-title"}>New Arrivals</Box>
           <Stack className={"cards-frame"}>
             <CssVarsProvider>
-              {newDishes.length !== 0 ? (
-                newDishes.map((product: Product) => {
+              {newProducts && newProducts.length !== 0 ? (
+                newProducts.map((product: Product) => {
                   const imagePath = `${serverApi}/${product.productImages[0]}`;
                   const sizeVolume =
-                    product.productCollection === ProductCollection.DRINK
-                      ? product.productVolume + "l"
-                      : product.productSize + "size";
+                    product.productCollection === ProductCollection.TOOLS
+                      ? (product.productVolume ? product.productVolume + "kg" : "Standard")
+                      : product.productSize + " pack";
                   return (
                     <Card
                       key={product._id}
@@ -49,12 +44,12 @@ export default function NewDishes() {
                       <CardOverflow>
                         <div className="product-sale">{sizeVolume}</div>
                         <AspectRatio ratio="1">
-                          <img src={imagePath} alt="" />
+                          <img src={imagePath} alt={product.productName} />
                         </AspectRatio>
                       </CardOverflow>
 
-                      <CardOverflow variant="soft" className="product-detail">
-                        <Stack className="info">
+                      <Box className={"product-detail"}>
+                        <Stack className={"info"}>
                           <Stack flexDirection={"row"}>
                             <Typography className={"title"}>
                               {product.productName}
@@ -73,12 +68,12 @@ export default function NewDishes() {
                             </Typography>
                           </Stack>
                         </Stack>
-                      </CardOverflow>
+                      </Box>
                     </Card>
                   );
                 })
               ) : (
-                <Box className="no-data">New Products are not available!</Box>
+                <Box className={"no-data"}>New products are not available!</Box>
               )}
             </CssVarsProvider>
           </Stack>
@@ -87,3 +82,4 @@ export default function NewDishes() {
     </div>
   );
 }
+

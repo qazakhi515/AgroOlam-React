@@ -41,17 +41,21 @@ class MemberService {
     }
   }
 
-  public async getRestaurant(): Promise<Member> {
+  public async getStoreDetails(): Promise<Member> {
     try {
       const url = this.path + "/member/restaurant";
       const result = await axios.get(url);
-      console.log("getRestaurant", result);
-      const restaurant: Member = result.data;
-      return restaurant;
+      console.log("getStoreDetails", result);
+      return result.data;
     } catch (err) {
-      console.log("Error, getProduct", err);
+      console.log("Error, getStoreDetails", err);
       throw err;
     }
+  }
+
+  // Backward compatibility alias
+  public async getRestaurant(): Promise<Member> {
+    return this.getStoreDetails();
   }
 
   public async signup(input: MemberInput): Promise<Member> {

@@ -2,7 +2,7 @@ import { Member } from "./member";
 import { Order } from "./order";
 import { Product } from "./product";
 
-/**  React app state **/
+/** React app state **/
 export interface AppRootState {
   ordersPagePage: any;
   homePage: HomePageState;
@@ -11,14 +11,18 @@ export interface AppRootState {
 }
 
 export interface HomePageState {
-  popularDishes: Product[];
-  newDishes: Product[];
+  popularProducts: Product[];
+  newProducts: Product[];
   topUsers: Member[];
+  // Legacy aliases
+  popularDishes?: Product[];
+  newDishes?: Product[];
 }
 
 /** Products Page **/
 export interface ProductsPageState {
-  restaurant: Member | null;
+  storeDetails?: Member | null;
+  restaurant?: Member | null;
   chosenProduct: Product | null;
   products: Product[];
 }

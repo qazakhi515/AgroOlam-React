@@ -50,7 +50,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
         <Stack className="menu">
           <Box>
             <NavLink to="/">
-              <img className="brand-logo" src="/icons/burak.svg" />
+              <img className="brand-logo" src="/icons/agrivia-logo.svg" alt="Agrivia" />
             </NavLink>
           </Box>
           <Stack className="links">
@@ -60,6 +60,11 @@ export default function OtherNavbar(props: OtherNavbarProps) {
             <Box className={"hover-line"}>
               <NavLink to="/products" activeClassName={"underline"}>
                 Products
+              </NavLink>
+            </Box>
+            <Box className={"hover-line"}>
+              <NavLink to="/news" activeClassName={"underline"}>
+                Yangiliklar
               </NavLink>
             </Box>
             {authMember ? (

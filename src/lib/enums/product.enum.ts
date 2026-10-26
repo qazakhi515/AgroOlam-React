@@ -20,9 +20,14 @@ export enum ProductStatus {
 }
 
 export enum ProductCollection {
-  DISH = "DISH",
-  SALAD = "SALAD",
-  DESSERT = "DESSERT",
-  DRINK = "DRINK",
+  PLANTS = "PLANTS",
+  SEEDS = "SEEDS",
+  FERTILIZERS = "FERTILIZERS",
+  TOOLS = "TOOLS",
   OTHER = "OTHER",
+  // Backward compatibility alias for legacy data
+  DISH = "PLANTS",
+  SALAD = "SEEDS",
+  DESSERT = "FERTILIZERS",
+  DRINK = "TOOLS",
 }

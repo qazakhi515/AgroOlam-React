@@ -1,26 +1,32 @@
 export const faq = [
-	{
-		question: 'How to make order?',
-		answer: 'You should choose products and make an order via basket!',
-	},
-	{
-		question: 'How long does delivery takes?',
-		answer: 'It depends on your location. The max delivery time is 1 hour!',
-	},
-	{
-		question: 'Is our details secure in this platform?',
-		answer: 'Of course, we take full responsibility for your provided user details!',
-	},
-	{
-		question: 'I am blocked, what should I do?',
-		answer: 'There is a reason for your block, please contact to us!',
-	},
-	{
-		question: 'How can I cancel order?',
-		answer: 'You can cancel your order any time easily, just go to your orders page!',
-	},
-	{
-		question: 'Who developed this platform?',
-		answer: 'ITC Global developers developed this platform!',
-	},
+  {
+    question: "How do I place an order for seeds and fertilizers?",
+    answer:
+      "Browse our product catalog (Plants, Seeds, Fertilizers, Tools), add your required items to the cart, and proceed to checkout with delivery details.",
+  },
+  {
+    question: "How does delivery work for fresh plants and seedlings?",
+    answer:
+      "We provide specialized climate-controlled regional delivery for delicate seedlings and bulk courier shipping for seeds and tools within 24-48 hours.",
+  },
+  {
+    question: "Are chemical fertilizers and pesticides tested for safety?",
+    answer:
+      "Yes, all agrochemicals listed on Agrivia are state-certified, with detailed active ingredient labels and application instructions.",
+  },
+  {
+    question: "Where can I get expert advice on plant diseases and treatment?",
+    answer:
+      "Visit our News & Advisory section for seasonal guides, or use our upcoming AI Diagnosis tool to identify plant diseases directly from leaf photos.",
+  },
+  {
+    question: "Can I cancel or modify my farm order?",
+    answer:
+      "Orders can be modified or cancelled before shipment dispatch directly from your 'My Orders' dashboard.",
+  },
+  {
+    question: "Who developed the Agrivia platform?",
+    answer:
+      "Agrivia was designed and engineered by Akhmadjon Usmonov and the Agrivia engineering team, combining domain expertise in plant pathology with modern full-stack web technologies.",
+  },
 ];

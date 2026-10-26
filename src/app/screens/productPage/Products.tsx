@@ -39,7 +39,7 @@ export default function Products(props: ProductsProps) {
     page: 1,
     limit: 8,
     order: "createdAt",
-    productCollection: ProductCollection.DISH,
+    productCollection: ProductCollection.PLANTS,
     search: " ",
   });
   const [searchText, setSearchText] = useState<string>("");
@@ -85,7 +85,7 @@ export default function Products(props: ProductsProps) {
     setProductSearch({ ...productSearch });
   };
 
-  const choseDishHandler = (id: string) => {
+  const chooseProductHandler = (id: string) => {
     history.push(`/products/${id}`);
   };
 
@@ -94,7 +94,7 @@ export default function Products(props: ProductsProps) {
       <Container>
         <Stack flexDirection={"column"} alignItems={"center"}>
           <Stack className={"avatar-big-box"}>
-            <Box className="main-title">Burak Restaurant</Box>
+            <Box className="main-title">Agrivia Agro Mahsulotlar Bozori</Box>
             <div className="mclain-input">
               <input
                 type="text"
@@ -172,55 +172,55 @@ export default function Products(props: ProductsProps) {
                 <Button
                   variant={"contained"}
                   color={
+                    productSearch.productCollection === ProductCollection.TOOLS
+                      ? "primary"
+                      : "secondary"
+                  }
+                  onClick={() =>
+                    searchCollectionHandler(ProductCollection.TOOLS)
+                  }
+                >
+                  Tools
+                </Button>
+                <Button
+                  variant={"contained"}
+                  color={
                     productSearch.productCollection ===
-                    ProductCollection.DESSERT
+                    ProductCollection.FERTILIZERS
                       ? "primary"
                       : "secondary"
                   }
                   onClick={() =>
-                    searchCollectionHandler(ProductCollection.DESSERT)
+                    searchCollectionHandler(ProductCollection.FERTILIZERS)
                   }
                 >
-                  Dessert
+                  Fertilizers
                 </Button>
                 <Button
                   variant={"contained"}
                   color={
-                    productSearch.productCollection === ProductCollection.DRINK
+                    productSearch.productCollection === ProductCollection.SEEDS
                       ? "primary"
                       : "secondary"
                   }
                   onClick={() =>
-                    searchCollectionHandler(ProductCollection.DRINK)
+                    searchCollectionHandler(ProductCollection.SEEDS)
                   }
                 >
-                  Drink
+                  Seeds
                 </Button>
                 <Button
                   variant={"contained"}
                   color={
-                    productSearch.productCollection === ProductCollection.SALAD
+                    productSearch.productCollection === ProductCollection.PLANTS
                       ? "primary"
                       : "secondary"
                   }
                   onClick={() =>
-                    searchCollectionHandler(ProductCollection.SALAD)
+                    searchCollectionHandler(ProductCollection.PLANTS)
                   }
                 >
-                  Salad
-                </Button>
-                <Button
-                  variant={"contained"}
-                  color={
-                    productSearch.productCollection === ProductCollection.DISH
-                      ? "primary"
-                      : "secondary"
-                  }
-                  onClick={() =>
-                    searchCollectionHandler(ProductCollection.DISH)
-                  }
-                >
-                  Dish
+                  Plants
                 </Button>
               </div>
             </Stack>
@@ -228,15 +228,14 @@ export default function Products(props: ProductsProps) {
               {products.length !== 0 ? (
                 products.map((product, index) => {
                   const imagePath = `${serverApi}/${product.productImages[0]}`;
-                  const sizeVolume =
-                    product.productCollection === ProductCollection.DRINK
-                      ? product.productVolume + " litre"
-                      : product.productSize + " size";
+                  const sizeVolume = product.productVolume
+                    ? product.productVolume + " kg/L"
+                    : product.productSize + " pack";
                   return (
                     <Stack
                       key={product._id}
                       className={"product-card"}
-                      onClick={() => choseDishHandler(product._id)}
+                      onClick={() => chooseProductHandler(product._id)}
                     >
                       <Stack
                         className={"product-img"}

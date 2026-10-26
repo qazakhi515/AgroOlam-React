@@ -25,7 +25,7 @@ const ordersPageSlice = createSlice({
 });
 
 export const { setPausedOrders, setProcessOrders, setFinishedOrders } =
-  ordersPageSlice.actions; // set newDishes va setPopularDishes bular action xisobllanadi .
+  ordersPageSlice.actions;
 
 const OrdersPageReducer = ordersPageSlice.reducer;
 export default OrdersPageReducer;

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Container, Typography } from "@mui/material";
-import { Link, Route, Switch, useLocation } from "react-router-dom";
+import { Route, Switch, useLocation } from "react-router-dom";
 import HomePage from "./screens/homePage";
 import ProductsPage from "./screens/productPage";
 import OrdersPage from "./screens/ordersPage";
@@ -9,13 +8,13 @@ import HomeNavbar from "./components/headers/HomeNavbar";
 import OtherNavbar from "./components/headers/OtherNavbar";
 import Footer from "./components/footer";
 import HelpPage from "./screens/helpPage";
-import Test from "./screens/Test";
+import NewsPage from "./screens/newsPage";
+import ChosenArticle from "./screens/newsPage/ChosenArticle";
 import useBasket from "./components/hooks/useBasket";
 import AuthenticationModal from "./components/auth";
 import "../css/app.css";
 import "../css/navbar.css";
 import "../css/footer.css";
-import { T } from "../lib/types/common";
 import { sweetErrorHandling, sweetTopSuccessAlert } from "../lib/sweetAlert";
 import { Messages } from "../lib/config";
 import MemberService from "./services/memberService";
@@ -90,6 +89,12 @@ function App() {
         </Route>
         <Route path="/member-page">
           <UserPage />
+        </Route>
+        <Route path="/news/:articleId">
+          <ChosenArticle />
+        </Route>
+        <Route path="/news">
+          <NewsPage />
         </Route>
         <Route path="/help">
           <HelpPage />
