@@ -1,43 +1,148 @@
 <!doctype html>
-<html lang="en">
+<html lang="uz">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/icons/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="theme-color" content="#2e7d32" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://agroplant.uz/" />
+
+    <!-- Primary SEO Meta Tags -->
+    <title>AgroPlant — Smart Agro Platform & AI Plant Doctor | O'simlik Dorilari & Urug'lar</title>
+    <meta
+      name="title"
+      content="AgroPlant — Smart Agro Platform & AI Plant Doctor | O'simlik Dorilari & Urug'lar"
+    />
     <meta
       name="description"
-      content="Agrivia — Zamonaviy qishloq xo'jaligi, o'simliklar parvarishi, agro-tavsiyalar va sifatli urug'lar platformasi."
+      content="AgroPlant: Zamonaviy qishloq xo'jaligi platformasi. Sun'iy intellekt (AI) orqali o'simlik kasalliklarini jonli kamera orqali tashxis qilish, sertifikatlangan o'simlik dorilari, gibrid urug'lar, o'g'itlar va 9-kunlik takroriy dorilash Telegram eslatmalari. Toss Payments va Payme/Click to'lovlari."
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+    <meta
+      name="keywords"
+      content="agroplant, agrivia, o'simlik kasalliklari tashxisi, pomidor un-shudring, fitoftora davolash, bodring kasalliklari, urug'lar, o'g'itlar, agro dori, fermer maslahati, 식물병원, 병해충 AI 진단, 농약 비료, 스마트팜, plant disease vision ai, crop diagnosis, pesticide schedule"
+    />
+    <meta name="author" content="AgroPlant Agronomy Team" />
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>Agrivia — AgroPlant Platformasi</title>
+    <!-- Search Engines Crawl Directives -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="yandex" content="index, follow" />
+    <meta name="naver-site-verification" content="agroplant_naver_verify_token" />
+    <meta name="yandex-verification" content="agroplant_yandex_verify_token" />
+
+    <!-- Geo Targeting (Uzbekistan & South Korea Agro Moat) -->
+    <meta name="geo.region" content="UZ-TO" />
+    <meta name="geo.placename" content="Tashkent, Uzbekistan" />
+    <meta name="geo.position" content="41.2995;69.2401" />
+    <meta name="ICBM" content="41.2995, 69.2401" />
+
+    <!-- Security Directives -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- Open Graph / Facebook / Telegram Preview -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://agroplant.uz/" />
+    <meta property="og:site_name" content="AgroPlant" />
+    <meta property="og:title" content="AgroPlant — Smart Agro Platform & AI Plant Doctor" />
+    <meta
+      property="og:description"
+      content="O'simlik kasalliklarini AI kamera orqali bir zumda aniqlang, sertifikatlangan dori tavsiyalarini oling va xavfsiz to'lov orqali xarid qiling!"
+    />
+    <meta property="og:image" content="%PUBLIC_URL%/images/agroplant-banner.jpg" />
+    <meta property="og:locale" content="uz_UZ" />
+    <meta property="og:locale:alternate" content="ko_KR" />
+    <meta property="og:locale:alternate" content="en_US" />
+
+    <!-- Twitter Card Meta -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://agroplant.uz/" />
+    <meta name="twitter:title" content="AgroPlant — Smart Agro Platform & AI Plant Doctor" />
+    <meta
+      name="twitter:description"
+      content="Barg kasalliklari AI diagnostikasi, gibrid urug'lar, o'g'itlar va Telegram dori eslatmalari."
+    />
+    <meta name="twitter:image" content="%PUBLIC_URL%/images/agroplant-banner.jpg" />
+
+    <!-- Apple & PWA Assets -->
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- Schema.org JSON-LD Structured Data for High Google/Yandex/Naver Ranking -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://agroplant.uz/#website",
+            "url": "https://agroplant.uz/",
+            "name": "AgroPlant",
+            "description": "Smart Agro Tech, AI Plant Vision Diagnostics & Farm Supplies Platform",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://agroplant.uz/products?search={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            },
+            "inLanguage": ["uz", "ko", "en"]
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://agroplant.uz/#organization",
+            "name": "AgroPlant Co.",
+            "url": "https://agroplant.uz/",
+            "logo": "https://agroplant.uz/icons/favicon.svg",
+            "sameAs": [
+              "https://t.me/AgroPlantBot"
+            ],
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "telephone": "+998-71-200-0000",
+              "contactType": "Customer Support",
+              "areaServed": ["UZ", "KR"],
+              "availableLanguage": ["Uzbek", "Korean", "English"]
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://agroplant.uz/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "O'simlik kasalligini kamera orqali qanday aniqlash mumkin?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "AgroPlant platformasidagi 'AI Agronom' yoki 'Plant Vision Doctor' tugmasini bosib, kasallangan bargni rasmga olasiz. AI kasallikni (masalan, Un-shudring yoki Fitoftora) aniqlaydi va zarur dorini savatchaga qo'shishni taklif qiladi."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "AgroPlant platformasida qanday to'lov usullari mavjud?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Platformada Janubiy Koreya va xalqaro kartalar uchun Toss Payments (USD), hamda O'zbekiston uchun Uzcard/Humo orqali Payme, Click va Paynet to'lovlari mavjud."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Xarid qilingan dorilar bo'yicha Telegram eslatmalari qanday ishlaydi?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Dori yoki o'g'it xarid qilgach, 9-kuni 2-marta profilaktik sepish va 14-kuni o'g'itlash vaqti kelganida @AgroPlantBot Telegram botingizga ogohlantirish yuboradi."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>AgroPlant platformasidan to'liq foydalanish uchun brauzeringizda JavaScript-ni yoqing.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
   </body>
 </html>

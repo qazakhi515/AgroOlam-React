@@ -11,6 +11,14 @@ import "./css/index.css";
 import { BrowserRouter as Router } from "react-router-dom";
 import ContextProvider from "./app/components/headers/context/ContextProvider";
 
+// Suppress console logs in production for data security & DevTools privacy
+if (process.env.NODE_ENV === "production") {
+  console.log = () => {};
+  console.debug = () => {};
+  console.info = () => {};
+  console.warn = () => {};
+}
+
 const container = document.getElementById("root") as HTMLElement;
 const root = createRoot(container);
 root.render(
