@@ -1,6 +1,7 @@
 import { Box, Button, Container, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
 import { serverApi } from "../../../lib/config";
 import { CartItem } from "../../../lib/types/search";
 import { useGlobals } from "../hooks/useGlobals";
@@ -46,227 +47,268 @@ export default function HomeNavbar(props: HomeNavbarProps) {
   const lang = getSavedLanguage();
   const t = translations[lang].nav;
   const [isDoctorOpen, setIsDoctorOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 40);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="home-navbar">
-      <Container className="navbar-container">
-        <Stack className="menu">
-          <Box>
-            <NavLink to="/">
-              <img className="brand-logo" src="/icons/agrivia-logo.svg" alt="Agrivia" />
-            </NavLink>
-          </Box>
-          <Stack className="links">
-            <Box className={"hover-line"}>
-              <NavLink to="/" activeClassName={"underline"}>
-                {t.home}
+      <motion.div
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className={`navbar-sticky-bar ${isScrolled ? "scrolled" : ""}`}
+      >
+        <Container maxWidth="xl" className="navbar-top-container">
+          <Stack className="menu">
+            {/* 1. Brand Logo */}
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <NavLink to="/" className="brand-logo-wrapper">
+                <img className="brand-logo" src="/icons/agrivia-logo.svg" alt="Agrivia" />
               </NavLink>
-            </Box>
-            <Box className={"hover-line"}>
-              <NavLink to="/products" activeClassName={"underline"}>
-                {t.products}
-              </NavLink>
-            </Box>
-            <Box className={"hover-line"}>
-              <NavLink to="/news" activeClassName={"underline"}>
-                {t.news}
-              </NavLink>
-            </Box>
-            {authMember ? (
-              <Box className={"hover-line"}>
-                <NavLink to="/orders" activeClassName={"underline"}>
-                  {t.orders}
+            </motion.div>
+
+            {/* 2. Center Navigation Links (Balanced Gaps) */}
+            <Stack direction="row" className="nav-center-links" spacing={{ xs: 1.5, md: 3 }}>
+              <Box className="hover-line">
+                <NavLink to="/" exact activeClassName="underline">
+                  {t.home}
                 </NavLink>
               </Box>
-            ) : null}
-            {authMember ? (
-              <Box className={"hover-line"}>
-                <NavLink to="/member-page" activeClassName={"underline"}>
-                  {t.myPage}
+              <Box className="hover-line">
+                <NavLink to="/products" activeClassName="underline">
+                  {t.products}
                 </NavLink>
               </Box>
-            ) : null}
-            <Box className={"hover-line"}>
-              <NavLink to="/help" activeClassName={"underline"}>
-                {t.help}
-              </NavLink>
-            </Box>
-            <Button
-              size="small"
-              startIcon={<PhotoCameraIcon sx={{ fontSize: 16 }} />}
-              onClick={() => setIsDoctorOpen(true)}
-              sx={{
-                bgcolor: "#2e7d32",
-                color: "#fff",
-                borderRadius: "20px",
-                px: 1.6,
-                py: 0.5,
-                fontWeight: 700,
-                fontSize: 12,
-                textTransform: "none",
-                boxShadow: "0 2px 8px rgba(46,125,50,0.3)",
-                "&:hover": { bgcolor: "#1b5e20" },
-              }}
-            >
-              {lang === "ko" ? "AI 닥터" : lang === "uz" ? "AI Shifokor" : "Plant Doctor"}
-            </Button>
+              <Box className="hover-line">
+                <NavLink to="/news" activeClassName="underline">
+                  {t.news}
+                </NavLink>
+              </Box>
+              {authMember && (
+                <Box className="hover-line">
+                  <NavLink to="/orders" activeClassName="underline">
+                    {t.orders}
+                  </NavLink>
+                </Box>
+              )}
+              {authMember && (
+                <Box className="hover-line">
+                  <NavLink to="/member-page" activeClassName="underline">
+                    {t.myPage}
+                  </NavLink>
+                </Box>
+              )}
+              <Box className="hover-line">
+                <NavLink to="/help" activeClassName="underline">
+                  {t.help}
+                </NavLink>
+              </Box>
+            </Stack>
 
-            <PlantDoctorModal
-              open={isDoctorOpen}
-              onClose={() => setIsDoctorOpen(false)}
-              onAdd={onAdd}
-            />
-
-            <Basket
-              cartItems={cartItems}
-              onAdd={onAdd}
-              onRemove={onRemove}
-              onDelete={onDelete}
-              onDeleteAll={onDeleteAll}
-            />
-
-            <LanguageSelector />
-
-            {!authMember ? (
-              <Box>
+            {/* 3. Action Group: Plant Doctor, Basket, Lang & Auth */}
+            <Stack direction="row" className="nav-actions-group" spacing={1.8} alignItems="center">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
-                  variant="contained"
-                  className="login-button"
-                  onClick={() => setLoginOpen(true)}
+                  size="small"
+                  className="plant-doctor-btn"
+                  startIcon={<PhotoCameraIcon sx={{ fontSize: 16 }} />}
+                  onClick={() => setIsDoctorOpen(true)}
                 >
-                  {t.login}
+                  {lang === "ko" ? "AI 닥터" : lang === "uz" ? "AI Shifokor" : "Plant Doctor"}
                 </Button>
-              </Box>
-            ) : (
-              <img
-                className="user-avatar"
-                src={
-                  authMember?.memberImage
-                    ? `${serverApi}/${authMember?.memberImage}`
-                    : "/icons/default-user.svg"
-                }
-                aria-haspopup={"true"}
-                onClick={handleLogoutClick}
+              </motion.div>
+
+              <PlantDoctorModal
+                open={isDoctorOpen}
+                onClose={() => setIsDoctorOpen(false)}
+                onAdd={onAdd}
               />
-            )}
 
-            <Menu
-              anchorEl={anchorEl}
-              id="account-menu"
-              open={Boolean(anchorEl)}
-              onClose={handleCloseLogout}
-              onClick={handleCloseLogout}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    width: 32,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  "&:before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    transform: "translateY(-50%) rotate(45deg)",
-                    zIndex: 0,
-                  },
-                },
-              }}
-              transformOrigin={{ horizontal: "right", vertical: "top" }}
-              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-            >
-              <MenuItem onClick={handleLogoutRequest}>
-                <ListItemIcon>
-                  <Logout fontSize="small" style={{ color: "blue" }} />
-                </ListItemIcon>
-                {t.logout}
-              </MenuItem>
-            </Menu>
-          </Stack>
-        </Stack>
-        <Stack className={"header-frame"}>
-          <Stack className={"detail"}>
-            <Box className={"head-main-txt"}>
-              Smart Agriculture & Plant Vision AI
-            </Box>
-            <Box className={"wel-txt"}>
-              {lang === "uz"
-                ? "Sog'lom ekinlar, mo'l hosil va xavfsiz o'simlik parvarishi"
-                : lang === "ko"
-                ? "스마트 농업 & AI 식물 병해충 원격 진단 플랫폼"
-                : "Smart Plant Health, Disease Diagnosis & Certified Farm Supplies"}
-            </Box>
-            <Box className={"service-txt"}>
-              {lang === "uz"
-                ? "🌿 24/7 AI Agronom tashxisi va 9-kunlik takroriy dori eslatmalari"
-                : lang === "ko"
-                ? "🌿 24시간 AI 병해충 처방 및 텔레그램 재방제 알림"
-                : "🌿 24/7 AI Agronomy Advisory & Automated Spray Alerts"}
-            </Box>
-            <Stack direction="row" spacing={2} sx={{ mt: 3.5, flexWrap: "wrap", gap: 1.5 }}>
-              <Button
-                variant="contained"
-                onClick={() => setIsDoctorOpen(true)}
-                startIcon={<PhotoCameraIcon />}
-                sx={{
-                  bgcolor: "#2e7d32",
-                  color: "#fff",
-                  px: 3,
-                  py: 1.4,
-                  borderRadius: "24px",
-                  fontWeight: 700,
-                  fontSize: 14,
-                  textTransform: "none",
-                  boxShadow: "0 6px 18px rgba(46,125,50,0.45)",
-                  "&:hover": { bgcolor: "#1b5e20" },
-                }}
-              >
-                {lang === "uz"
-                  ? "📷 Bargni Tashxis Qilish"
-                  : lang === "ko"
-                  ? "📷 잎 사진 AI 진단"
-                  : "📷 Plant Vision AI Doctor"}
-              </Button>
-              <NavLink to="/products" style={{ textDecoration: "none" }}>
-                <Button
-                  variant="outlined"
-                  sx={{
-                    borderColor: "#fff",
+              <Basket
+                cartItems={cartItems}
+                onAdd={onAdd}
+                onRemove={onRemove}
+                onDelete={onDelete}
+                onDeleteAll={onDeleteAll}
+              />
+
+              <LanguageSelector />
+
+              {!authMember ? (
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
+                  <Button
+                    variant="contained"
+                    className="login-button"
+                    onClick={() => setLoginOpen(true)}
+                  >
+                    {t.login}
+                  </Button>
+                </motion.div>
+              ) : (
+                <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}>
+                  <img
+                    className="user-avatar"
+                    src={
+                      authMember?.memberImage
+                        ? `${serverApi}/${authMember?.memberImage}`
+                        : "/icons/default-user.svg"
+                    }
+                    alt="User Profile"
+                    onClick={handleLogoutClick}
+                  />
+                </motion.div>
+              )}
+
+              <Menu
+                anchorEl={anchorEl}
+                id="account-menu"
+                open={Boolean(anchorEl)}
+                onClose={handleCloseLogout}
+                onClick={handleCloseLogout}
+                PaperProps={{
+                  elevation: 0,
+                  sx: {
+                    overflow: "visible",
+                    filter: "drop-shadow(0px 4px 16px rgba(0,0,0,0.35))",
+                    mt: 1.5,
+                    borderRadius: "14px",
+                    bgcolor: "rgba(13, 56, 30, 0.95)",
+                    backdropFilter: "blur(12px)",
                     color: "#fff",
-                    borderRadius: "24px",
-                    px: 3,
-                    py: 1.4,
-                    fontWeight: 600,
-                    fontSize: 14,
-                    textTransform: "none",
-                    "&:hover": { borderColor: "#c8e6c9", bgcolor: "rgba(255,255,255,0.15)" },
-                  }}
-                >
-                  {lang === "uz"
-                    ? "🌾 Mahsulotlar Katalogi"
-                    : lang === "ko"
-                    ? "🌾 농자재 상품 보기"
-                    : "🌾 Farm Products"}
-                </Button>
-              </NavLink>
+                    border: "1px solid rgba(74, 222, 128, 0.2)",
+                    "& .MuiAvatar-root": {
+                      width: 32,
+                      height: 32,
+                      ml: -0.5,
+                      mr: 1,
+                    },
+                    "&:before": {
+                      content: '""',
+                      display: "block",
+                      position: "absolute",
+                      top: 0,
+                      right: 14,
+                      width: 10,
+                      height: 10,
+                      bgcolor: "rgba(13, 56, 30, 0.95)",
+                      transform: "translateY(-50%) rotate(45deg)",
+                      zIndex: 0,
+                    },
+                  },
+                }}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+              >
+                <MenuItem onClick={handleLogoutRequest} sx={{ color: "#f87171", fontWeight: 600 }}>
+                  <ListItemIcon>
+                    <Logout fontSize="small" sx={{ color: "#f87171" }} />
+                  </ListItemIcon>
+                  {t.logout}
+                </MenuItem>
+              </Menu>
             </Stack>
           </Stack>
-          <Box className={"logo-frame"}>
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                borderRadius: "24px",
+        </Container>
+      </motion.div>
+
+      <Container className="navbar-container">
+        <Stack className={"header-frame"}>
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <Stack className={"detail"}>
+              <Box className={"head-main-txt"}>
+                Smart Agriculture & Plant Vision AI
+              </Box>
+              <Box className={"wel-txt"}>
+                {lang === "uz"
+                  ? "Sog'lom ekinlar, mo'l hosil va xavfsiz o'simlik parvarishi"
+                  : lang === "ko"
+                  ? "스마트 농업 & AI 식물 병해충 원격 진단 플랫폼"
+                  : "Smart Plant Health, Disease Diagnosis & Certified Farm Supplies"}
+              </Box>
+              <Box className={"service-txt"}>
+                {lang === "uz"
+                  ? "🌿 24/7 AI Agronom tashxisi va 9-kunlik takroriy dori eslatmalari"
+                  : lang === "ko"
+                  ? "🌿 24시간 AI 병해충 처방 및 텔레그램 재방제 알림"
+                  : "🌿 24/7 AI Agronomy Advisory & Automated Spray Alerts"}
+              </Box>
+              <Stack direction="row" spacing={2} sx={{ mt: 3.5, flexWrap: "wrap", gap: 1.5 }}>
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
+                  <Button
+                    variant="contained"
+                    onClick={() => setIsDoctorOpen(true)}
+                    startIcon={<PhotoCameraIcon />}
+                    sx={{
+                      bgcolor: "#2e7d32",
+                      color: "#fff",
+                      px: 3,
+                      py: 1.4,
+                      borderRadius: "24px",
+                      fontWeight: 700,
+                      fontSize: 14,
+                      textTransform: "none",
+                      boxShadow: "0 6px 18px rgba(46,125,50,0.45)",
+                      "&:hover": { bgcolor: "#1b5e20" },
+                    }}
+                  >
+                    {lang === "uz"
+                      ? "📷 Bargni Tashxis Qilish"
+                      : lang === "ko"
+                      ? "📷 잎 사진 AI 진단"
+                      : "📷 Plant Vision AI Doctor"}
+                  </Button>
+                </motion.div>
+                <NavLink to="/products" style={{ textDecoration: "none" }}>
+                  <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        borderColor: "#fff",
+                        color: "#fff",
+                        borderRadius: "24px",
+                        px: 3,
+                        py: 1.4,
+                        fontWeight: 600,
+                        fontSize: 14,
+                        textTransform: "none",
+                        "&:hover": { borderColor: "#c8e6c9", bgcolor: "rgba(255,255,255,0.15)" },
+                      }}
+                    >
+                      {lang === "uz"
+                        ? "🌾 Mahsulotlar Katalogi"
+                        : lang === "ko"
+                        ? "🌾 농자재 상품 보기"
+                        : "🌾 Farm Products"}
+                    </Button>
+                  </motion.div>
+                </NavLink>
+              </Stack>
+            </Stack>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+            whileHover={{ y: -6 }}
+            style={{ width: "100%", maxWidth: 690 }}
+          >
+            <Box className={"logo-frame"} style={{ width: "100%", height: "100%", marginTop: 0 }}>
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "24px",
                 p: 3,
                 bgcolor: "rgba(255, 255, 255, 0.92)",
                 backdropFilter: "blur(12px)",
@@ -385,6 +427,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               </Stack>
             </Box>
           </Box>
+          </motion.div>
         </Stack>
       </Container>
     </div>

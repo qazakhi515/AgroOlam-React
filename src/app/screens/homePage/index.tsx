@@ -5,6 +5,11 @@ import Events from "./Events";
 import NewProducts from "./NewProducts";
 import PopularProducts from "./PopularProducts";
 import Statistics from "./Statistics";
+import QuickServicesStrip from "./QuickServicesStrip";
+import AiScannerSection from "./AiScannerSection";
+import ServicesSection from "./ServicesSection";
+import GlobalProjectsMap from "./GlobalProjectsMap";
+import FarmerConsultationSection from "./FarmerConsultationSection";
 import { useDispatch } from "react-redux";
 import { Dispatch } from "@reduxjs/toolkit";
 import { setNewProducts, setPopularProducts, setTopUsers } from "./slice";
@@ -14,6 +19,11 @@ import { ProductCollection } from "../../../lib/enums/product.enum";
 import "../../../css/home.css";
 import MemberService from "../../services/memberService";
 import { Member } from "../../../lib/types/member";
+import { CartItem } from "../../../lib/types/search";
+
+interface HomePageProps {
+  onAdd?: (item: CartItem) => void;
+}
 
 const actionDispatch = (dispatch: Dispatch) => ({
   setPopularProducts: (data: Product[]) => dispatch(setPopularProducts(data)),
@@ -21,7 +31,7 @@ const actionDispatch = (dispatch: Dispatch) => ({
   setTopUsers: (data: Member[]) => dispatch(setTopUsers(data)),
 });
 
-export default function HomePage() {
+export default function HomePage({ onAdd = () => {} }: HomePageProps) {
   const { setPopularProducts, setNewProducts, setTopUsers } =
     actionDispatch(useDispatch());
 
@@ -62,12 +72,17 @@ export default function HomePage() {
 
   return (
     <div className={"homepage"}>
-      <Statistics />
+      <QuickServicesStrip />
+      <AiScannerSection onAdd={onAdd} />
       <PopularProducts />
       <NewProducts />
+      <ServicesSection />
+      <GlobalProjectsMap />
+      <FarmerConsultationSection />
       <Advertisement />
       <ActiveUsers />
       <Events />
     </div>
   );
 }
+
