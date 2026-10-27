@@ -367,13 +367,13 @@ export default function PaymentModal({
                   Bank orqali to'lov yoki Paynet Terminal:
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                  🇰🇷 <strong>Korea</strong>: Shinhan Bank: <code>110-345-678901</code> (AgroPlant Global Inc.)
+                  🇰🇷 <strong>Korea</strong>: Shinhan Bank: <code>110-345-678901</code> (AgroOlam Global Inc.)
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  🇺🇿 <strong>Uzbekistan</strong>: Agrobank: <code>2020 8000 9005 1234 5001</code> (AgroPlant MCHJ)
+                  🇺🇿 <strong>Uzbekistan</strong>: Agrobank: <code>2020 8000 9005 1234 5001</code> (AgroOlam MCHJ)
                 </Typography>
                 <Alert severity="info" sx={{ fontSize: "12px" }}>
-                  Dorixonadagi Paynet kioskida <strong>AgroPlant</strong> xizmatini tanlab, buyurtma ID raqamingizni kiriting.
+                  Dorixonadagi Paynet kioskida <strong>AgroOlam</strong> xizmatini tanlab, buyurtma ID raqamingizni kiriting.
                 </Alert>
               </Box>
             )}
@@ -436,7 +436,7 @@ export default function PaymentModal({
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
               <ReceiptIcon sx={{ color: "#558b2f", fontSize: 20 }} />
               <Typography variant="subtitle2" fontWeight={800} color="#33691e">
-                AgroPlant Official E-Receipt / Invoice
+                AgroOlam (agroolam.tech) Official E-Receipt / Invoice
               </Typography>
             </Stack>
             <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>

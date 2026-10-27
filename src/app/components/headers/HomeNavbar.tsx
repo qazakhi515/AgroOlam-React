@@ -1,6 +1,17 @@
-import { Box, Button, Container, Stack } from "@mui/material";
-import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  Container,
+  Stack,
+  Typography,
+  Chip,
+  InputBase,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+} from "@mui/material";
+import { NavLink, useHistory } from "react-router-dom";
 import { motion } from "framer-motion";
 import { serverApi } from "../../../lib/config";
 import { CartItem } from "../../../lib/types/search";
@@ -8,11 +19,16 @@ import { useGlobals } from "../hooks/useGlobals";
 import Basket from "./Basket";
 import LanguageSelector from "./LanguageSelector";
 import { getSavedLanguage, translations } from "../../../lib/i18n";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import Logout from "@mui/icons-material/Logout";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import SearchIcon from "@mui/icons-material/Search";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import ThermostatIcon from "@mui/icons-material/Thermostat";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import PhoneIcon from "@mui/icons-material/Phone";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PlantDoctorModal from "../ai/PlantDoctorModal";
 
 interface HomeNavbarProps {
@@ -37,54 +53,218 @@ export default function HomeNavbar(props: HomeNavbarProps) {
     onDelete,
     onDeleteAll,
     setLoginOpen,
-    setSignupOpen,
     handleLogoutClick,
     anchorEl,
     handleCloseLogout,
     handleLogoutRequest,
   } = props;
+
+  const history = useHistory();
   const { authMember } = useGlobals();
   const lang = getSavedLanguage();
   const t = translations[lang].nav;
+
   const [isDoctorOpen, setIsDoctorOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
+      setIsScrolled(window.scrollY > 30);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (searchQuery.trim()) {
+      history.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      history.push(`/products`);
+    }
+  };
+
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="home-navbar">
+      {/* ======================================================== */}
+      {/* 1. TOP ANNOUNCEMENT BAR                                  */}
+      {/* ======================================================== */}
+      <Box
+        sx={{
+          bgcolor: "#0E271D",
+          color: "#E1EFE7",
+          py: 0.9,
+          px: { xs: 2, sm: 4 },
+          borderBottom: "1px solid rgba(45, 106, 79, 0.3)",
+          fontSize: { xs: "11px", sm: "12px" },
+        }}
+      >
+        <Container maxWidth="xl">
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent="space-between"
+            alignItems="center"
+            spacing={1}
+          >
+            <Stack direction="row" alignItems="center" spacing={1.5}>
+              <Box
+                sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 0.6,
+                  color: "#4ade80",
+                  fontWeight: 700,
+                }}
+              >
+                <AutoAwesomeIcon sx={{ fontSize: 14 }} />
+                AgroOlam Vision AI 4.1 (agroolam.tech)
+              </Box>
+              <Box sx={{ color: "rgba(255, 255, 255, 0.4)", display: { xs: "none", md: "inline" } }}>|</Box>
+              <Box sx={{ color: "rgba(255, 255, 255, 0.85)", display: { xs: "none", md: "inline" } }}>
+                Issiqxona salafanlari & F1 urug'lariga bahorgi 15% chegirma!
+              </Box>
+            </Stack>
+
+            <Stack direction="row" alignItems="center" spacing={2.5}>
+              <a
+                href="tel:+998712008800"
+                style={{
+                  color: "#ffffff",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  fontWeight: 600,
+                }}
+              >
+                <PhoneIcon sx={{ fontSize: 13, color: "#4ade80" }} />
+                +998 (71) 200-88-00
+              </a>
+              <Box
+                sx={{
+                  bgcolor: "#143527",
+                  border: "1px solid #1f4e38",
+                  px: 1.5,
+                  py: 0.2,
+                  borderRadius: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.8,
+                  fontSize: "11px",
+                }}
+              >
+                <span style={{ color: "#4ade80", fontWeight: 800 }}>Toshkent</span>
+                <span style={{ color: "rgba(255, 255, 255, 0.7)" }}>• +22°C Namlik: 64%</span>
+              </Box>
+            </Stack>
+          </Stack>
+        </Container>
+      </Box>
+
+      {/* ======================================================== */}
+      {/* 2. STICKY GLASSMORPHIC NAVIGATION BAR                    */}
+      {/* ======================================================== */}
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         className={`navbar-sticky-bar ${isScrolled ? "scrolled" : ""}`}
       >
         <Container maxWidth="xl" className="navbar-top-container">
-          <Stack className="menu">
+          <Stack className="menu" direction="row" justifyContent="space-between" alignItems="center">
             {/* 1. Brand Logo */}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
               <NavLink to="/" className="brand-logo-wrapper">
-                <img className="brand-logo" src="/icons/agrivia-logo.svg" alt="Agrivia" />
+                <img
+                  className="brand-logo"
+                  src="/icons/agroolam-logo.svg"
+                  alt="AgroOlam.tech"
+                  style={{ height: 38 }}
+                />
               </NavLink>
             </motion.div>
 
-            {/* 2. Center Navigation Links (Balanced Gaps) */}
-            <Stack direction="row" className="nav-center-links" spacing={{ xs: 1.5, md: 3 }}>
+            {/* 2. Center Navigation Links */}
+            <Stack
+              direction="row"
+              className="nav-center-links"
+              spacing={{ xs: 1.5, md: 3 }}
+              alignItems="center"
+              sx={{ display: { xs: "none", lg: "flex" } }}
+            >
               <Box className="hover-line">
                 <NavLink to="/" exact activeClassName="underline">
                   {t.home}
                 </NavLink>
               </Box>
               <Box className="hover-line">
+                <Button
+                  onClick={() => setIsDoctorOpen(true)}
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 700,
+                    fontSize: "14px",
+                    color: "#166534",
+                    p: 0,
+                    minWidth: "auto",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.8,
+                    "&:hover": { bgcolor: "transparent", color: "#0e381f" },
+                  }}
+                >
+                  AI Ekin Skaner
+                  <span
+                    style={{
+                      background: "#ef4444",
+                      color: "#ffffff",
+                      fontSize: "9px",
+                      fontWeight: 800,
+                      padding: "1px 6px",
+                      borderRadius: "10px",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Jonli
+                  </span>
+                </Button>
+              </Box>
+              <Box className="hover-line">
                 <NavLink to="/products" activeClassName="underline">
                   {t.products}
                 </NavLink>
+              </Box>
+              <Box className="hover-line">
+                <a
+                  href="#services"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection("services");
+                  }}
+                  style={{ textDecoration: "none", color: "#1A2E24", fontWeight: 600, fontSize: "14px" }}
+                >
+                  Xizmatlar
+                </a>
+              </Box>
+              <Box className="hover-line">
+                <a
+                  href="#projects"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection("projects");
+                  }}
+                  style={{ textDecoration: "none", color: "#1A2E24", fontWeight: 600, fontSize: "14px" }}
+                >
+                  Global Loyihalar
+                </a>
               </Box>
               <Box className="hover-line">
                 <NavLink to="/news" activeClassName="underline">
@@ -98,38 +278,33 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   </NavLink>
                 </Box>
               )}
-              {authMember && (
-                <Box className="hover-line">
-                  <NavLink to="/member-page" activeClassName="underline">
-                    {t.myPage}
-                  </NavLink>
-                </Box>
-              )}
-              <Box className="hover-line">
-                <NavLink to="/help" activeClassName="underline">
-                  {t.help}
-                </NavLink>
-              </Box>
             </Stack>
 
-            {/* 3. Action Group: Plant Doctor, Basket, Lang & Auth */}
-            <Stack direction="row" className="nav-actions-group" spacing={1.8} alignItems="center">
+            {/* 3. Actions: Plant Doctor Button, Basket, Consultation, Language, Auth */}
+            <Stack direction="row" className="nav-actions-group" spacing={1.5} alignItems="center">
+              {/* Plant Doctor AI Quick Trigger */}
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   size="small"
                   className="plant-doctor-btn"
                   startIcon={<PhotoCameraIcon sx={{ fontSize: 16 }} />}
                   onClick={() => setIsDoctorOpen(true)}
+                  sx={{
+                    bgcolor: "#2D6A4F",
+                    color: "#ffffff",
+                    borderRadius: "20px",
+                    px: 2,
+                    py: 0.8,
+                    fontWeight: 700,
+                    fontSize: "12px",
+                    textTransform: "none",
+                    boxShadow: "0 4px 12px rgba(45, 106, 79, 0.3)",
+                    "&:hover": { bgcolor: "#1B4332" },
+                  }}
                 >
-                  {lang === "ko" ? "AI 닥터" : lang === "uz" ? "AI Shifokor" : "Plant Doctor"}
+                  AI Tashxis
                 </Button>
               </motion.div>
-
-              <PlantDoctorModal
-                open={isDoctorOpen}
-                onClose={() => setIsDoctorOpen(false)}
-                onAdd={onAdd}
-              />
 
               <Basket
                 cartItems={cartItems}
@@ -139,14 +314,47 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 onDeleteAll={onDeleteAll}
               />
 
+              {/* Consultation Trigger Button */}
+              <Box sx={{ display: { xs: "none", sm: "block" } }}>
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
+                  <Button
+                    size="small"
+                    onClick={() => scrollToSection("contact")}
+                    sx={{
+                      bgcolor: "#1B4332",
+                      color: "#ffffff",
+                      px: 2.2,
+                      py: 0.8,
+                      borderRadius: "20px",
+                      textTransform: "none",
+                      fontWeight: 700,
+                      fontSize: "12px",
+                      "&:hover": { bgcolor: "#143527" },
+                    }}
+                  >
+                    Konsultatsiya
+                  </Button>
+                </motion.div>
+              </Box>
+
               <LanguageSelector />
 
               {!authMember ? (
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
                   <Button
-                    variant="contained"
-                    className="login-button"
+                    variant="outlined"
                     onClick={() => setLoginOpen(true)}
+                    sx={{
+                      borderColor: "#2D6A4F",
+                      color: "#2D6A4F",
+                      borderRadius: "20px",
+                      px: 2.5,
+                      py: 0.6,
+                      textTransform: "none",
+                      fontWeight: 700,
+                      fontSize: "13px",
+                      "&:hover": { bgcolor: "rgba(45, 106, 79, 0.08)", borderColor: "#1B4332" },
+                    }}
                   >
                     {t.login}
                   </Button>
@@ -176,39 +384,19 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   elevation: 0,
                   sx: {
                     overflow: "visible",
-                    filter: "drop-shadow(0px 4px 16px rgba(0,0,0,0.35))",
+                    filter: "drop-shadow(0px 4px 16px rgba(0,0,0,0.15))",
                     mt: 1.5,
                     borderRadius: "14px",
-                    bgcolor: "rgba(13, 56, 30, 0.95)",
-                    backdropFilter: "blur(12px)",
-                    color: "#fff",
-                    border: "1px solid rgba(74, 222, 128, 0.2)",
-                    "& .MuiAvatar-root": {
-                      width: 32,
-                      height: 32,
-                      ml: -0.5,
-                      mr: 1,
-                    },
-                    "&:before": {
-                      content: '""',
-                      display: "block",
-                      position: "absolute",
-                      top: 0,
-                      right: 14,
-                      width: 10,
-                      height: 10,
-                      bgcolor: "rgba(13, 56, 30, 0.95)",
-                      transform: "translateY(-50%) rotate(45deg)",
-                      zIndex: 0,
-                    },
+                    bgcolor: "#ffffff",
+                    border: "1px solid #c2dfce",
                   },
                 }}
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
-                <MenuItem onClick={handleLogoutRequest} sx={{ color: "#f87171", fontWeight: 600 }}>
+                <MenuItem onClick={handleLogoutRequest} sx={{ color: "#dc2626", fontWeight: 700 }}>
                   <ListItemIcon>
-                    <Logout fontSize="small" sx={{ color: "#f87171" }} />
+                    <Logout fontSize="small" sx={{ color: "#dc2626" }} />
                   </ListItemIcon>
                   {t.logout}
                 </MenuItem>
@@ -218,218 +406,421 @@ export default function HomeNavbar(props: HomeNavbarProps) {
         </Container>
       </motion.div>
 
-      <Container className="navbar-container">
-        <Stack className={"header-frame"}>
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+      {/* ======================================================== */}
+      {/* 3. HERO SECTION (Asymmetrical Organic Curve Design)     */}
+      {/* ======================================================== */}
+      <Box
+        component="section"
+        id="home"
+        sx={{
+          position: "relative",
+          pt: { xs: 4, sm: 6, md: 8 },
+          pb: { xs: 8, md: 12 },
+          bgcolor: "#FCFDF9",
+          overflow: "hidden",
+        }}
+      >
+        {/* Ambient Organic Background Gradients */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: -100,
+            right: -100,
+            width: 550,
+            height: 550,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(167, 243, 208, 0.45) 0%, rgba(252, 253, 249, 0) 70%)",
+            filter: "blur(50px)",
+            pointerEvents: "none",
+            zIndex: 0,
+          }}
+        />
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: -50,
+            left: -80,
+            width: 450,
+            height: 450,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(225, 239, 231, 0.5) 0%, rgba(252, 253, 249, 0) 70%)",
+            filter: "blur(40px)",
+            pointerEvents: "none",
+            zIndex: 0,
+          }}
+        />
+
+        <Container maxWidth="xl" sx={{ position: "relative", zIndex: 1 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", lg: "1.1fr 0.9fr" },
+              gap: { xs: 6, lg: 8 },
+              alignItems: "center",
+            }}
           >
-            <Stack className={"detail"}>
-              <Box className={"head-main-txt"}>
-                Smart Agriculture & Plant Vision AI
-              </Box>
-              <Box className={"wel-txt"}>
-                {lang === "uz"
-                  ? "Sog'lom ekinlar, mo'l hosil va xavfsiz o'simlik parvarishi"
-                  : lang === "ko"
-                  ? "스마트 농업 & AI 식물 병해충 원격 진단 플랫폼"
-                  : "Smart Plant Health, Disease Diagnosis & Certified Farm Supplies"}
-              </Box>
-              <Box className={"service-txt"}>
-                {lang === "uz"
-                  ? "🌿 24/7 AI Agronom tashxisi va 9-kunlik takroriy dori eslatmalari"
-                  : lang === "ko"
-                  ? "🌿 24시간 AI 병해충 처방 및 텔레그램 재방제 알림"
-                  : "🌿 24/7 AI Agronomy Advisory & Automated Spray Alerts"}
-              </Box>
-              <Stack direction="row" spacing={2} sx={{ mt: 3.5, flexWrap: "wrap", gap: 1.5 }}>
-                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
-                  <Button
-                    variant="contained"
-                    onClick={() => setIsDoctorOpen(true)}
-                    startIcon={<PhotoCameraIcon />}
-                    sx={{
-                      bgcolor: "#2e7d32",
-                      color: "#fff",
-                      px: 3,
-                      py: 1.4,
-                      borderRadius: "24px",
-                      fontWeight: 700,
-                      fontSize: 14,
-                      textTransform: "none",
-                      boxShadow: "0 6px 18px rgba(46,125,50,0.45)",
-                      "&:hover": { bgcolor: "#1b5e20" },
+            {/* LEFT COLUMN: HEADLINE, SEARCH & CTAS */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <Stack spacing={3.5}>
+                {/* Pill Badge with pulse */}
+                <Box
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 1.2,
+                    px: 2,
+                    py: 0.8,
+                    borderRadius: "30px",
+                    bgcolor: "rgba(209, 250, 229, 0.9)",
+                    border: "1px solid #6ee7b7",
+                    color: "#065f46",
+                    fontSize: "12px",
+                    fontWeight: 800,
+                    width: "fit-content",
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      backgroundColor: "#10b981",
+                      display: "inline-block",
+                      boxShadow: "0 0 8px #10b981",
+                    }}
+                  />
+                  Gollandiya & Yapon Gibrid Urug'lari va Agro-Dori Ta'minoti
+                </Box>
+
+                {/* Main Headline */}
+                <Typography
+                  variant="h1"
+                  sx={{
+                    fontSize: { xs: "34px", sm: "46px", lg: "54px" },
+                    fontWeight: 900,
+                    color: "#0E271D",
+                    lineHeight: 1.15,
+                    letterSpacing: "-1px",
+                  }}
+                >
+                  Yuqori Hosildor Issiqxonalar va <br />
+                  <span
+                    style={{
+                      fontFamily: "'Playfair Display', Georgia, serif",
+                      fontStyle: "italic",
+                      fontWeight: 500,
+                      color: "#2D6A4F",
                     }}
                   >
-                    {lang === "uz"
-                      ? "📷 Bargni Tashxis Qilish"
-                      : lang === "ko"
-                      ? "📷 잎 사진 AI 진단"
-                      : "📷 Plant Vision AI Doctor"}
+                    Zamonaviy AgroTexnologiyalar
+                  </span>{" "}
+                  Ekosistemasi.
+                </Typography>
+
+                {/* Description */}
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: "#3E5A4B",
+                    fontSize: { xs: "15px", sm: "17px" },
+                    lineHeight: 1.65,
+                    maxWidth: 580,
+                  }}
+                >
+                  Issiqxonalar uchun 3 qavatli mustahkam plyonkalar, kasalliklarga chidamli F1 urug'lar,
+                  tomchilatib sug'orish tizimlari va ekin patologiyalarini soniyalarda aniqlovchi{" "}
+                  <strong style={{ color: "#1B4332" }}>AgroOlam Vision AI 4.1</strong> yordamchisi.
+                </Typography>
+
+                {/* Functional Agro Search Component */}
+                <Box
+                  component="form"
+                  onSubmit={handleSearchSubmit}
+                  sx={{
+                    p: 0.8,
+                    bgcolor: "#ffffff",
+                    borderRadius: "18px",
+                    border: "1px solid #c2dfce",
+                    boxShadow: "0 8px 24px rgba(14, 39, 29, 0.08)",
+                    maxWidth: 540,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                  }}
+                >
+                  <Box sx={{ pl: 1.5, color: "#2D6A4F", display: "flex", alignItems: "center" }}>
+                    <SearchIcon sx={{ fontSize: 24 }} />
+                  </Box>
+                  <InputBase
+                    placeholder="Masalan: F1 Pomidor urug'i, Ridomil Gold, 150mkr plyonka..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    sx={{
+                      flex: 1,
+                      fontSize: "14px",
+                      color: "#0f172a",
+                      "& input::placeholder": { color: "#94a3b8", opacity: 1 },
+                    }}
+                  />
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{
+                      bgcolor: "#2D6A4F",
+                      color: "#ffffff",
+                      px: 3,
+                      py: 1.2,
+                      borderRadius: "14px",
+                      textTransform: "none",
+                      fontWeight: 800,
+                      fontSize: "13px",
+                      "&:hover": { bgcolor: "#1B4332" },
+                      flexShrink: 0,
+                    }}
+                  >
+                    Qidirish
                   </Button>
-                </motion.div>
-                <NavLink to="/products" style={{ textDecoration: "none" }}>
+                </Box>
+
+                {/* Quick Action Buttons */}
+                <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ gap: 1.5, pt: 0.5 }}>
                   <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
                     <Button
-                      variant="outlined"
+                      variant="contained"
+                      onClick={() => setIsDoctorOpen(true)}
+                      startIcon={<PhotoCameraIcon sx={{ color: "#bbf7d0" }} />}
                       sx={{
-                        borderColor: "#fff",
-                        color: "#fff",
-                        borderRadius: "24px",
-                        px: 3,
-                        py: 1.4,
-                        fontWeight: 600,
-                        fontSize: 14,
+                        bgcolor: "#1B4332",
+                        color: "#ffffff",
+                        px: 3.5,
+                        py: 1.5,
+                        borderRadius: "30px",
+                        fontWeight: 800,
+                        fontSize: "14px",
                         textTransform: "none",
-                        "&:hover": { borderColor: "#c8e6c9", bgcolor: "rgba(255,255,255,0.15)" },
+                        boxShadow: "0 6px 20px rgba(27, 67, 50, 0.35)",
+                        "&:hover": { bgcolor: "#143527" },
                       }}
                     >
-                      {lang === "uz"
-                        ? "🌾 Mahsulotlar Katalogi"
-                        : lang === "ko"
-                        ? "🌾 농자재 상품 보기"
-                        : "🌾 Farm Products"}
+                      AI Ekinni Skanerlash
                     </Button>
                   </motion.div>
-                </NavLink>
+
+                  <NavLink to="/products" style={{ textDecoration: "none" }}>
+                    <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
+                      <Button
+                        variant="outlined"
+                        endIcon={<ArrowForwardIcon />}
+                        sx={{
+                          borderColor: "rgba(45, 106, 79, 0.35)",
+                          color: "#1B4332",
+                          bgcolor: "#ffffff",
+                          px: 3.5,
+                          py: 1.5,
+                          borderRadius: "30px",
+                          fontWeight: 700,
+                          fontSize: "14px",
+                          textTransform: "none",
+                          "&:hover": {
+                            bgcolor: "#f1f5f9",
+                            borderColor: "#1B4332",
+                          },
+                        }}
+                      >
+                        Do'kon Katalogi
+                      </Button>
+                    </motion.div>
+                  </NavLink>
+                </Stack>
+
+                {/* Trust Proof Badges */}
+                <Stack direction="row" spacing={3} sx={{ pt: 1, flexWrap: "wrap", gap: 2 }}>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <VerifiedUserIcon sx={{ color: "#059669", fontSize: 20 }} />
+                    <Typography variant="caption" sx={{ fontWeight: 800, color: "#1e293b", fontSize: "12px" }}>
+                      100% Sertifikatlangan O'zbekiston Registri
+                    </Typography>
+                  </Stack>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <LocalShippingIcon sx={{ color: "#059669", fontSize: 20 }} />
+                    <Typography variant="caption" sx={{ fontWeight: 800, color: "#1e293b", fontSize: "12px" }}>
+                      Respublika bo'ylab tezkor yetkazish
+                    </Typography>
+                  </Stack>
+                </Stack>
               </Stack>
-            </Stack>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-            whileHover={{ y: -6 }}
-            style={{ width: "100%", maxWidth: 690 }}
-          >
-            <Box className={"logo-frame"} style={{ width: "100%", height: "100%", marginTop: 0 }}>
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  borderRadius: "24px",
-                p: 3,
-                bgcolor: "rgba(255, 255, 255, 0.92)",
-                backdropFilter: "blur(12px)",
-                border: "1px solid rgba(255, 255, 255, 0.6)",
-                boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-              }}
+            </motion.div>
+
+            {/* RIGHT COLUMN: ASYMMETRICAL ORGANIC CURVED IMAGE & FLOATING METRICS */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
             >
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Stack direction="row" alignItems="center" spacing={1.5}>
+              <Box sx={{ position: "relative", mx: "auto", maxWidth: { xs: 440, sm: 540, lg: "100%" } }}>
+                {/* Asymmetric Organic Mask Shape */}
+                <Box
+                  sx={{
+                    position: "relative",
+                    borderRadius: "48px 16px 48px 16px",
+                    border: "4px solid #ffffff",
+                    boxShadow: "0 25px 50px -12px rgba(14, 39, 29, 0.22)",
+                    overflow: "hidden",
+                    aspectRatio: { xs: "4/3", sm: "16/12" },
+                    bgcolor: "#143527",
+                  }}
+                >
+                  <img
+                    src="https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?auto=format&fit=crop&w=1200&q=80"
+                    alt="AgroOlam Greenhouse & Agronomist"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      transform: "scale(1.02)",
+                      transition: "transform 0.6s ease",
+                    }}
+                  />
                   <Box
                     sx={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: "12px",
-                      bgcolor: "#2e7d32",
-                      color: "#fff",
+                      position: "absolute",
+                      inset: 0,
+                      background: "linear-gradient(to top, rgba(14, 39, 29, 0.7) 0%, transparent 60%)",
+                      pointerEvents: "none",
+                    }}
+                  />
+
+                  {/* Inside Bottom Overlay: Greenhouse Microclimate Badge */}
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      bottom: { xs: 12, sm: 18 },
+                      left: { xs: 12, sm: 18 },
+                      right: { xs: 12, sm: 18 },
+                      p: { xs: 1.8, sm: 2.2 },
+                      borderRadius: "18px",
+                      bgcolor: "rgba(255, 255, 255, 0.94)",
+                      backdropFilter: "blur(10px)",
+                      border: "1px solid rgba(255, 255, 255, 0.6)",
+                      boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
+                      justifyContent: "space-between",
                     }}
                   >
-                    <PhotoCameraIcon />
+                    <Stack direction="row" spacing={1.5} alignItems="center">
+                      <Box
+                        sx={{
+                          width: 42,
+                          height: 42,
+                          borderRadius: "12px",
+                          bgcolor: "#dcfce7",
+                          color: "#166534",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <ThermostatIcon sx={{ fontSize: 24 }} />
+                      </Box>
+                      <div>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: "#0f172a", fontSize: "13px" }}>
+                          Issiqxona Avtomatik Mikroklimat
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "#2D6A4F", fontWeight: 700, fontSize: "11px" }}>
+                          T: +24.2°C • Tuproq namligi: 72%
+                        </Typography>
+                      </div>
+                    </Stack>
+                    <Chip
+                      label="Optimal"
+                      size="small"
+                      sx={{
+                        bgcolor: "#10b981",
+                        color: "#ffffff",
+                        fontWeight: 900,
+                        fontSize: "10px",
+                        letterSpacing: "0.5px",
+                        textTransform: "uppercase",
+                      }}
+                    />
                   </Box>
-                  <Box>
-                    <Box sx={{ fontWeight: 800, fontSize: 16, color: "#1b5e20" }}>
-                      AgroPlant Vision AI Doctor
-                    </Box>
-                    <Box sx={{ fontSize: 12, color: "#666" }}>
-                      Real-time Leaf Pathology Scanner
-                    </Box>
-                  </Box>
-                </Stack>
-                <Box
-                  sx={{
-                    bgcolor: "#e8f5e9",
-                    color: "#2e7d32",
-                    px: 1.5,
-                    py: 0.5,
-                    borderRadius: "12px",
-                    fontSize: 12,
-                    fontWeight: 700,
-                  }}
-                >
-                  99.2% Accuracy
                 </Box>
-              </Stack>
 
-              <Box
-                sx={{
-                  bgcolor: "#f8fafc",
-                  borderRadius: "16px",
-                  p: 2,
-                  border: "1px solid #e2e8f0",
-                }}
-              >
-                <Stack direction="row" justifyContent="space-between" sx={{ mb: 1 }}>
-                  <span style={{ fontWeight: 600, color: "#334155", fontSize: 13 }}>
-                    Ekin: Pomidor (Lycopersicon)
-                  </span>
-                  <span style={{ color: "#d97706", fontWeight: 700, fontSize: 13 }}>
-                    Aniqlangan kasallik: Un-shudring
-                  </span>
-                </Stack>
-                <Box sx={{ fontSize: 12, color: "#64748b", mb: 1.5, lineHeight: 1.5 }}>
-                  Barg yuzasida oq unsimon dog'lar mavjud. Zamburug'li infeksiya boshlang'ich bosqichda.
-                </Box>
-                <Box
-                  sx={{
-                    p: 1.2,
-                    bgcolor: "#ecfdf5",
-                    borderRadius: "10px",
-                    border: "1px solid #a7f3d0",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
+                {/* Floating Top-Left Badge: Crop Yield Boost */}
+                <motion.div
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+                  style={{
+                    position: "absolute",
+                    top: -18,
+                    left: -14,
+                    zIndex: 2,
                   }}
                 >
-                  <Box sx={{ fontSize: 12, color: "#065f46", fontWeight: 600 }}>
-                    💊 Tavsiya dori: Ridomil Gold MZ (25g / 10L)
-                  </Box>
-                  <Button
-                    size="small"
-                    variant="contained"
-                    onClick={() => setIsDoctorOpen(true)}
+                  <Box
                     sx={{
-                      bgcolor: "#059669",
-                      fontSize: 11,
-                      textTransform: "none",
-                      py: 0.4,
-                      "&:hover": { bgcolor: "#047857" },
+                      bgcolor: "rgba(255, 255, 255, 0.96)",
+                      backdropFilter: "blur(10px)",
+                      p: 1.8,
+                      borderRadius: "18px",
+                      border: "1px solid #c2dfce",
+                      boxShadow: "0 12px 30px rgba(14, 39, 29, 0.15)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
                     }}
                   >
-                    Batafsil
-                  </Button>
-                </Box>
+                    <Box
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: "12px",
+                        bgcolor: "#2D6A4F",
+                        color: "#ffffff",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: "0 4px 10px rgba(45, 106, 79, 0.3)",
+                      }}
+                    >
+                      <TrendingUpIcon sx={{ fontSize: 22 }} />
+                    </Box>
+                    <div>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: "#64748b",
+                          fontWeight: 800,
+                          fontSize: "10px",
+                          textTransform: "uppercase",
+                          display: "block",
+                        }}
+                      >
+                        Hosildorlik O'sishi
+                      </Typography>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 900, color: "#1B4332", fontSize: "14px" }}>
+                        +38% Yuqori Natija
+                      </Typography>
+                    </div>
+                  </Box>
+                </motion.div>
               </Box>
-
-              <Stack direction="row" spacing={1} justifyContent="space-around">
-                <Box sx={{ textAlign: "center" }}>
-                  <Box sx={{ fontWeight: 800, fontSize: 18, color: "#1e293b" }}>0.8s</Box>
-                  <Box sx={{ fontSize: 11, color: "#64748b" }}>Tezkor tahlil</Box>
-                </Box>
-                <Box sx={{ borderRight: "1px solid #e2e8f0" }} />
-                <Box sx={{ textAlign: "center" }}>
-                  <Box sx={{ fontWeight: 800, fontSize: 18, color: "#1e293b" }}>1,200+</Box>
-                  <Box sx={{ fontSize: 11, color: "#64748b" }}>Agro mahsulot</Box>
-                </Box>
-                <Box sx={{ borderRight: "1px solid #e2e8f0" }} />
-                <Box sx={{ textAlign: "center" }}>
-                  <Box sx={{ fontWeight: 800, fontSize: 18, color: "#1e293b" }}>9-kun</Box>
-                  <Box sx={{ fontSize: 11, color: "#64748b" }}>Telegram eslatma</Box>
-                </Box>
-              </Stack>
-            </Box>
+            </motion.div>
           </Box>
-          </motion.div>
-        </Stack>
-      </Container>
+        </Container>
+      </Box>
+
+      {/* Embedded Doctor Modal */}
+      <PlantDoctorModal
+        open={isDoctorOpen}
+        onClose={() => setIsDoctorOpen(false)}
+        onAdd={onAdd}
+      />
     </div>
   );
 }

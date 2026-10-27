@@ -70,7 +70,7 @@ export default function NewsPage() {
       <Box className="news-header-section">
         <Container>
           <Typography className="news-header-title">
-            Agrivia Agro-Yangiliklar & Mutaxassis Maslahatlari
+            AgroOlam Agro-Yangiliklar & Mutaxassis Maslahatlari
           </Typography>
           <Typography className="news-header-subtitle">
             Ekinlar parvarishi, kasalliklarning erta oldini olish, dorilarning

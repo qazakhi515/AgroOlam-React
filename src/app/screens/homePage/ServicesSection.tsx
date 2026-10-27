@@ -22,7 +22,7 @@ export default function ServicesSection() {
       descEn:
         "Comprehensive soil, irrigation water, and foliar tissue lab audit to formulate precision fertigation protocols.",
       image: "https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?auto=format&fit=crop&w=700&q=80",
-      certUz: "Agrivia Cert",
+      certUz: "AgroOlam Cert",
     },
     {
       badgeUz: "Hosildorlik & Biznes",

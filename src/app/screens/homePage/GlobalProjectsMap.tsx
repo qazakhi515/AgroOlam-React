@@ -117,7 +117,7 @@ export default function GlobalProjectsMap() {
             International Hydroponic Cultivation Projects
           </Typography>
           <Typography variant="body1" sx={{ color: "#4D6657", fontSize: { xs: "14px", md: "16px" } }}>
-            Agrivia texnologiyalari O'zbekistondan tortib Yevropa va Osiyo agro-parklarigacha muvaffaqiyatli tatbiq etilmoqda. Xaritadagi faol hablar ustiga bosing.
+            AgroOlam (agroolam.tech) texnologiyalari O'zbekistondan tortib Yevropa va Osiyo agro-parklarigacha muvaffaqiyatli tatbiq etilmoqda. Xaritadagi faol hablar ustiga bosing.
           </Typography>
         </Box>
 

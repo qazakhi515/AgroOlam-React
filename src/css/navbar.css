@@ -3,10 +3,8 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 780px;
-  background: url("/public/img/banner.webp");
-  background-position: center;
-  background-size: cover;
+  min-height: auto;
+  background-color: #FCFDF9;
 }
 
 .navbar-sticky-bar {
@@ -15,17 +13,29 @@
   left: 0;
   z-index: 1000;
   width: 100%;
-  padding: 16px 0;
+  padding: 14px 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(251, 251, 246, 0.92);
+  border-bottom: 1px solid rgba(225, 232, 222, 0.9);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .navbar-sticky-bar.scrolled {
   padding: 10px 0;
-  border-bottom: 1px solid rgba(74, 222, 128, 0.2);
-  background: rgba(13, 56, 30, 0.94);
+  border-bottom: 1px solid rgba(194, 223, 206, 0.9);
+  background: rgba(251, 251, 246, 0.98);
+  box-shadow: 0 4px 20px rgba(14, 39, 29, 0.08);
+}
+
+.other-navbar .navbar-sticky-bar {
+  background: rgba(14, 39, 29, 0.95);
+  border-bottom: 1px solid rgba(45, 106, 79, 0.3);
+}
+
+.other-navbar .navbar-sticky-bar.scrolled {
+  background: rgba(14, 39, 29, 0.98);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
 }
 
 .home-navbar .navbar-top-container,
@@ -123,7 +133,39 @@
   text-decoration: none;
 }
 
-.home-navbar .hover-line a,
+.home-navbar .hover-line a {
+  z-index: 100;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  color: #1A2E24;
+  transition: color 0.2s ease;
+}
+
+.home-navbar .hover-line a:hover,
+.home-navbar .hover-line a.underline {
+  color: #2D6A4F !important;
+}
+
+.home-navbar .underline {
+  content: "";
+  display: block;
+  border-bottom: solid 2.5px #2D6A4F !important;
+  color: #2D6A4F !important;
+}
+
+.home-navbar .hover-line:after {
+  content: "";
+  display: block;
+  border-bottom: solid 2.5px #2D6A4F;
+  transition: transform 250ms ease-in-out;
+  transform: scaleX(0);
+}
+
+.home-navbar .hover-line:hover::after {
+  transform: scaleX(1);
+}
+
 .other-navbar .hover-line a {
   z-index: 100;
   font-size: 15px;
@@ -133,12 +175,10 @@
   transition: color 0.2s ease;
 }
 
-.home-navbar .hover-line a:hover,
 .other-navbar .hover-line a:hover {
   color: #4ade80;
 }
 
-.home-navbar .underline,
 .other-navbar .underline {
   content: "";
   display: block;
@@ -146,7 +186,6 @@
   color: #4ade80 !important;
 }
 
-.home-navbar .hover-line:after,
 .other-navbar .hover-line:after {
   content: "";
   display: block;
@@ -155,7 +194,6 @@
   transform: scaleX(0);
 }
 
-.home-navbar .hover-line:hover::after,
 .other-navbar .hover-line:hover::after {
   transform: scaleX(1);
 }

@@ -12,7 +12,7 @@ export const faq = [
   {
     question: "Are chemical fertilizers and pesticides tested for safety?",
     answer:
-      "Yes, all agrochemicals listed on Agrivia are state-certified, with detailed active ingredient labels and application instructions.",
+      "Yes, all agrochemicals listed on AgroOlam (agroolam.tech) are state-certified, with detailed active ingredient labels and application instructions.",
   },
   {
     question: "Where can I get expert advice on plant diseases and treatment?",
@@ -25,8 +25,8 @@ export const faq = [
       "Orders can be modified or cancelled before shipment dispatch directly from your 'My Orders' dashboard.",
   },
   {
-    question: "Who developed the Agrivia platform?",
+    question: "Who developed the AgroOlam platform?",
     answer:
-      "Agrivia was designed and engineered by Akhmadjon Usmonov and the Agrivia engineering team, combining domain expertise in plant pathology with modern full-stack web technologies.",
+      "AgroOlam was designed and engineered by Akhmadjon Usmonov and the AgroOlam engineering team, combining domain expertise in plant pathology with modern full-stack web technologies.",
   },
 ];

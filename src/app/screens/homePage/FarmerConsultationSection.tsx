@@ -102,7 +102,7 @@ export default function FarmerConsultationSection() {
                       mb: 2,
                     }}
                   >
-                    "Agrivia bergan 150 mkr termo-diffuz plyonka va F1 urug'lar tufayli qattiq sovuqda ham ekinimiz zararlanmadi. AI skaner esa zararkunandani vaqtida to'xtatishga yordam berdi!"
+                    "AgroOlam (agroolam.tech) bergan 150 mkr termo-diffuz plyonka va F1 urug'lar tufayli qattiq sovuqda ham ekinimiz zararlanmadi. AI skaner esa zararkunandani vaqtida to'xtatishga yordam berdi!"
                   </Typography>
                   <Box sx={{ pt: 1.5, borderTop: "1px solid rgba(255,255,255,0.2)" }}>
                     <Typography variant="subtitle2" fontWeight={800} color="#fff">

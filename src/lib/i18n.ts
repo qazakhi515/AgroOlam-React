@@ -31,7 +31,7 @@ export const translations = {
       },
     },
     footer: {
-      desc: "AgroPlant — Leading smart agricultural platform delivering advanced seed technology, certified plant medicines, agro-chemicals, and AI diagnostics. Your trusted partner in high-yield farming.",
+      desc: "AgroOlam (agroolam.tech) — Leading smart agricultural ecosystem delivering greenhouse films, hybrid seed technology, certified plant medicines, agro-chemicals, and AI diagnostics. Your trusted partner in high-yield farming.",
       sectionsTitle: "Sections",
       home: "Home",
       products: "Products",
@@ -39,14 +39,14 @@ export const translations = {
       orders: "Orders",
       help: "Help & FAQ",
       contactTitle: "Contact Us",
-      location: "Tashkent, Uzbekistan / Seoul, South Korea",
-      phone: "+998 71 200 00 00",
-      email: "support@agroplant.uz",
+      location: "Tashkent, Uzbekistan",
+      phone: "+998 (71) 200-88-00",
+      email: "support@agroolam.tech",
       hours: "Everyday: 08:00 - 20:00",
-      copyright: "© 2026 AgroPlant Smart Agro Platform. All rights reserved.",
+      copyright: "© 2026 AgroOlam (agroolam.tech). All rights reserved.",
     },
     aiChat: {
-      title: "Agrivia AI Agronomist",
+      title: "AgroOlam AI Agronomist",
       subtitle: "Instant disease diagnosis & treatment (KO / EN / UZ / RU)",
       placeholder: "Ask in Korean, English, Uzbek or Russian...",
       send: "Send",
@@ -89,7 +89,7 @@ export const translations = {
       },
     },
     footer: {
-      desc: "AgroPlant — 첨단 종자, 정품 작물보호제, 친환경 비료 및 AI 병해충 원격 진단을 제공하는 스마트 농업 선도 플랫폼입니다. 농가와 원예인의 믿음직한 파트너입니다.",
+      desc: "AgroOlam (agroolam.tech) — 첨단 온실 필름, 다수확 종자, 정품 작물보호제 및 AI 병해충 원격 진단을 제공하는 스마트 농업 선도 플랫폼입니다.",
       sectionsTitle: "바로가기",
       home: "홈",
       products: "상품 목록",
@@ -97,14 +97,14 @@ export const translations = {
       orders: "주문 내역",
       help: "고객지원 & FAQ",
       contactTitle: "문의하기",
-      location: "타슈켄트, 우즈베키스탄 / 서울, 대한민국",
-      phone: "+998 71 200 00 00",
-      email: "support@agroplant.uz",
+      location: "타슈켄트, 우즈베키스탄",
+      phone: "+998 (71) 200-88-00",
+      email: "support@agroolam.tech",
       hours: "연중무휴: 08:00 - 20:00",
-      copyright: "© 2026 AgroPlant 스마트 농업 플랫폼. All rights reserved.",
+      copyright: "© 2026 AgroOlam (agroolam.tech). All rights reserved.",
     },
     aiChat: {
-      title: "Agrivia AI 스마트 아그로노미스트",
+      title: "AgroOlam AI 스마트 아그로노미스트",
       subtitle: "실시간 병해충 진단 및 농약 처방 (한국어 / EN / UZ / RU)",
       placeholder: "한국어, 영어, 우즈벡어로 증상을 입력하세요...",
       send: "전송",
@@ -147,7 +147,7 @@ export const translations = {
       },
     },
     footer: {
-      desc: "AgroPlant — Qishloq xo'jaligi, zamonaviy urug'chilik, agro-kimyo, sertifikatlangan dorilar va AI diagnostikasini yetkazib beruvchi yetakchi agro-platforma. Dehqon va fermerlarning ishonchli hamrohi.",
+      desc: "AgroOlam (agroolam.tech) — Issiqxonalar, zamonaviy urug'chilik, agro-kimyo, sertifikatlangan dorilar va AI diagnostikasini yetkazib beruvchi yetakchi agro-platforma. Dehqon va fermerlarning ishonchli hamrohi.",
       sectionsTitle: "Bo'limlar",
       home: "Bosh sahifa",
       products: "Mahsulotlar",
@@ -155,14 +155,14 @@ export const translations = {
       orders: "Buyurtmalar",
       help: "Yordam & FAQ",
       contactTitle: "Bog'lanish",
-      location: "Toshkent shahri, O'zbekiston / Seul, Koreya",
-      phone: "+998 71 200 00 00",
-      email: "support@agroplant.uz",
+      location: "Toshkent shahri, O'zbekiston",
+      phone: "+998 (71) 200-88-00",
+      email: "support@agroolam.tech",
       hours: "Har kuni: 08:00 - 20:00",
-      copyright: "© 2026 AgroPlant Smart Agro Platformasi. Barcha huquqlar himoyalangan.",
+      copyright: "© 2026 AgroOlam (agroolam.tech). Barcha huquqlar himoyalangan.",
     },
     aiChat: {
-      title: "Agrivia AI Agronom Maslahatchi",
+      title: "AgroOlam AI Agronom Maslahatchi",
       subtitle: "Barg kasalliklari tashxisi va davolash (UZ / KO / EN / RU)",
       placeholder: "O'zbekcha, koreyscha yoki inglizcha yozing...",
       send: "Yuborish",
@@ -182,7 +182,7 @@ export const getSavedLanguage = (): Language => {
   if (saved && (saved === "en" || saved === "ko" || saved === "uz")) {
     return saved;
   }
-  return "en"; // Default international English
+  return "uz"; // Default is now Uzbek (Uzbekistan farmer primary)
 };
 
 export const setSavedLanguage = (lang: Language): void => {

@@ -171,10 +171,10 @@ export default function Products(props: ProductsProps) {
           <Stack className={"avatar-big-box"}>
             <Box className="main-title">
               {lang === "ko"
-                ? "Agrivia 스마트 농자재 마켓"
+                ? "AgroOlam 스마트 농자재 마켓"
                 : lang === "uz"
-                ? "Agrivia Agro Mahsulotlar Bozori"
-                : "Agrivia Smart Agro Marketplace"}
+                ? "AgroOlam Agro Mahsulotlar Bozori (agroolam.tech)"
+                : "AgroOlam Smart Agro Marketplace"}
             </Box>
             <div className="mclain-input" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
               <input
@@ -577,7 +577,7 @@ export default function Products(props: ProductsProps) {
               }}
             >
               <Box sx={{ fontSize: 24, mb: 0.5 }}>🤖</Box>
-              <Box sx={{ fontWeight: 800, color: "#065f46", fontSize: 16 }}>AgroPlant Vision AI</Box>
+              <Box sx={{ fontWeight: 800, color: "#065f46", fontSize: 16 }}>AgroOlam Vision AI 4.1</Box>
               <Box sx={{ fontSize: 12, color: "#64748b", mt: 0.5 }}>Avtomatik Dorilash & Eslatmalar</Box>
             </Box>
           </Stack>

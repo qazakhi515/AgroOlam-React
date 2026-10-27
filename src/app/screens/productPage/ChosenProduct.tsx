@@ -271,7 +271,7 @@ export default function ChosenProduct(props: ChosenProductProps) {
                       Yetkazib beruvchi do'kon:
                     </Typography>
                     <Typography variant="subtitle2" fontWeight={800} color="#1B4332">
-                      {restaurant?.memberNick || "AgroPlant Official Supply Center"}
+                      {restaurant?.memberNick || "AgroOlam Official Supply Center (agroolam.tech)"}
                     </Typography>
                   </div>
                   <Chip

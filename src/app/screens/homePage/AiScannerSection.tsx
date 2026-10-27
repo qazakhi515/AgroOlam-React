@@ -77,7 +77,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
         {/* Section Title Header */}
         <Box sx={{ textAlign: "center", maxWidth: "700px", mx: "auto", mb: { xs: 5, md: 7 } }}>
           <Chip
-            label="AgroPlant Vision AI 4.1 • Jonli Skaner"
+            label="AgroOlam Vision AI 4.1 • Jonli Skaner"
             sx={{
               bgcolor: "#d1fae5",
               color: "#065f46",

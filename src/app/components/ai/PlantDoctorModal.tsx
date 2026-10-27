@@ -89,7 +89,7 @@ export const MOCK_DIAGNOSIS_SAMPLES: Record<string, DiagnosisResult> = {
     safetyWarning:
       "Kimyoviy ishlov berishda respirator va qo'lqop taqing. Hosilni uzishdan kamida 14 kun oldin purkashni to'xtating.",
     disclaimer:
-      "Tashxis AgroPlant Vision AI 4.1 neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
+      "Tashxis AgroOlam Vision AI 4.1 (agroolam.tech) neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
     recommendedProducts: [
       {
         _id: "med_ridomil_gold_1",
@@ -155,7 +155,7 @@ export const MOCK_DIAGNOSIS_SAMPLES: Record<string, DiagnosisResult> = {
     safetyWarning:
       "Oltingugurtli vositalarni havo harorati +30°C dan oshganda ishlatmang (bargni kuydirishi mumkin).",
     disclaimer:
-      "Tashxis AgroPlant Vision AI 4.1 neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
+      "Tashxis AgroOlam Vision AI 4.1 (agroolam.tech) neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
     recommendedProducts: [
       {
         _id: "med_topas_100_ec",
@@ -221,7 +221,7 @@ export const MOCK_DIAGNOSIS_SAMPLES: Record<string, DiagnosisResult> = {
     safetyWarning:
       "Bakteriozlarga qarshi faqat toza suv va misli preparatlardan me'yorida foydalaning.",
     disclaimer:
-      "Tashxis AgroPlant Vision AI 4.1 neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
+      "Tashxis AgroOlam Vision AI 4.1 (agroolam.tech) neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
     recommendedProducts: [
       {
         _id: "med_kocide_2000_1",
@@ -362,7 +362,7 @@ export default function PlantDoctorModal({
             imageUrl: previewUrl || "https://images.unsplash.com/photo-1592417817098-8f3d6910985c?auto=format&fit=crop&w=800&q=80",
             tempAdvice: d.temp_advice || d.tempAdvice || "+24°C...+26°C",
             humidityAdvice: d.humidity_advice || d.humidityAdvice || "60% - 65%",
-            disclaimer: "Tashxis AgroPlant Vision AI 4.1 neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
+            disclaimer: "Tashxis AgroOlam Vision AI 4.1 (agroolam.tech) neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
             recommendedProducts: Array.isArray(d.recommended_medicines)
               ? d.recommended_medicines.map((m: any, idx: number) => ({
                   _id: `rec_med_${m.id || idx}`,
@@ -419,7 +419,7 @@ export default function PlantDoctorModal({
       .join("\n");
 
     const message =
-      `🌿 AgroPlant Vision AI 4.1 Tashxis Retsepti\n\n` +
+      `🌿 AgroOlam Vision AI 4.1 Tashxis Retsepti (agroolam.tech)\n\n` +
       `🌱 Ekin: ${diagnosis.crop}\n` +
       `⚠️ Kasallik: ${diagnosis.diseaseName}\n` +
       `🔬 Patogen: ${diagnosis.pathogen}\n` +
@@ -429,10 +429,10 @@ export default function PlantDoctorModal({
       `💊 Tavsiya etilgan dori vositalari:\n${medicineNames}\n\n` +
       `📝 Agronom ko'rsatmasi:\n${diagnosis.treatment}\n\n` +
       `⏳ Takroriy ishlov: ${diagnosis.nextSprayDays} kundan so'ng\n\n` +
-      `📞 AgroPlant Call-markazi: +998 (71) 200-44-88\n` +
-      `🌐 https://agroplant.uz`;
+      `📞 AgroOlam Call-markazi: +998 (71) 200-88-00\n` +
+      `🌐 https://agroolam.tech`;
 
-    const shareUrl = `https://t.me/share/url?url=https://agroplant.uz&text=${encodeURIComponent(
+    const shareUrl = `https://t.me/share/url?url=https://agroolam.tech&text=${encodeURIComponent(
       message
     )}`;
     window.open(shareUrl, "_blank");
@@ -485,7 +485,7 @@ export default function PlantDoctorModal({
           <div>
             <Stack direction="row" spacing={1} alignItems="center">
               <Typography variant="h6" fontWeight={800} color="#1B4332">
-                AgroPlant Vision AI 4.1
+                AgroOlam Vision AI 4.1
               </Typography>
               <Chip
                 icon={<SparklesIcon sx={{ fontSize: "14px !important", color: "#10b981" }} />}

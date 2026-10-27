@@ -102,3 +102,4 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 React frontend (`PlantDoctorModal.tsx` va `AiScannerSection.tsx`) avtomatik ravishda `http://localhost:8000/api/v1/diagnose` API endpointiga ulanadi!
+

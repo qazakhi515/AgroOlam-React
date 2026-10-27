@@ -32,6 +32,19 @@ services:
     networks:
       - agro-net
 
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: agroplant-ai-service
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ai-service/weights:/app/weights
+    networks:
+      - agro-net
+
 networks:
   agro-net:
     driver: bridge

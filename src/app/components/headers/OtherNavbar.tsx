@@ -75,7 +75,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
             {/* 1. Brand Logo */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <NavLink to="/" className="brand-logo-wrapper">
-                <img className="brand-logo" src="/icons/agrivia-logo.svg" alt="Agrivia" />
+                <img className="brand-logo" src="/icons/agroolam-logo.svg" alt="AgroOlam.tech" />
               </NavLink>
             </motion.div>
 
