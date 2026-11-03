@@ -303,9 +303,9 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 420px;
+  min-height: 600px;
   background:
-    linear-gradient(rgba(14, 39, 29, 0.22), rgba(14, 39, 29, 0.58)),
+    linear-gradient(rgba(14, 39, 29, 0.18), rgba(14, 39, 29, 0.52)),
     url("/public/img/header.jpg");
   background-position: center 30%;
   background-size: cover;
@@ -315,7 +315,7 @@
 
 @media (max-width: 768px) {
   .other-navbar {
-    min-height: 320px;
+    min-height: 440px;
   }
 }
 

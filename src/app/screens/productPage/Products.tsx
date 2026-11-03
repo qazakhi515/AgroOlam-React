@@ -1088,8 +1088,8 @@ export default function Products(props: ProductsProps) {
         sx={{
           bgcolor: "#0E271D",
           color: "#ffffff",
-          pt: { xs: 4, md: 6 },
-          pb: { xs: 6, md: 8 },
+          pt: { xs: 3.5, md: 4.5 },
+          pb: { xs: 3, md: 3.5 },
           position: "relative",
           overflow: "hidden",
           borderBottom: "1px solid rgba(45, 106, 79, 0.3)",
@@ -1307,7 +1307,7 @@ export default function Products(props: ProductsProps) {
       {/* ======================================================== */}
       {/* 2. DUAL COLUMN WORKBENCH: SIDEBAR + PRODUCT GRID         */}
       {/* ======================================================== */}
-      <Container maxWidth="xl" sx={{ mt: 5 }}>
+      <Container maxWidth="xl" sx={{ mt: 4 }}>
         <Box
           sx={{
             display: "grid",
