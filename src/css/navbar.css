@@ -304,7 +304,7 @@
   flex-direction: column;
   width: 100%;
   min-height: 260px;
-  background: url("/public/img/banner.webp");
+  background: linear-gradient(rgba(14, 39, 29, 0.5), rgba(14, 39, 29, 0.7)), url("/public/img/dala1.jpg");
   background-position: center;
   background-size: cover;
 }

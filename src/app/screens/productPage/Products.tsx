@@ -893,15 +893,6 @@ export default function Products(props: ProductsProps) {
     { key: ProductCollection.SEEDS, label: "Urug'lar (Seeds)", icon: "🌱", count: 7 },
   ];
 
-  const quickPrompts = [
-    "F1 Pomidor urug'i",
-    "Ridomil Gold MZ",
-    "150 mkr salafan",
-    "Tomchilatib sug'orish",
-    "Topas 100 EC",
-    "Fitosporin Bio",
-  ];
-
   return (
     <Box sx={{ width: "100%", bgcolor: "#F8FAF6", minHeight: "100vh", pb: 12 }}>
       {/* ======================================================== */}
@@ -969,8 +960,8 @@ export default function Products(props: ProductsProps) {
                 maxWidth: 680,
               }}
             >
-              Issiqxonalar uchun 3 qavatli mustahkam salafanlar, kasalliklarga chidamli Gollandiya F1 urug'lari,
-              sertifikatlangan Syngenta & Bayer dorilari hamda Isroil sug'orish tizimlari.
+              Issiqxonalar uchun 3 qavatli mustahkam salafanlar, kasalliklarga chidamli serhosil urug'lar,
+              sertifikatlangan dori vositalari hamda zamonaviy tejamkor sug'orish tizimlari.
             </Typography>
 
             {/* SEARCH COMPONENT WITH AI BUTTON */}
@@ -1049,32 +1040,7 @@ export default function Products(props: ProductsProps) {
               </Button>
             </Box>
 
-            {/* Quick Suggestions Chips */}
-            <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 1, pt: 1 }}>
-              <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", alignSelf: "center", fontWeight: 600 }}>
-                Ommabop qidiruvlar:
-              </span>
-              {quickPrompts.map((prompt, idx) => (
-                <Chip
-                  key={idx}
-                  label={prompt}
-                  size="small"
-                  onClick={() => {
-                    setSearchText(prompt);
-                    handleAISearch(prompt);
-                  }}
-                  sx={{
-                    bgcolor: "rgba(255, 255, 255, 0.12)",
-                    color: "#ffffff",
-                    border: "1px solid rgba(255, 255, 255, 0.2)",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    "&:hover": { bgcolor: "rgba(74, 222, 128, 0.25)", borderColor: "#4ade80" },
-                  }}
-                />
-              ))}
-            </Stack>
+
 
             {/* AI Search Feedback Banner */}
             {aiExplanation && (
@@ -1528,7 +1494,7 @@ export default function Products(props: ProductsProps) {
                                 : product.productCollection === ProductCollection.OTHER
                                 ? "UV 5 Yil"
                                 : product.productCollection === ProductCollection.TOOLS
-                                ? "Isroil Drip"
+                                ? "Smart Drip"
                                 : "Syngenta / Bayer"
                             }
                             size="small"
