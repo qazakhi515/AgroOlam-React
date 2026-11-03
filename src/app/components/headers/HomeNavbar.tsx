@@ -231,6 +231,13 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   </NavLink>
                 </Box>
               )}
+              {authMember && (
+                <Box className="hover-line">
+                  <NavLink to="/member-page" activeClassName="underline">
+                    {t.myPage}
+                  </NavLink>
+                </Box>
+              )}
             </Stack>
 
             {/* 3. Actions: Plant Doctor Button, Consultation, Basket, Language, Auth */}

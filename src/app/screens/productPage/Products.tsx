@@ -52,6 +52,7 @@ import OrderService from "../../services/OrdersService";
 import { OrderStatus } from "../../../lib/enums/order.enum";
 import { Order } from "../../../lib/types/order";
 import { sweetTopSuccessAlert, sweetErrorHandling } from "../../../lib/sweetAlert";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 const actionDispatch = (dispatch: Dispatch) => ({
   setProducts: (data: Product[]) => dispatch(setProducts(data)),
@@ -624,6 +625,8 @@ export default function Products(props: ProductsProps) {
   const { onAdd } = props;
   const history = useHistory();
   const location = useLocation();
+  const lang = getSavedLanguage();
+  const t = translations[lang].products;
   const { setProducts } = actionDispatch(useDispatch());
   const { products: storeProducts } = useSelector(productsRetriever);
 
@@ -886,11 +889,11 @@ export default function Products(props: ProductsProps) {
     icon: React.ReactNode;
     count: number;
   }[] = [
-    { key: undefined, label: "Barchasi", icon: "🌿", count: CERTIFIED_AGRO_PRODUCTS.length },
-    { key: ProductCollection.OTHER, label: "Issiqxona Salafanlari", icon: <GreenhouseLogo />, count: 5 },
-    { key: ProductCollection.FERTILIZERS, label: "Dori & O'g'itlar", icon: "💊", count: 13 },
-    { key: ProductCollection.TOOLS, label: "Sug'orish & Uskunalar", icon: "💧", count: 8 },
-    { key: ProductCollection.SEEDS, label: "Urug'lar (Seeds)", icon: "🌱", count: 7 },
+    { key: undefined, label: t.catAll, icon: "🌿", count: CERTIFIED_AGRO_PRODUCTS.length },
+    { key: ProductCollection.OTHER, label: t.catGreenhouse, icon: <GreenhouseLogo />, count: 5 },
+    { key: ProductCollection.FERTILIZERS, label: t.catFertilizers, icon: "💊", count: 13 },
+    { key: ProductCollection.TOOLS, label: t.catIrrigation, icon: "💧", count: 8 },
+    { key: ProductCollection.SEEDS, label: t.catSeeds, icon: "🌱", count: 7 },
   ];
 
   return (
@@ -931,11 +934,11 @@ export default function Products(props: ProductsProps) {
                 onClick={() => history.push("/")}
                 style={{ cursor: "pointer", color: "#86efac", fontSize: "13px", fontWeight: 700 }}
               >
-                Bosh sahifa
+                {t.breadcrumbHome}
               </span>
               <span style={{ color: "rgba(255,255,255,0.4)" }}>/</span>
               <span style={{ color: "#ffffff", fontSize: "13px", fontWeight: 700 }}>
-                Agro Mahsulotlar Bozori
+                {t.breadcrumbTitle}
               </span>
             </Stack>
 
@@ -948,7 +951,7 @@ export default function Products(props: ProductsProps) {
                 lineHeight: 1.15,
               }}
             >
-              AgroOlam Rasmiy Mahsulotlar Bozori
+              {t.heroTitle}
             </Typography>
 
             <Typography
@@ -960,8 +963,7 @@ export default function Products(props: ProductsProps) {
                 maxWidth: 680,
               }}
             >
-              Issiqxonalar uchun 3 qavatli mustahkam salafanlar, kasalliklarga chidamli serhosil urug'lar,
-              sertifikatlangan dori vositalari hamda zamonaviy tejamkor sug'orish tizimlari.
+              {t.heroSubtitle}
             </Typography>
 
             {/* SEARCH COMPONENT WITH AI BUTTON */}
@@ -984,7 +986,7 @@ export default function Products(props: ProductsProps) {
                 <SearchIcon sx={{ fontSize: 24 }} />
               </Box>
               <InputBase
-                placeholder="Masalan: F1 Pomidor urug'i, Ridomil Gold, 150mkr salafan..."
+                placeholder={t.searchPlaceholder}
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 sx={{
@@ -1014,7 +1016,7 @@ export default function Products(props: ProductsProps) {
                   "&:hover": { bgcolor: "#0E271D" },
                 }}
               >
-                Qidirish
+                {t.searchBtn}
               </Button>
               <Button
                 onClick={() => handleAISearch()}
@@ -1036,7 +1038,7 @@ export default function Products(props: ProductsProps) {
                 }}
               >
                 {aiLoading ? <CircularProgress size={16} sx={{ color: "#fff" }} /> : <AutoAwesomeIcon sx={{ fontSize: 18, color: "#4ade80" }} />}
-                AI Qidiruv
+                {t.aiSearchBtn}
               </Button>
             </Box>
 
@@ -1724,10 +1726,10 @@ export default function Products(props: ProductsProps) {
                 }}
               >
                 <Typography variant="h5" sx={{ fontWeight: 800, color: "#0E271D", mb: 1 }}>
-                  Mahsulot topilmadi
+                  {t.emptyTitle}
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#64748b", maxWidth: 450, mx: "auto", mb: 3 }}>
-                  Kiritilgan so'z yoki tanlangan narx bo'yicha mahsulot mavjud emas. Filtrlarni tozalab qaytadan urinib ko'ring.
+                  {t.emptyDesc}
                 </Typography>
                 <Button
                   variant="outlined"

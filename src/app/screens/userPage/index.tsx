@@ -13,11 +13,15 @@ import { useHistory } from "react-router-dom";
 import { MemberType } from "../../../lib/enums/member.enum";
 import { serverApi } from "../../../lib/config";
 import TelegramAlertCard from "../../components/telegram/TelegramAlertCard";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 import "../../../css/userPage.css";
 
 export default function UserPage() {
   const history = useHistory();
   const { authMember } = useGlobals();
+  const lang = getSavedLanguage();
+  const t = translations[lang].member;
+  const ordersT = translations[lang].orders;
 
   if (!authMember) {
     history.push("/");
@@ -37,7 +41,7 @@ export default function UserPage() {
           {/* LEFT: SETTINGS FORM */}
           <Stack className="my-page-left">
             <Box className="menu-name">
-              <span>🌱 Fermer Profili va Issiqxona Sozlamalari</span>
+              <span>🌱 {t.title}</span>
             </Box>
             <Box className="menu-content">
               <Settings />
@@ -66,7 +70,7 @@ export default function UserPage() {
               </span>
 
               <Chip
-                label={authMember.memberType === MemberType.RESTAURANT ? "Bosh Agro-Ta'minotchi" : "Sertifikatlangan Fermer"}
+                label={authMember.memberType === MemberType.RESTAURANT ? ordersT.supplier : ordersT.certifiedFarmer}
                 size="small"
                 sx={{
                   mt: 0.8,

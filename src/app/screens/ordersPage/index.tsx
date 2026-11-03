@@ -25,6 +25,7 @@ import { useGlobals } from "../../components/hooks/useGlobals";
 import { serverApi } from "../../../lib/config";
 import TelegramAlertCard from "../../components/telegram/TelegramAlertCard";
 import { retrievePausedOrders, retrieveProcessOrders, retrieveFinishedOrders } from "./selector";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 const actionDispatch = (dispatch: Dispatch) => ({
   setPausedOrders: (data: Order[]) => dispatch(setPausedOrders(data)),
@@ -36,6 +37,8 @@ export default function OrdersPage() {
   const { setPausedOrders, setProcessOrders, setFinishedOrders } =
     actionDispatch(useDispatch());
   const { orderBuilder, authMember } = useGlobals();
+  const lang = getSavedLanguage();
+  const t = translations[lang].orders;
   const [value, setValue] = useState("1");
   const [orderInquiry, setOrderInquiry] = useState<OrderInquiry>({
     page: 1,
@@ -96,10 +99,10 @@ export default function OrdersPage() {
                 gap: 1.5,
               }}
             >
-              🌱 Mening Agro-Buyurtmalarim
+              🌱 {t.title}
             </Typography>
             <Typography sx={{ color: "#64748b", fontSize: 14, mt: 0.5 }}>
-              Issiqxona va ekinlar ta'minoti bo'yicha buyurtmalar holati va hisob-fakturalar
+              {t.subtitle}
             </Typography>
           </Box>
 
@@ -116,7 +119,7 @@ export default function OrdersPage() {
                   iconPosition="start"
                   label={
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <span>To'lov kutilmoqda</span>
+                      <span>{t.tabPaused}</span>
                       {pausedOrders.length > 0 && (
                         <span className="order-tab-badge">{pausedOrders.length}</span>
                       )}
@@ -129,7 +132,7 @@ export default function OrdersPage() {
                   iconPosition="start"
                   label={
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <span>Yetkazilmoqda</span>
+                      <span>{t.tabProcess}</span>
                       {processOrders.length > 0 && (
                         <span className="order-tab-badge active">{processOrders.length}</span>
                       )}
@@ -142,7 +145,7 @@ export default function OrdersPage() {
                   iconPosition="start"
                   label={
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <span>Yetkazilgan</span>
+                      <span>{t.tabFinished}</span>
                       {finishedOrders.length > 0 && (
                         <span className="order-tab-badge">{finishedOrders.length}</span>
                       )}
@@ -193,7 +196,7 @@ export default function OrdersPage() {
               </span>
 
               <Chip
-                label={authMember?.memberType === MemberType.RESTAURANT ? "Bosh Agro-Ta'minotchi" : "Sertifikatlangan Fermer"}
+                label={authMember?.memberType === MemberType.RESTAURANT ? t.supplier : t.certifiedFarmer}
                 size="small"
                 sx={{
                   mt: 0.8,
@@ -218,12 +221,12 @@ export default function OrdersPage() {
             {/* Quick Farm Stats Summary */}
             <Box sx={{ width: "100%", mt: 2, pt: 2, borderTop: "1px dashed #e2e8f0" }}>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, color: "#64748b", marginBottom: 6 }}>
-                <span>Faol buyurtmalar:</span>
-                <strong style={{ color: "#0f172a" }}>{pausedOrders.length + processOrders.length} ta</strong>
+                <span>{t.activeOrders}</span>
+                <strong style={{ color: "#0f172a" }}>{pausedOrders.length + processOrders.length}</strong>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, color: "#64748b" }}>
-                <span>Yakunlangan xaridlar:</span>
-                <strong style={{ color: "#059669" }}>{finishedOrders.length} ta</strong>
+                <span>{t.finishedPurchases}</span>
+                <strong style={{ color: "#059669" }}>{finishedOrders.length}</strong>
               </div>
             </Box>
           </Box>
@@ -247,10 +250,10 @@ export default function OrdersPage() {
               <SupportAgentIcon sx={{ color: "#4ade80", fontSize: 28 }} />
               <div>
                 <Typography sx={{ fontWeight: 800, fontSize: 14 }}>
-                  Agro-Mutaxassis Yordami
+                  {t.hotlineTitle}
                 </Typography>
                 <Typography sx={{ fontSize: 11, color: "#a7f3d0" }}>
-                  Buyurtma va dorilar bo'yicha konsultatsiya
+                  {t.hotlineDesc}
                 </Typography>
               </div>
             </Stack>

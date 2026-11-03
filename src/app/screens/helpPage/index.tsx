@@ -13,8 +13,11 @@ import { sweetErrorHandling, sweetTopSuccessAlert } from "../../../lib/sweetAler
 import "../../../css/help.css";
 import { faq } from "../../../lib/data/faq";
 import { terms } from "../../../lib/data/terms";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 export default function HelpPage() {
+  const lang = getSavedLanguage();
+  const t = translations[lang].help;
   const [value, setValue] = useState("1");
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
@@ -73,10 +76,10 @@ export default function HelpPage() {
               letterSpacing: "-0.02em",
             }}
           >
-            🌱 AgroOlam Qo'llab-Quvvatlash Markazi
+            🌱 {t.title}
           </Typography>
           <Typography sx={{ color: "#64748b", fontSize: 14, mt: 0.5 }}>
-            Fermerlar uchun rasmiy kafolatlar, ko'p beriladigan savollar va to'g'ridan-to'g'ri agronomik yordam
+            {t.subtitle}
           </Typography>
         </Box>
 
@@ -91,19 +94,19 @@ export default function HelpPage() {
               <Tab
                 icon={<GavelIcon sx={{ fontSize: 18 }} />}
                 iconPosition="start"
-                label="Qoidalar & Kafolatlar"
+                label={t.tabRules}
                 value="1"
               />
               <Tab
                 icon={<HelpOutlineIcon sx={{ fontSize: 18 }} />}
                 iconPosition="start"
-                label="Ko'p Beriladigan Savollar (FAQ)"
+                label={t.tabFaq}
                 value="2"
               />
               <Tab
                 icon={<MailOutlineIcon sx={{ fontSize: 18 }} />}
                 iconPosition="start"
-                label="Agronomga Savol Yuborish"
+                label={t.tabContact}
                 value="3"
               />
             </Tabs>
@@ -157,10 +160,10 @@ export default function HelpPage() {
                       </p>
 
                       <div className="admin-input-box">
-                        <label>Fermer / Xo'jalik Ismi *</label>
+                        <label>{t.nameLabel} *</label>
                         <input
                           type="text"
-                          placeholder="Ismingiz yoki xo'jalik nomini kiriting"
+                          placeholder={t.nameLabel}
                           value={contactName}
                           onChange={(e) => setContactName(e.target.value)}
                         />
@@ -168,7 +171,7 @@ export default function HelpPage() {
 
                       <div style={{ display: "flex", gap: 16 }}>
                         <div className="admin-input-box" style={{ flex: 1 }}>
-                          <label>Telefon Raqam *</label>
+                          <label>{t.phoneLabel} *</label>
                           <input
                             type="text"
                             placeholder="+998 90 123 45 67"
@@ -178,7 +181,7 @@ export default function HelpPage() {
                         </div>
 
                         <div className="admin-input-box" style={{ flex: 1 }}>
-                          <label>Elektron Pochta (Ixtiyoriy)</label>
+                          <label>{t.emailLabel}</label>
                           <input
                             type="email"
                             placeholder="pochta@misol.uz"
@@ -189,9 +192,9 @@ export default function HelpPage() {
                       </div>
 
                       <div className="admin-input-box">
-                        <label>Murojaat Matni *</label>
+                        <label>{t.messageLabel} *</label>
                         <textarea
-                          placeholder="Ekin turi, issiqxona maydoni va sizni qiziqtirgan savolni batafsil yozing..."
+                          placeholder={t.messagePlaceholder}
                           value={contactMessage}
                           onChange={(e) => setContactMessage(e.target.value)}
                           rows={4}
@@ -205,7 +208,7 @@ export default function HelpPage() {
                         disabled={contactLoading}
                         startIcon={contactLoading ? <CircularProgress size={18} color="inherit" /> : <SendIcon sx={{ fontSize: 18 }} />}
                       >
-                        {contactLoading ? "Yuborilmoqda..." : "Murojaatni Yuborish"}
+                        {contactLoading ? t.sendingBtn : t.sendBtn}
                       </Button>
                     </div>
                   </form>

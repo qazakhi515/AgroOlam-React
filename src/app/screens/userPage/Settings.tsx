@@ -13,6 +13,7 @@ import {
   sweetErrorHandling,
   sweetTopSmallSuccessAlert,
 } from "../../../lib/sweetAlert";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 import { Messages, serverApi } from "../../../lib/config";
 import MemberService from "../../services/memberService";
 
@@ -43,6 +44,8 @@ const COMMON_REGIONS = [
 
 export function Settings() {
   const { authMember, setAuthMember } = useGlobals();
+  const lang = getSavedLanguage();
+  const t = translations[lang].member;
   const [memberImage, setMemberImage] = useState<string>(
     authMember?.memberImage
       ? (authMember.memberImage.startsWith("http")
@@ -143,7 +146,7 @@ export function Settings() {
         />
         <div className="media-change-box">
           <span>Profil fotosurati</span>
-          <p>JPG, PNG yoki WEBP formatidagi fermer yoki xo'jalik logotipi</p>
+          <p>{t.photoHint}</p>
           <div className="up-del-box">
             <Button
               component="label"
@@ -162,12 +165,12 @@ export function Settings() {
         <div className="short-input">
           <label className="spec-label">
             <AgricultureIcon sx={{ fontSize: 18, color: "#1B4332" }} />
-            Fermer ismi / Xo'jalik nomi *
+            {t.nickname} *
           </label>
           <input
             className="spec-input"
             type="text"
-            placeholder="Masalan: Sardor Rahimov / Agro Fayz MCHJ"
+            placeholder={t.nickname}
             value={memberUpdateInput.memberNick || ""}
             onChange={memberNickHandler}
           />
@@ -176,7 +179,7 @@ export function Settings() {
         <div className="short-input">
           <label className="spec-label">
             <PhoneIphoneIcon sx={{ fontSize: 18, color: "#1B4332" }} />
-            Telefon raqam *
+            {t.phone} *
           </label>
           <input
             className="spec-input"
@@ -193,12 +196,12 @@ export function Settings() {
         <div className="long-input">
           <label className="spec-label">
             <LocationOnIcon sx={{ fontSize: 18, color: "#1B4332" }} />
-            Joylashuv (Viloyat va tuman)
+            {t.address}
           </label>
           <input
             className="spec-input"
             type="text"
-            placeholder="Masalan: Toshkent viloyati, Zangiota tumani"
+            placeholder={t.address}
             value={memberUpdateInput.memberAddress || ""}
             onChange={memberAddressHandler}
           />
@@ -256,7 +259,7 @@ export function Settings() {
           startIcon={<SaveIcon sx={{ fontSize: 18 }} />}
           onClick={handleSubmitButton}
         >
-          O'zgarishlarni saqlash
+          {t.saveBtn}
         </Button>
       </Box>
     </Box>

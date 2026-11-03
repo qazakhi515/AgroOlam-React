@@ -16,18 +16,22 @@ import ArticleService from "../../services/ArticleService";
 import { Article, ArticleInquiry } from "../../../lib/types/article";
 import { ArticleCategory } from "../../../lib/enums/article.enum";
 import AndijanAgroWeatherBar from "../../components/weather/AndijanAgroWeatherBar";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 import "../../../css/news.css";
-
-const categoryLabels: Record<ArticleCategory, string> = {
-  [ArticleCategory.ALL]: "Barchasi",
-  [ArticleCategory.KASALLIKLAR]: "Kasalliklar & Davolash",
-  [ArticleCategory.AGRO_TAVSIYALAR]: "Agro-Tavsiyalar",
-  [ArticleCategory.URUG_VA_HOSIL]: "Urug'chilik & Hosil",
-  [ArticleCategory.YANGILIKLAR]: "Soha Yangiliklari",
-};
 
 export default function NewsPage() {
   const history = useHistory();
+  const lang = getSavedLanguage();
+  const t = translations[lang].news;
+
+  const categoryLabels: Record<ArticleCategory, string> = {
+    [ArticleCategory.ALL]: t.catAll,
+    [ArticleCategory.KASALLIKLAR]: t.catDiseases,
+    [ArticleCategory.AGRO_TAVSIYALAR]: t.catAdvisory,
+    [ArticleCategory.URUG_VA_HOSIL]: t.catSeeds,
+    [ArticleCategory.YANGILIKLAR]: t.catNews,
+  };
+
   const [articles, setArticles] = useState<Article[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ArticleCategory>(
     ArticleCategory.ALL
@@ -76,7 +80,7 @@ export default function NewsPage() {
       <Box className="news-header-section">
         <Container>
           <Typography className="news-header-title">
-            AgroOlam Agro-Yangiliklar & Mutaxassis Maslahatlari
+            AgroOlam {t.title}
           </Typography>
 
           <Box className="news-search-box">
@@ -84,7 +88,7 @@ export default function NewsPage() {
             <input
               type="text"
               className="news-search-input"
-              placeholder="Kasallik, dori yoki urug' nomini qidiring..."
+              placeholder={t.searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => {
@@ -96,7 +100,7 @@ export default function NewsPage() {
               className="news-search-btn"
               onClick={handleSearch}
             >
-              Qidirish
+              {lang === "uz" ? "Qidirish" : lang === "ko" ? "검색" : "Search"}
             </Button>
           </Box>
         </Container>
