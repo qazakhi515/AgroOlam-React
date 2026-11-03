@@ -17,8 +17,6 @@ import { CartItem } from "../../../lib/types/search";
 import { useGlobals } from "../hooks/useGlobals";
 import Basket from "./Basket";
 import LanguageSelector from "./LanguageSelector";
-import PlantDoctorModal from "../ai/PlantDoctorModal";
-import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 interface OtherNavbarProps {
@@ -51,7 +49,6 @@ export default function OtherNavbar(props: OtherNavbarProps) {
   const { authMember } = useGlobals();
   const lang = getSavedLanguage();
   const t = translations[lang].nav;
-  const [isDoctorOpen, setIsDoctorOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -80,8 +77,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "14px",
-                  marginRight: "48px",
+                  marginRight: "40px",
                   textDecoration: "none",
                 }}
               >
@@ -89,34 +85,8 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                   className="brand-logo"
                   src="/icons/agroolam-emblem-white.png"
                   alt="AgroOlam"
-                  style={{ height: 48, width: "auto", objectFit: "contain" }}
+                  style={{ height: 52, width: "auto", objectFit: "contain" }}
                 />
-                <Box sx={{ display: { xs: "none", sm: "block" } }}>
-                  <Typography
-                    sx={{
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontWeight: 900,
-                      fontSize: "20px",
-                      color: "#ffffff",
-                      lineHeight: 1.1,
-                      letterSpacing: "-0.5px",
-                    }}
-                  >
-                    Agro<span style={{ color: "#4ade80" }}>Olam</span>
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontWeight: 700,
-                      fontSize: "9.5px",
-                      color: "#a7f3d0",
-                      letterSpacing: "1.2px",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    2024 • AgroTech
-                  </Typography>
-                </Box>
               </NavLink>
             </motion.div>
 
@@ -200,30 +170,6 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                   </Typography>
                 </Box>
               </NavLink>
-
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  size="small"
-                  className="plant-doctor-btn"
-                  startIcon={<PhotoCameraIcon sx={{ fontSize: 16 }} />}
-                  onClick={() => setIsDoctorOpen(true)}
-                >
-                  {lang === "ko"
-                    ? "AI 닥터"
-                    : lang === "uz"
-                      ? "AI Shifokor"
-                      : "Plant Doctor"}
-                </Button>
-              </motion.div>
-
-              <PlantDoctorModal
-                open={isDoctorOpen}
-                onClose={() => setIsDoctorOpen(false)}
-                onAdd={onAdd}
-              />
 
               <Basket
                 cartItems={cartItems}

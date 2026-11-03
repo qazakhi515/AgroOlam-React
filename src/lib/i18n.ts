@@ -43,7 +43,7 @@ export const translations = {
       phone: "+998 (71) 200-88-00",
       email: "support@agroolam.tech",
       hours: "Everyday: 08:00 - 20:00",
-      copyright: "© 2026 AgroOlam. All rights reserved.",
+      copyright: "© 2024 AgroOlam. All rights reserved.",
     },
     aiChat: {
       title: "AgroOlam AI Agronomist",
@@ -101,7 +101,7 @@ export const translations = {
       phone: "+998 (71) 200-88-00",
       email: "support@agroolam.tech",
       hours: "연중무휴: 08:00 - 20:00",
-      copyright: "© 2026 AgroOlam. All rights reserved.",
+      copyright: "© 2024 AgroOlam. All rights reserved.",
     },
     aiChat: {
       title: "AgroOlam AI 스마트 아그로노미스트",
@@ -159,7 +159,7 @@ export const translations = {
       phone: "+998 (71) 200-88-00",
       email: "support@agroolam.tech",
       hours: "Har kuni: 08:00 - 20:00",
-      copyright: "© 2026 AgroOlam. Barcha huquqlar himoyalangan.",
+      copyright: "© 2024 AgroOlam. Barcha huquqlar himoyalangan.",
     },
     aiChat: {
       title: "AgroOlam AI Agronom Maslahatchi",

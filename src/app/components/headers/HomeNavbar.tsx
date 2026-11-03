@@ -188,43 +188,16 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "14px",
-                  marginRight: "48px",
+                  marginRight: "40px",
                   textDecoration: "none",
                 }}
               >
                 <img
                   className="brand-logo"
                   src="/icons/agroolam-emblem.png"
-                  alt="AgroOlam 2024"
-                  style={{ height: 48, width: "auto", objectFit: "contain" }}
+                  alt="AgroOlam"
+                  style={{ height: 54, width: "auto", objectFit: "contain" }}
                 />
-                <Box sx={{ display: { xs: "none", sm: "block" } }}>
-                  <Typography
-                    sx={{
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontWeight: 900,
-                      fontSize: "20px",
-                      color: "#1B4332",
-                      lineHeight: 1.1,
-                      letterSpacing: "-0.5px",
-                    }}
-                  >
-                    Agro<span style={{ color: "#2D6A4F" }}>Olam</span>
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontWeight: 700,
-                      fontSize: "9.5px",
-                      color: "#64748b",
-                      letterSpacing: "1.2px",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    2024 • AgroTech
-                  </Typography>
-                </Box>
               </NavLink>
             </motion.div>
 
@@ -291,31 +264,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 </Box>
               </NavLink>
 
-              {/* Plant Doctor AI Quick Trigger */}
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  size="small"
-                  className="plant-doctor-btn"
-                  startIcon={<PhotoCameraIcon sx={{ fontSize: 16 }} />}
-                  onClick={() => setIsDoctorOpen(true)}
-                  sx={{
-                    bgcolor: "#2D6A4F",
-                    color: "#ffffff",
-                    borderRadius: "20px",
-                    px: 2,
-                    py: 0.8,
-                    fontWeight: 700,
-                    fontSize: "12px",
-                    textTransform: "none",
-                    boxShadow: "0 4px 12px rgba(45, 106, 79, 0.3)",
-                    "&:hover": { bgcolor: "#1B4332" },
-                  }}
-                >
-                  AI Tashxis
-                </Button>
-              </motion.div>
-
-              {/* Consultation Trigger Button (After AI Tashxis) */}
+              {/* Consultation Trigger Button */}
               <Box sx={{ display: { xs: "none", sm: "block" } }}>
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
                   <Button
@@ -804,59 +753,6 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                         +38% Yuqori Natija
                       </Typography>
                     </div>
-                  </Box>
-                </motion.div>
-
-                {/* Floating Top-Right Badge: Official AgroOlam 2024 Seal */}
-                <motion.div
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
-                  style={{
-                    position: "absolute",
-                    top: -24,
-                    right: -16,
-                    zIndex: 3,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      bgcolor: "rgba(255, 255, 255, 0.97)",
-                      backdropFilter: "blur(14px)",
-                      p: 1.4,
-                      borderRadius: "22px",
-                      border: "1.5px solid #a7f3d0",
-                      boxShadow: "0 18px 40px rgba(14, 39, 29, 0.18)",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1.5,
-                    }}
-                  >
-                    <img
-                      src="/icons/agroolam-emblem.png"
-                      alt="AgroOlam 2024"
-                      style={{ height: 60, width: "auto", objectFit: "contain" }}
-                    />
-                    <Box sx={{ pr: 0.5 }}>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: "#059669",
-                          fontWeight: 800,
-                          fontSize: "10px",
-                          letterSpacing: "0.8px",
-                          textTransform: "uppercase",
-                          display: "block",
-                        }}
-                      >
-                        Rasmiy Sifat Belgisi
-                      </Typography>
-                      <Typography
-                        variant="subtitle2"
-                        sx={{ fontWeight: 900, color: "#1B4332", fontSize: "14px" }}
-                      >
-                        AgroOlam • 2024
-                      </Typography>
-                    </Box>
                   </Box>
                 </motion.div>
               </Box>
