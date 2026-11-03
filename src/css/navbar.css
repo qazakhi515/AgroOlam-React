@@ -303,13 +303,20 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 270px;
+  min-height: 420px;
   background:
-    linear-gradient(rgba(14, 39, 29, 0.45), rgba(14, 39, 29, 0.72)),
-    url("/public/img/farm-banner.jpg");
-  background-position: center 40%;
+    linear-gradient(rgba(14, 39, 29, 0.22), rgba(14, 39, 29, 0.58)),
+    url("/public/img/header.jpg");
+  background-position: center 30%;
   background-size: cover;
   background-repeat: no-repeat;
+  transition: min-height 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .other-navbar {
+    min-height: 320px;
+  }
 }
 
 .other-navbar .navbar-container {
