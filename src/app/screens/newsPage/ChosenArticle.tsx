@@ -6,6 +6,7 @@ import {
   Stack,
   Typography,
   Breadcrumbs,
+  Chip,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -88,12 +89,40 @@ export default function ChosenArticle() {
         {/* Main Article Content Card */}
         <Box className="article-detail-card">
           <Box className="article-detail-header">
-            <span className="article-badge" style={{ position: "static" }}>
-              {article.articleCategory}
-            </span>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+              <span className="article-badge" style={{ position: "static" }}>
+                {article.articleCategory}
+              </span>
+              {article.tag && (
+                <Chip
+                  label={article.tag}
+                  size="small"
+                  sx={{ bgcolor: "#d1fae5", color: "#065f46", fontWeight: 700 }}
+                />
+              )}
+            </Stack>
+
             <Typography className="article-detail-title">
               {article.articleTitle}
             </Typography>
+
+            {article.source && (
+              <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography variant="caption" sx={{ color: "#2D6A4F", fontWeight: 800 }}>
+                  Manba: {article.source}
+                </Typography>
+                {article.sourceUrl && (
+                  <a
+                    href={article.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ fontSize: "11px", color: "#047857", fontWeight: 700, textDecoration: "underline" }}
+                  >
+                    (Rasmiy veb-saytga o'tish ↗)
+                  </a>
+                )}
+              </Box>
+            )}
 
             <Box className="article-detail-meta">
               <span className="article-meta-item">

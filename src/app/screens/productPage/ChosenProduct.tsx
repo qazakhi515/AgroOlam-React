@@ -31,6 +31,9 @@ import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import BoltIcon from "@mui/icons-material/Bolt";
 import { motion } from "framer-motion";
 import { useParams, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -43,8 +46,14 @@ import MemberService from "../../services/memberService";
 import { Member } from "../../../lib/types/member";
 import { serverApi } from "../../../lib/config";
 import { CartItem } from "../../../lib/types/search";
-import { getSavedLanguage } from "../../../lib/i18n";
 import PlantDoctorModal from "../../components/ai/PlantDoctorModal";
+import WishlistService from "../../services/WishlistService";
+import PaymentModal from "../../components/payment/PaymentModal";
+import OrderService from "../../services/OrdersService";
+import { OrderStatus } from "../../../lib/enums/order.enum";
+import { Order } from "../../../lib/types/order";
+import { sweetTopSuccessAlert, sweetErrorHandling } from "../../../lib/sweetAlert";
+import { CERTIFIED_AGRO_PRODUCTS } from "./Products";
 
 const actionDispatch = (dispatch: Dispatch) => ({
   setRestaurant: (data: Member) => dispatch(setRestaurant(data)),
@@ -69,7 +78,6 @@ export default function ChosenProduct(props: ChosenProductProps) {
   const { onAdd } = props;
   const { productId } = useParams<{ productId: string }>();
   const history = useHistory();
-  const lang = getSavedLanguage();
 
   const { setRestaurant, setChosenProduct } = actionDispatch(useDispatch());
   const { chosenProduct } = useSelector(chosenProductRetriever);
@@ -82,18 +90,86 @@ export default function ChosenProduct(props: ChosenProductProps) {
   const [selectedWidth, setSelectedWidth] = useState<string>("12 metr");
   const [isDoctorOpen, setIsDoctorOpen] = useState<boolean>(false);
 
+  // Like & Wishlist Persistence
+  const [isLiked, setIsLiked] = useState<boolean>(() =>
+    WishlistService.isLiked(productId)
+  );
+
+  // Direct 1-Click Purchase Payment Modal
+  const [directPaymentOpen, setDirectPaymentOpen] = useState<boolean>(false);
+  const [directPaymentOrder, setDirectPaymentOrder] = useState<Order | null>(null);
+
+  useEffect(() => {
+    setIsLiked(WishlistService.isLiked(productId));
+    const handleWishlistChange = () => {
+      setIsLiked(WishlistService.isLiked(productId));
+    };
+    window.addEventListener("agroolam_wishlist_updated", handleWishlistChange);
+    return () => {
+      window.removeEventListener("agroolam_wishlist_updated", handleWishlistChange);
+    };
+  }, [productId]);
+
+  const handleToggleLike = () => {
+    const res = WishlistService.toggleLike(productId);
+    setIsLiked(res.isLiked);
+    sweetTopSuccessAlert(
+      res.isLiked ? "❤️ Sevimlilar ro'yxatiga qo'shildi!" : "🤍 Sevimlilardan olib tashlandi"
+    );
+  };
+
+  const handleDirectBuy = async () => {
+    if (!chosenProduct) return;
+    try {
+      const orderSvc = new OrderService();
+      const normalizedPrice =
+        chosenProduct.productPrice < 1000
+          ? chosenProduct.productPrice * 12850
+          : chosenProduct.productPrice;
+      const order = await orderSvc.createOrder([
+        {
+          _id: chosenProduct._id,
+          quantity: quantity,
+          name: chosenProduct.productName,
+          price: normalizedPrice,
+          image: chosenProduct.productImages[0],
+        },
+      ]);
+      setDirectPaymentOrder(order);
+      setDirectPaymentOpen(true);
+    } catch (err) {
+      console.log("Error in handleDirectBuy:", err);
+      sweetErrorHandling(err).then();
+    }
+  };
+
+  const handlePaymentSuccess = async (orderId: string) => {
+    try {
+      const orderSvc = new OrderService();
+      await orderSvc.updateOrder({ orderId, orderStatus: OrderStatus.PROCESS });
+      sweetTopSuccessAlert("To'lov muvaffaqiyatli qabul qilindi!");
+    } catch (err) {
+      sweetErrorHandling(err).then();
+    }
+  };
+
   useEffect(() => {
     const product = new ProductService();
     product
       .getProduct(productId)
       .then((data) => setChosenProduct(data))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log("Backend getProduct err, using fallback:", err);
+        const fallback = CERTIFIED_AGRO_PRODUCTS.find((p) => p._id === productId);
+        if (fallback) setChosenProduct(fallback);
+      });
 
     const member = new MemberService();
     member
       .getRestaurant()
       .then((data) => setRestaurant(data))
       .catch((err) => console.log(err));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId]);
 
   if (!chosenProduct) {
@@ -163,7 +239,10 @@ export default function ChosenProduct(props: ChosenProductProps) {
                 style={{ width: "100%", height: "380px", borderRadius: "18px" }}
               >
                 {chosenProduct.productImages.map((img: string, idx: number) => {
-                  const imageSrc = img.startsWith("http") ? img : `${serverApi}/${img}`;
+                  const imageSrc =
+                    img.startsWith("http") || img.startsWith("/")
+                      ? img
+                      : `${serverApi}/${img}`;
                   return (
                     <SwiperSlide key={idx} style={{ textAlign: "center", backgroundColor: "#f8fafc" }}>
                       <img
@@ -232,14 +311,32 @@ export default function ChosenProduct(props: ChosenProductProps) {
                   {chosenProduct.productCollection} • Rasmiy Distribyutsiya
                 </Typography>
 
-                <Typography
-                  variant="h4"
-                  fontWeight={900}
-                  color="#0E271D"
-                  sx={{ fontSize: { xs: "24px", sm: "30px" }, lineHeight: 1.25, mb: 1.5 }}
-                >
-                  {chosenProduct.productName}
-                </Typography>
+                <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
+                  <Typography
+                    variant="h4"
+                    fontWeight={900}
+                    color="#0E271D"
+                    sx={{ fontSize: { xs: "24px", sm: "30px" }, lineHeight: 1.25, flex: 1 }}
+                  >
+                    {chosenProduct.productName}
+                  </Typography>
+                  <IconButton
+                    onClick={handleToggleLike}
+                    title={isLiked ? "Sevimlilardan o'chirish" : "Sevimlilarga qo'shish"}
+                    sx={{
+                      bgcolor: isLiked ? "#fee2e2" : "#f1f5f9",
+                      color: isLiked ? "#ef4444" : "#64748b",
+                      border: isLiked ? "1px solid #fca5a5" : "1px solid #e2e8f0",
+                      p: 1.2,
+                      ml: 1.5,
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                      transition: "all 0.2s ease",
+                      "&:hover": { bgcolor: isLiked ? "#fecaca" : "#e2e8f0", transform: "scale(1.08)" },
+                    }}
+                  >
+                    {isLiked ? <FavoriteIcon sx={{ color: "#ef4444", fontSize: 24 }} /> : <FavoriteBorderIcon sx={{ fontSize: 24 }} />}
+                  </IconButton>
+                </Stack>
 
                 {/* Rating, Views & Supplier */}
                 <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2, flexWrap: "wrap", gap: 1 }}>
@@ -288,10 +385,17 @@ export default function ChosenProduct(props: ChosenProductProps) {
                   </Typography>
                   <Stack direction="row" spacing={1.5} alignItems="baseline">
                     <Typography variant="h3" fontWeight={900} color="#2D6A4F" sx={{ fontSize: { xs: "28px", sm: "36px" } }}>
-                      {chosenProduct.productPrice.toLocaleString()} UZS
+                      {(chosenProduct.productPrice < 1000
+                        ? chosenProduct.productPrice * 12850
+                        : chosenProduct.productPrice
+                      ).toLocaleString()}{" "}
+                      UZS
                     </Typography>
                     <Typography variant="subtitle1" sx={{ color: "#64748b", fontWeight: 600 }}>
-                      (~${(chosenProduct.productPrice / 12600).toFixed(1)})
+                      (~${(chosenProduct.productPrice < 1000
+                        ? chosenProduct.productPrice
+                        : chosenProduct.productPrice / 12850
+                      ).toFixed(1)} USD)
                     </Typography>
                   </Stack>
                 </Box>
@@ -408,35 +512,67 @@ export default function ChosenProduct(props: ChosenProductProps) {
                     </IconButton>
                   </Stack>
 
-                  {/* Add To Cart Primary CTA */}
-                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} style={{ flex: 1, width: "100%" }}>
+                  {/* Add To Cart Button */}
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ flex: 1, width: "100%" }}>
                     <Button
                       fullWidth
-                      variant="contained"
+                      variant="outlined"
                       size="large"
                       startIcon={<ShoppingCartIcon />}
-                      onClick={() =>
+                      onClick={() => {
+                        const normalizedPrice =
+                          chosenProduct.productPrice < 1000
+                            ? chosenProduct.productPrice * 12850
+                            : chosenProduct.productPrice;
                         onAdd({
                           _id: chosenProduct._id,
                           quantity: quantity,
                           name: chosenProduct.productName,
-                          price: chosenProduct.productPrice,
+                          price: normalizedPrice,
                           image: chosenProduct.productImages[0],
-                        })
-                      }
+                        });
+                        sweetTopSuccessAlert("Savatga muvaffaqiyatli qo'shildi!");
+                      }}
                       sx={{
-                        bgcolor: "#2D6A4F",
+                        borderColor: "#2D6A4F",
+                        color: "#2D6A4F",
+                        py: 1.4,
+                        fontWeight: 800,
+                        fontSize: "14px",
+                        borderRadius: "14px",
+                        textTransform: "none",
+                        "&:hover": { bgcolor: "#f0fdf4", borderColor: "#1B4332" },
+                      }}
+                    >
+                      Savatga Qo'shish
+                    </Button>
+                  </motion.div>
+
+                  {/* 1-Click Direct Purchase Button */}
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ flex: 1.2, width: "100%" }}>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      size="large"
+                      startIcon={<BoltIcon sx={{ color: "#fef08a" }} />}
+                      onClick={handleDirectBuy}
+                      sx={{
+                        bgcolor: "#1B4332",
                         color: "#fff",
                         py: 1.4,
                         fontWeight: 800,
-                        fontSize: "15px",
+                        fontSize: "14px",
                         borderRadius: "14px",
                         textTransform: "none",
-                        boxShadow: "0 6px 20px rgba(45,106,79,0.35)",
-                        "&:hover": { bgcolor: "#1B4332" },
+                        boxShadow: "0 6px 20px rgba(27,67,50,0.35)",
+                        "&:hover": { bgcolor: "#0E271D" },
                       }}
                     >
-                      Savatga Qo'shish ({((chosenProduct.productPrice * quantity)).toLocaleString()} UZS)
+                      ⚡ Hozir Sotib Olish ({(
+                        (chosenProduct.productPrice < 1000
+                          ? chosenProduct.productPrice * 12850
+                          : chosenProduct.productPrice) * quantity
+                      ).toLocaleString()} UZS)
                     </Button>
                   </motion.div>
                 </Stack>
@@ -676,6 +812,17 @@ export default function ChosenProduct(props: ChosenProductProps) {
         open={isDoctorOpen}
         onClose={() => setIsDoctorOpen(false)}
         onAdd={onAdd}
+      />
+
+      {/* Standalone Direct Buy Payment Gateway */}
+      <PaymentModal
+        open={directPaymentOpen}
+        order={directPaymentOrder}
+        onClose={() => {
+          setDirectPaymentOpen(false);
+          setDirectPaymentOrder(null);
+        }}
+        onPaymentSuccess={handlePaymentSuccess}
       />
     </Box>
   );

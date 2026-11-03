@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -28,6 +28,11 @@ import SparklesIcon from "@mui/icons-material/AutoAwesome";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import TelegramIcon from "@mui/icons-material/Telegram";
+import VideocamIcon from "@mui/icons-material/Videocam";
+import VideocamOffIcon from "@mui/icons-material/VideocamOff";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import BoltIcon from "@mui/icons-material/Bolt";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { serverApi } from "../../../lib/config";
@@ -35,6 +40,11 @@ import { CartItem } from "../../../lib/types/search";
 import { Product } from "../../../lib/types/product";
 import { ProductSize } from "../../../lib/enums/product.enum";
 import { getSavedLanguage } from "../../../lib/i18n";
+import PaymentModal from "../payment/PaymentModal";
+import OrderService from "../../services/OrdersService";
+import { OrderStatus } from "../../../lib/enums/order.enum";
+import { Order } from "../../../lib/types/order";
+import { sweetTopSuccessAlert, sweetErrorHandling } from "../../../lib/sweetAlert";
 
 interface PlantDoctorModalProps {
   open: boolean;
@@ -273,6 +283,8 @@ export default function PlantDoctorModal({
 }: PlantDoctorModalProps) {
   const lang = getSavedLanguage();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -282,8 +294,188 @@ export default function PlantDoctorModal({
   const [diagnosis, setDiagnosis] = useState<DiagnosisResult | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Live Camera Stream State
+  const [isCameraActive, setIsCameraActive] = useState<boolean>(false);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+
+  // Speech Synthesis State
+  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+
+  // 1-Click Purchase Gateway State
+  const [directPaymentOpen, setDirectPaymentOpen] = useState<boolean>(false);
+  const [directPaymentOrder, setDirectPaymentOrder] = useState<Order | null>(null);
+
+  // Cleanup on close or unmount
+  useEffect(() => {
+    if (!open) {
+      stopCamera();
+      stopSpeech();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  useEffect(() => {
+    return () => {
+      stopCamera();
+      stopSpeech();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const stopCamera = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop());
+      setCameraStream(null);
+    }
+    setIsCameraActive(false);
+  };
+
+  const startCamera = async () => {
+    try {
+      setCameraError(null);
+      stopCamera();
+      setDiagnosis(null);
+      setPreviewUrl(null);
+      setSelectedFile(null);
+      setActiveSampleKey(null);
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: "environment" },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
+        audio: false,
+      });
+
+      setCameraStream(stream);
+      setIsCameraActive(true);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err: any) {
+      console.warn("Camera start error:", err);
+      setCameraError(
+        "Kamera qurilmasiga ulanishda xatolik yuz berdi yoki brauzerda ruxsat berilmadi. Rasm yuklash tugmasidan foydalanishingiz mumkin."
+      );
+    }
+  };
+
+  // Re-attach video stream if videoRef element mounts
+  useEffect(() => {
+    if (isCameraActive && cameraStream && videoRef.current) {
+      videoRef.current.srcObject = cameraStream;
+    }
+  }, [isCameraActive, cameraStream]);
+
+  // Capture frame from video feed and diagnose
+  const captureFromCamera = () => {
+    if (!videoRef.current) return;
+    const video = videoRef.current;
+    const canvas = canvasRef.current || document.createElement("canvas");
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+      setPreviewUrl(dataUrl);
+      stopCamera();
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const file = new File([blob], `leaf_camera_${Date.now()}.jpg`, {
+              type: "image/jpeg",
+            });
+            setSelectedFile(file);
+            handleDiagnoseInternal(file, dataUrl);
+          }
+        },
+        "image/jpeg",
+        0.9
+      );
+    }
+  };
+
+  // Speech Synthesis Narrator
+  const speakAdvice = (target?: DiagnosisResult) => {
+    const data = target || diagnosis;
+    if (!data) return;
+
+    if (!("speechSynthesis" in window)) {
+      sweetTopSuccessAlert("Brauzeringiz ovozli xizmatni qo'llab-quvvatlamaydi.");
+      return;
+    }
+
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const firstMed = data.recommendedProducts[0]?.productName || "tizimli himoya vositasi";
+    const text = `Diqqat! ${data.crop}da ${data.diseaseName} aniqlandi. Ishonchlilik darajasi ${Math.round(
+      data.confidence
+    )} foiz. Tavsiya etilgan dori vositasi: ${firstMed}. ${data.treatment}. Takroriy ishlov berish ${
+      data.nextSprayDays
+    } kundan keyin tavsiya etiladi.`;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "uz-UZ";
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const stopSpeech = () => {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeaking(false);
+  };
+
+  // 1-Click Buy Medicine handler
+  const handleDirectBuyMedicine = async (product: Product) => {
+    try {
+      const orderSvc = new OrderService();
+      const order = await orderSvc.createOrder([
+        {
+          _id: product._id,
+          quantity: 1,
+          name: product.productName,
+          price: product.productPrice,
+          image: product.productImages[0],
+        },
+      ]);
+      setDirectPaymentOrder(order);
+      setDirectPaymentOpen(true);
+    } catch (err) {
+      console.log("Direct buy error in modal:", err);
+      sweetErrorHandling(err).then();
+    }
+  };
+
+  const handleDirectPaymentSuccess = async (orderId: string) => {
+    try {
+      const orderSvc = new OrderService();
+      await orderSvc.updateOrder({ orderId, orderStatus: OrderStatus.PROCESS });
+      sweetTopSuccessAlert("To'lov muvaffaqiyatli qabul qilindi!");
+    } catch (err) {
+      sweetErrorHandling(err).then();
+    }
+  };
+
   // Trigger Mock Sample (Pomidor, Bodring, Balgar)
   const triggerMockSample = (sampleKey: "tomato" | "cucumber" | "pepper") => {
+    stopCamera();
+    stopSpeech();
     setActiveSampleKey(sampleKey);
     setCropHint(sampleKey);
     setSelectedFile(null);
@@ -297,110 +489,120 @@ export default function PlantDoctorModal({
     setTimeout(() => {
       setDiagnosis(sample);
       setIsAnalyzing(false);
+      speakAdvice(sample);
     }, 1300);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      stopCamera();
+      stopSpeech();
       setSelectedFile(file);
       setActiveSampleKey(null);
-      setPreviewUrl(URL.createObjectURL(file));
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
       setDiagnosis(null);
       setErrorMsg(null);
+      handleDiagnoseInternal(file, url);
+    }
+  };
+
+  const handleDiagnoseInternal = async (fileToScan: File, preview: string) => {
+    setIsAnalyzing(true);
+    setErrorMsg(null);
+
+    const formData = new FormData();
+    formData.append("image", fileToScan);
+    formData.append("crop", cropHint);
+    formData.append("lang", lang);
+
+    try {
+      let res;
+      try {
+        res = await axios.post(
+          `http://localhost:8000/api/v1/diagnose?crop_hint=${cropHint}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+            timeout: 3000,
+          }
+        );
+      } catch (fastApiErr) {
+        res = await axios.post(`${serverApi}/ai/diagnose`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          timeout: 3000,
+        });
+      }
+
+      if (res && res.data) {
+        const d = res.data;
+        const formatted: DiagnosisResult = {
+          crop: d.crop || "Pomidor (Tomato)",
+          diseaseName: d.disease_name || d.diseaseName || "Aniqlangan patologiya",
+          pathogen: d.pathogen || "Phytophthora infestans",
+          confidence: d.confidence || 98.5,
+          stage: d.stage || "2-bosqich nekroz",
+          symptoms: d.symptoms || "Barg to'qimasida nekrotik dog'lar",
+          treatment: Array.isArray(d.treatments)
+            ? d.treatments.join(". ")
+            : d.treatment || "Tizimli fungitsid bilan ishlov bering",
+          activeIngredients: d.activeIngredients || ["Mefenoksam", "Mankotseb", "Mis xloroksid"],
+          nextSprayDays: d.nextSprayDays || 7,
+          imageUrl: preview,
+          tempAdvice: d.temp_advice || d.tempAdvice || "+24°C...+26°C",
+          humidityAdvice: d.humidity_advice || d.humidityAdvice || "60% - 65%",
+          disclaimer:
+            "Tashxis AgroOlam Vision AI 4.1 (agroolam.tech) neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
+          recommendedProducts: Array.isArray(d.recommended_medicines)
+            ? d.recommended_medicines.map((m: any, idx: number) => ({
+                _id: `rec_med_${m.id || idx}`,
+                productCollection: "MEDICINE" as any,
+                productStatus: "PROCESS" as any,
+                productName: `${m.name} (${m.brand})`,
+                productPrice: m.priceUzsEstimate || 120000,
+                productLeftCount: 45,
+                productSize: ProductSize.NORMAL,
+                productVolume: 0.5,
+                productDesc: m.description || "O'simlik himoya vositasi",
+                productImages: [
+                  "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=400&q=80",
+                ],
+                productViews: 500,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              }))
+            : MOCK_DIAGNOSIS_SAMPLES.tomato.recommendedProducts,
+        };
+        setDiagnosis(formatted);
+        speakAdvice(formatted);
+      }
+    } catch (err: any) {
+      console.warn("Backend AI unreachable, using local AI matrix:", err);
+      const fallbackKey = cropHint in MOCK_DIAGNOSIS_SAMPLES ? cropHint : "tomato";
+      setTimeout(() => {
+        const fallbackRes = MOCK_DIAGNOSIS_SAMPLES[fallbackKey];
+        setDiagnosis(fallbackRes);
+        speakAdvice(fallbackRes);
+      }, 1200);
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 
   const handleDiagnose = async () => {
-    if (!selectedFile && !previewUrl) {
-      setErrorMsg("Iltimos, avval barg rasmini tanlang yoki namunani bosing.");
-      return;
-    }
-    setIsAnalyzing(true);
-    setErrorMsg(null);
-
-    // If using custom uploaded file
-    if (selectedFile) {
-      const formData = new FormData();
-      formData.append("image", selectedFile);
-      formData.append("crop", cropHint);
-      formData.append("lang", lang);
-
-      try {
-        let res;
-        try {
-          // Attempt FastAPI microservice on port 8000
-          res = await axios.post(
-            `http://localhost:8000/api/v1/diagnose?crop_hint=${cropHint}`,
-            formData,
-            {
-              headers: { "Content-Type": "multipart/form-data" },
-              timeout: 3000,
-            }
-          );
-        } catch (fastApiErr) {
-          // Fallback to serverApi
-          res = await axios.post(`${serverApi}/ai/diagnose`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-            timeout: 3000,
-          });
-        }
-
-        if (res && res.data) {
-          const d = res.data;
-          // Format response
-          const formatted: DiagnosisResult = {
-            crop: d.crop || "Pomidor (Tomato)",
-            diseaseName: d.disease_name || d.diseaseName || "Aniqlangan patologiya",
-            pathogen: d.pathogen || "Phytophthora infestans",
-            confidence: d.confidence || 98.5,
-            stage: d.stage || "2-bosqich nekroz",
-            symptoms: d.symptoms || "Barg to'qimasida nekrotik dog'lar",
-            treatment: Array.isArray(d.treatments) ? d.treatments.join(". ") : (d.treatment || "Tizimli fungitsid bilan ishlov bering"),
-            activeIngredients: d.activeIngredients || ["Mefenoksam", "Mankotseb", "Mis xloroksid"],
-            nextSprayDays: d.nextSprayDays || 7,
-            imageUrl: previewUrl || "https://images.unsplash.com/photo-1592417817098-8f3d6910985c?auto=format&fit=crop&w=800&q=80",
-            tempAdvice: d.temp_advice || d.tempAdvice || "+24°C...+26°C",
-            humidityAdvice: d.humidity_advice || d.humidityAdvice || "60% - 65%",
-            disclaimer: "Tashxis AgroOlam Vision AI 4.1 (agroolam.tech) neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
-            recommendedProducts: Array.isArray(d.recommended_medicines)
-              ? d.recommended_medicines.map((m: any, idx: number) => ({
-                  _id: `rec_med_${m.id || idx}`,
-                  productCollection: "MEDICINE" as any,
-                  productStatus: "PROCESS" as any,
-                  productName: `${m.name} (${m.brand})`,
-                  productPrice: m.priceUzsEstimate || 120000,
-                  productLeftCount: 45,
-                  productSize: ProductSize.NORMAL,
-                  productVolume: 0.5,
-                  productDesc: m.description || "O'simlik himoya vositasi",
-                  productImages: [
-                    "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=400&q=80",
-                  ],
-                  productViews: 500,
-                  createdAt: new Date(),
-                  updatedAt: new Date(),
-                }))
-              : MOCK_DIAGNOSIS_SAMPLES.tomato.recommendedProducts,
-          };
-          setDiagnosis(formatted);
-        }
-      } catch (err: any) {
-        // Intelligent fallback to high-quality local diagnosis matching cropHint
-        console.warn("Backend AI unreachable, using local AI matrix:", err);
-        const fallbackKey = cropHint in MOCK_DIAGNOSIS_SAMPLES ? cropHint : "tomato";
-        setTimeout(() => {
-          setDiagnosis(MOCK_DIAGNOSIS_SAMPLES[fallbackKey]);
-        }, 1200);
-      } finally {
-        setIsAnalyzing(false);
-      }
+    if (selectedFile && previewUrl) {
+      handleDiagnoseInternal(selectedFile, previewUrl);
     } else if (activeSampleKey) {
       triggerMockSample(activeSampleKey as any);
+    } else {
+      setErrorMsg("Iltimos, avval barg rasmini tanlang, kamerani yoqing yoki namunani bosing.");
     }
   };
 
   const handleReset = () => {
+    stopCamera();
+    stopSpeech();
     setSelectedFile(null);
     setPreviewUrl(null);
     setActiveSampleKey(null);
@@ -609,6 +811,8 @@ export default function PlantDoctorModal({
               </Stack>
             </Box>
 
+            {cameraError && <Alert severity="warning">{cameraError}</Alert>}
+
             {/* CAMERA & FILE UPLOAD ACTION ROW */}
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="center" justifyContent="space-between">
               <FormControl size="small" sx={{ minWidth: 200, width: { xs: "100%", sm: "auto" } }}>
@@ -637,31 +841,190 @@ export default function PlantDoctorModal({
               />
 
               <Stack direction="row" spacing={1.5} sx={{ width: { xs: "100%", sm: "auto" } }}>
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} style={{ width: "100%" }}>
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} style={{ flex: 1 }}>
                   <Button
                     fullWidth
-                    variant="contained"
-                    startIcon={<PhotoCameraIcon />}
-                    onClick={() => fileInputRef.current?.click()}
+                    variant={isCameraActive ? "outlined" : "contained"}
+                    startIcon={isCameraActive ? <VideocamOffIcon /> : <VideocamIcon />}
+                    onClick={isCameraActive ? stopCamera : startCamera}
                     sx={{
-                      bgcolor: "#2D6A4F",
-                      "&:hover": { bgcolor: "#1B4332" },
+                      bgcolor: isCameraActive ? "transparent" : "#10b981",
+                      color: isCameraActive ? "#ef4444" : "#ffffff",
+                      borderColor: isCameraActive ? "#ef4444" : "transparent",
+                      "&:hover": { bgcolor: isCameraActive ? "#fee2e2" : "#059669" },
                       py: 1.2,
-                      px: 3,
-                      fontWeight: 700,
+                      px: 2.5,
+                      fontWeight: 800,
                       borderRadius: "14px",
-                      boxShadow: "0 4px 14px rgba(45,106,79,0.3)",
+                      boxShadow: isCameraActive ? "none" : "0 4px 14px rgba(16,185,129,0.35)",
                       textTransform: "none",
                     }}
                   >
-                    📷 O'z Rasmingizni Yuklash
+                    {isCameraActive ? "Kamerani To'xtatish" : "🎥 Jonli Kamera (Video)"}
+                  </Button>
+                </motion.div>
+
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} style={{ flex: 1 }}>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    startIcon={<PhotoCameraIcon />}
+                    onClick={() => {
+                      stopCamera();
+                      fileInputRef.current?.click();
+                    }}
+                    sx={{
+                      borderColor: "#2D6A4F",
+                      color: "#2D6A4F",
+                      "&:hover": { bgcolor: "#f0fdf4" },
+                      py: 1.2,
+                      px: 2.5,
+                      fontWeight: 700,
+                      borderRadius: "14px",
+                      textTransform: "none",
+                    }}
+                  >
+                    📁 Rasm Yuklash
                   </Button>
                 </motion.div>
               </Stack>
             </Stack>
 
-            {/* PREVIEW CONTAINER WITH LASER SCANNING AND HUD */}
-            {previewUrl ? (
+            {/* LIVE WEBCAM / PREVIEW CONTAINER WITH LASER SCANNING AND HUD */}
+            {isCameraActive ? (
+              <Box
+                sx={{
+                  position: "relative",
+                  borderRadius: "20px",
+                  overflow: "hidden",
+                  border: "2px solid #10b981",
+                  bgcolor: "#000",
+                  height: { xs: "320px", sm: "400px" },
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+
+                {/* Laser Sweep Line */}
+                <div className="laser-scanner-line" />
+
+                <Box
+                  className="hud-grid-overlay"
+                  sx={{
+                    position: "absolute",
+                    inset: 0,
+                    p: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box
+                      sx={{
+                        bgcolor: "rgba(0,0,0,0.75)",
+                        color: "#4ade80",
+                        fontFamily: "monospace",
+                        fontSize: "11px",
+                        px: 1.5,
+                        py: 0.5,
+                        borderRadius: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      <span style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#ef4444" }} />
+                      <span>LIVE_CAMERA_VISION: ACTIVE</span>
+                    </Box>
+                    <Box
+                      sx={{
+                        bgcolor: "rgba(0,0,0,0.75)",
+                        color: "#fbbf24",
+                        fontFamily: "monospace",
+                        fontSize: "11px",
+                        px: 1.5,
+                        py: 0.5,
+                        borderRadius: "8px",
+                      }}
+                    >
+                      BARGNI MARKAZGA QARATING
+                    </Box>
+                  </Stack>
+
+                  {/* Targeting Reticle */}
+                  <Box
+                    sx={{
+                      mx: "auto",
+                      border: "2px dashed #4ade80",
+                      borderRadius: "20px",
+                      p: 2.5,
+                      bgcolor: "rgba(0,0,0,0.35)",
+                      backdropFilter: "blur(2px)",
+                      color: "#86efac",
+                      fontFamily: "monospace",
+                      fontSize: "12px",
+                      textAlign: "center",
+                      maxWidth: "290px",
+                    }}
+                  >
+                    <div>[ AI PATHO-SCANNER ACTIVE ]</div>
+                    <div style={{ color: "#fff", fontSize: "11px", marginTop: 4 }}>
+                      Bargni doira ichiga olib, tugmani bosing
+                    </div>
+                  </Box>
+
+                  <Box sx={{ textAlign: "center", pointerEvents: "auto", pb: 1 }}>
+                    <Stack direction="row" spacing={1.5} justifyContent="center">
+                      <Button
+                        variant="contained"
+                        size="large"
+                        startIcon={<PhotoCameraIcon sx={{ fontSize: 22 }} />}
+                        onClick={captureFromCamera}
+                        sx={{
+                          bgcolor: "#10b981",
+                          color: "#ffffff",
+                          fontWeight: 900,
+                          fontSize: "14px",
+                          px: 3.5,
+                          py: 1.2,
+                          borderRadius: "14px",
+                          boxShadow: "0 6px 25px rgba(16,185,129,0.5)",
+                          textTransform: "none",
+                          "&:hover": { bgcolor: "#059669" },
+                        }}
+                      >
+                        ⚡ Hozir Suratga Olish & Tahlil
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        onClick={stopCamera}
+                        sx={{
+                          color: "#ffffff",
+                          borderColor: "rgba(255,255,255,0.7)",
+                          bgcolor: "rgba(0,0,0,0.6)",
+                          borderRadius: "14px",
+                          textTransform: "none",
+                          fontWeight: 700,
+                          "&:hover": { bgcolor: "rgba(0,0,0,0.9)" },
+                        }}
+                      >
+                        Yopish
+                      </Button>
+                    </Stack>
+                  </Box>
+                </Box>
+              </Box>
+            ) : previewUrl ? (
               <Box
                 sx={{
                   position: "relative",
@@ -846,6 +1209,59 @@ export default function PlantDoctorModal({
                   </Stack>
                 </Box>
 
+                {/* AUDIO VOICE GUIDANCE BANNER */}
+                <Box
+                  sx={{
+                    p: 2,
+                    bgcolor: isSpeaking ? "#ecfdf5" : "#f0fdf4",
+                    borderRadius: "16px",
+                    border: isSpeaking ? "2px solid #10b981" : "1.5px solid #86efac",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    boxShadow: isSpeaking ? "0 4px 20px rgba(16,185,129,0.25)" : "0 2px 8px rgba(0,0,0,0.03)",
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  <Stack direction="row" spacing={1.5} alignItems="center">
+                    <IconButton
+                      onClick={() => speakAdvice()}
+                      sx={{
+                        bgcolor: isSpeaking ? "#ef4444" : "#10b981",
+                        color: "#fff",
+                        boxShadow: "0 2px 10px rgba(16,185,129,0.3)",
+                        "&:hover": { bgcolor: isSpeaking ? "#dc2626" : "#059669" },
+                      }}
+                    >
+                      {isSpeaking ? <VolumeOffIcon /> : <VolumeUpIcon />}
+                    </IconButton>
+                    <div>
+                      <Typography variant="subtitle2" fontWeight={800} color="#065f46">
+                        {isSpeaking ? "🔊 AI Agronom Ovozli Maslahati Tinglanmoqda..." : "🔊 Ovozli Maslahatni Tinglash"}
+                      </Typography>
+                      <Typography variant="caption" color="#166534">
+                        AI aniqlangan kasallik va zarur dorilar miqdorini o'zbek tilida ovoz chiqarib o'qib beradi
+                      </Typography>
+                    </div>
+                  </Stack>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    onClick={() => speakAdvice()}
+                    sx={{
+                      bgcolor: isSpeaking ? "#ef4444" : "#059669",
+                      color: "#fff",
+                      textTransform: "none",
+                      fontWeight: 800,
+                      borderRadius: "10px",
+                      px: 2,
+                      "&:hover": { bgcolor: isSpeaking ? "#dc2626" : "#047857" },
+                    }}
+                  >
+                    {isSpeaking ? "To'xtatish" : "Eshitish"}
+                  </Button>
+                </Box>
+
                 {/* Stage & Symptoms */}
                 <Box sx={{ p: 2, bgcolor: "#ffffff", borderRadius: "14px", border: "1px solid #e2e8f0" }}>
                   <Typography variant="subtitle2" fontWeight={800} color="#1B4332">
@@ -975,34 +1391,57 @@ export default function PlantDoctorModal({
                           </div>
                         </Stack>
 
-                        <Stack direction="row" spacing={2} alignItems="center">
-                          <Typography variant="subtitle1" fontWeight={800} color="#2D6A4F">
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          <Typography variant="subtitle1" fontWeight={800} color="#2D6A4F" sx={{ mr: 0.5 }}>
                             {prod.productPrice.toLocaleString()} UZS
                           </Typography>
                           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                             <Button
                               size="small"
-                              variant="contained"
-                              startIcon={<ShoppingCartIcon />}
-                              onClick={() =>
+                              variant="outlined"
+                              startIcon={<ShoppingCartIcon sx={{ fontSize: 15 }} />}
+                              onClick={() => {
                                 onAdd({
                                   _id: prod._id,
                                   quantity: 1,
                                   name: prod.productName,
                                   price: prod.productPrice,
                                   image: prod.productImages[0],
-                                })
-                              }
+                                });
+                                sweetTopSuccessAlert("Savatga qo'shildi!");
+                              }}
                               sx={{
-                                bgcolor: "#2D6A4F",
-                                "&:hover": { bgcolor: "#1B4332" },
+                                borderColor: "#2D6A4F",
+                                color: "#2D6A4F",
+                                "&:hover": { bgcolor: "#f0fdf4" },
                                 textTransform: "none",
                                 fontWeight: 700,
                                 borderRadius: "10px",
-                                px: 2,
+                                px: 1.5,
                               }}
                             >
                               Savatga
+                            </Button>
+                          </motion.div>
+
+                          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            <Button
+                              size="small"
+                              variant="contained"
+                              startIcon={<BoltIcon sx={{ color: "#fef08a", fontSize: 16 }} />}
+                              onClick={() => handleDirectBuyMedicine(prod)}
+                              sx={{
+                                bgcolor: "#1B4332",
+                                color: "#fff",
+                                "&:hover": { bgcolor: "#0E271D" },
+                                textTransform: "none",
+                                fontWeight: 800,
+                                borderRadius: "10px",
+                                px: 1.5,
+                                boxShadow: "0 2px 8px rgba(27,67,50,0.3)",
+                              }}
+                            >
+                              Xarid
                             </Button>
                           </motion.div>
                         </Stack>
@@ -1062,6 +1501,17 @@ export default function PlantDoctorModal({
           </Button>
         )}
       </DialogActions>
+
+      {/* Standalone Direct Buy Payment Gateway */}
+      <PaymentModal
+        open={directPaymentOpen}
+        order={directPaymentOrder}
+        onClose={() => {
+          setDirectPaymentOpen(false);
+          setDirectPaymentOrder(null);
+        }}
+        onPaymentSuccess={handleDirectPaymentSuccess}
+      />
     </Dialog>
   );
 }

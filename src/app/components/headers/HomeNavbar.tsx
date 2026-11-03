@@ -282,6 +282,29 @@ export default function HomeNavbar(props: HomeNavbarProps) {
 
             {/* 3. Actions: Plant Doctor Button, Basket, Consultation, Language, Auth */}
             <Stack direction="row" className="nav-actions-group" spacing={1.5} alignItems="center">
+              {/* Andijan Real-time Agro Weather Chip */}
+              <NavLink to="/news" style={{ textDecoration: "none" }}>
+                <Box
+                  sx={{
+                    display: { xs: "none", sm: "flex" },
+                    alignItems: "center",
+                    gap: 0.6,
+                    bgcolor: "rgba(16, 185, 129, 0.12)",
+                    border: "1px solid rgba(16, 185, 129, 0.25)",
+                    borderRadius: "20px",
+                    px: 1.5,
+                    py: 0.6,
+                    transition: "all 0.2s ease",
+                    "&:hover": { bgcolor: "rgba(16, 185, 129, 0.22)" },
+                  }}
+                >
+                  <span style={{ fontSize: "14px" }}>🌤️</span>
+                  <Typography sx={{ fontWeight: 800, fontSize: "11px", color: "#1B4332", whiteSpace: "nowrap" }}>
+                    Andijon: +19°C
+                  </Typography>
+                </Box>
+              </NavLink>
+
               {/* Plant Doctor AI Quick Trigger */}
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button

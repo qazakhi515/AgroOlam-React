@@ -30,6 +30,9 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ClearIcon from "@mui/icons-material/Clear";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import VerifiedIcon from "@mui/icons-material/Verified";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import BoltIcon from "@mui/icons-material/Bolt";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "@reduxjs/toolkit";
@@ -42,8 +45,13 @@ import ProductService from "../../services/ProductService";
 import { ProductCollection, ProductSize, ProductStatus } from "../../../lib/enums/product.enum";
 import { serverApi } from "../../../lib/config";
 import { CartItem } from "../../../lib/types/search";
-import { getSavedLanguage, translations } from "../../../lib/i18n";
 import PlantDoctorModal from "../../components/ai/PlantDoctorModal";
+import WishlistService from "../../services/WishlistService";
+import PaymentModal from "../../components/payment/PaymentModal";
+import OrderService from "../../services/OrdersService";
+import { OrderStatus } from "../../../lib/enums/order.enum";
+import { Order } from "../../../lib/types/order";
+import { sweetTopSuccessAlert, sweetErrorHandling } from "../../../lib/sweetAlert";
 
 const actionDispatch = (dispatch: Dispatch) => ({
   setProducts: (data: Product[]) => dispatch(setProducts(data)),
@@ -57,260 +65,556 @@ interface ProductsProps {
   onAdd: (item: CartItem) => void;
 }
 
-// Certified Fallback Agro Catalog (16 Pro Agro Items for Uzbekistan Greenhouses)
-const CERTIFIED_AGRO_PRODUCTS: Product[] = [
+// Custom SVG Greenhouse Logo for "Issiqxona Salafanlari"
+export const GreenhouseLogo = () => (
+  <Box
+    component="span"
+    sx={{
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      width: 20,
+      height: 20,
+    }}
+  >
+    <svg
+      width="19"
+      height="19"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M3 21V11C3 6.5 7 3 12 3C17 3 21 6.5 21 11V21H3Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M12 3V21" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M3 12H21" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M7 21V12" stroke="currentColor" strokeWidth="1.2" />
+      <path d="M17 21V12" stroke="currentColor" strokeWidth="1.2" />
+      <path
+        d="M10 18C10 16 11 15 12 15C13 15 14 16 14 18"
+        stroke="#10b981"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      <circle cx="12" cy="14" r="1.3" fill="#10b981" />
+    </svg>
+  </Box>
+);
+
+// Certified Official Agro Catalog (Real products with photos from desktop/agroplantrasm)
+export const CERTIFIED_AGRO_PRODUCTS: Product[] = [
+  // ===============================================================
+  // 1. ISSIQXONA SALAFANLARI (ProductCollection.OTHER)
+  // ===============================================================
   {
-    _id: "agro_clorofill_tomato_1",
-    productCollection: ProductCollection.SEEDS,
-    productStatus: ProductStatus.PROCESS,
-    productName: "Clorofill F1 Gibrid Pomidor Urug'i (1,000 dona)",
-    productPrice: 420000,
-    productLeftCount: 65,
-    productSize: ProductSize.NORMAL,
-    productVolume: 0.1,
-    productDesc: "Gollandiya seleksiyasi. Fitoftora va mozaika virusiga chidamli, hosildorligi tupidan 14-16 kg.",
-    productImages: [
-      "https://images.unsplash.com/photo-1592417817098-8f3d6910985c?auto=format&fit=crop&w=600&q=80",
-    ],
-    productViews: 1420,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: "agro_severin_cucumber_2",
-    productCollection: ProductCollection.SEEDS,
-    productStatus: ProductStatus.PROCESS,
-    productName: "Severin F1 Partenokarpik Bodring Urug'i (Enza Zaden, 500 dona)",
-    productPrice: 390000,
-    productLeftCount: 48,
-    productSize: ProductSize.NORMAL,
-    productVolume: 0.05,
-    productDesc: "Erta bahorgi va kechki issiqxonalar uchun eng ko'p ekiladigan serhosil gibrid.",
-    productImages: [
-      "https://images.unsplash.com/photo-1449339854873-750e6913301b?auto=format&fit=crop&w=600&q=80",
-    ],
-    productViews: 980,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: "agro_seminis_pepper_3",
-    productCollection: ProductCollection.SEEDS,
-    productStatus: ProductStatus.PROCESS,
-    productName: "Seminis Balgar Qalampiri F1 (500 dona)",
-    productPrice: 310000,
-    productLeftCount: 30,
-    productSize: ProductSize.NORMAL,
-    productVolume: 0.05,
-    productDesc: "To'q yashil va qizil go'shtdor mevali, bakterial dog'lanishga chidamli gibrid.",
-    productImages: [
-      "https://images.unsplash.com/photo-1563565945633-8a70340329f0?auto=format&fit=crop&w=600&q=80",
-    ],
-    productViews: 810,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: "agro_film_150mkr_4",
+    _id: "agro_salafan_4m",
     productCollection: ProductCollection.OTHER,
     productStatus: ProductStatus.PROCESS,
-    productName: "3 Qavatli Termo-Diffuz Salafan (150 mkr, 12m x 50m)",
+    productName: "4 Metrlik 3-Qavatli Termo-Diffuz Salafan (120 mkr, 4m x 100m)",
+    productPrice: 1850000,
+    productLeftCount: 25,
+    productSize: ProductSize.NORMAL,
+    productVolume: 45,
+    productDesc: "3 qavatli termo-diffuz salafan. Kichik va o'rta issiqxonalar uchun qulay, quyosh nurlarini 85% teng tarqatadi va qora sovuqdan asraydi.",
+    productImages: ["/img/salafan/Salafan4M.jpeg"],
+    productViews: 1840,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_salafan_6m",
+    productCollection: ProductCollection.OTHER,
+    productStatus: ProductStatus.PROCESS,
+    productName: "6 Metrlik Ko'p Yillik Antikaplya Issiqxona Plyonkasi (150 mkr, 6m x 100m)",
+    productPrice: 2650000,
+    productLeftCount: 30,
+    productSize: ProductSize.LARGE,
+    productVolume: 60,
+    productDesc: "Antikondensat va antitumanga qarshi qoplamali. Tomchilashni oldini olib o'simlik barglarini kuyishdan va zamburug'dan saqlaydi.",
+    productImages: ["/img/salafan/Salafan6M.jpg"],
+    productViews: 2420,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_salafan_termo_3m",
+    productCollection: ProductCollection.OTHER,
+    productStatus: ProductStatus.PROCESS,
+    productName: "3 Metrlik Termos Tizimi Ichki Parda Salafani (80 mkr, 3m x 100m)",
+    productPrice: 950000,
+    productLeftCount: 40,
+    productSize: ProductSize.NORMAL,
+    productVolume: 25,
+    productDesc: "Issiqxona ichiga ikkinchi qatlam termos tizimi uchun maxsus yengil termo-plyonka. Sovuqda haroratni +4...+6°C oshiradi.",
+    productImages: ["/img/salafan/salafanTermo3m.webp"],
+    productViews: 1620,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_salafan_12m",
+    productCollection: ProductCollection.OTHER,
+    productStatus: ProductStatus.PROCESS,
+    productName: "12 Metrlik Professional Termo Issiqxona Plyonkasi (180 mkr, 12m x 50m)",
     productPrice: 3450000,
     productLeftCount: 18,
     productSize: ProductSize.LARGE,
     productVolume: 90,
-    productDesc: "UV 5 yillik kafolat, EVA antikondensat va termal qatlamli yuqori chidamli plyonka.",
-    productImages: [
-      "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=600&q=80",
-    ],
-    productViews: 2310,
+    productDesc: "EVA va UV 5 yillik kafolatli plyonka. Qattiq shamol, qor bosimi va qora sovuqqa o'ta bardoshli professional salafan.",
+    productImages: ["/img/salafan/salafan12M.webp"],
+    productViews: 3100,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    _id: "agro_film_200mkr_5",
+    _id: "agro_salafan_15m",
     productCollection: ProductCollection.OTHER,
     productStatus: ProductStatus.PROCESS,
-    productName: "200 mkr UV-Stabilizatsiyali Salafan (14m x 50m)",
-    productPrice: 4200000,
+    productName: "15 Metrlik Sanoat Issiqxona Plyonkasi (200 mkr, 15m x 50m)",
+    productPrice: 4500000,
     productLeftCount: 12,
     productSize: ProductSize.LARGE,
-    productVolume: 120,
-    productDesc: "Katta sanoat issiqxonalari uchun qor va shamol bosimiga eng chidamli salafan.",
-    productImages: [
-      "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=600&q=80",
-    ],
-    productViews: 1150,
+    productVolume: 130,
+    productDesc: "Zamonaviy baland konstruksiyali sanoat issiqxonalari uchun 3 qavatli kopolimer salafan. Maksimal yorug'lik o'tkazuvchanlik.",
+    productImages: ["/img/salafan/Salafan15M.webp"],
+    productViews: 1950,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+
+  // ===============================================================
+  // 2. DORI VA O'G'ITLAR (ProductCollection.FERTILIZERS)
+  // ===============================================================
+  {
+    _id: "agro_miravis_duo",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Miravis Duo Tizimli Fungitsid (Syngenta, 1 L)",
+    productPrice: 420000,
+    productLeftCount: 45,
+    productSize: ProductSize.NORMAL,
+    productVolume: 1.0,
+    productDesc: "ADEPIDYN innovatsion molekulasi asosidagi eng yangi fungitsid. Alternarioz, kladosporioz va zangga qarshi jahon etaloni.",
+    productImages: ["/img/products/Syngenta-Miravis-Duo.webp"],
+    productViews: 3410,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    _id: "agro_ridomil_gold_6",
+    _id: "agro_ridomil_gold_real",
     productCollection: ProductCollection.FERTILIZERS,
     productStatus: ProductStatus.PROCESS,
     productName: "Ridomil Gold MZ 68 WG (Syngenta, 1 kg)",
-    productPrice: 145000,
-    productLeftCount: 92,
+    productPrice: 165000,
+    productLeftCount: 88,
     productSize: ProductSize.NORMAL,
     productVolume: 1.0,
-    productDesc: "Fitoftora, alternarioz va peronosporozga qarshi tizimli jahon andozasidagi fungitsid.",
-    productImages: [
-      "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=600&q=80",
-    ],
+    productDesc: "Fitoftora, peronosporoz va soxta un-shudringga qarshi eng kuchli tizimli dori vositasi.",
+    productImages: ["/img/products/ridomilgold.jpg"],
+    productViews: 4120,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_score_real",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Skor 250 EC Sistemali Fungitsid (Syngenta, 250 ml)",
+    productPrice: 110000,
+    productLeftCount: 60,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.25,
+    productDesc: "Sabzavot va mevalardagi qo'tir, dog'lanish va un-shudringni 24 soatda bartaraf etuvchi preparat.",
+    productImages: ["/img/products/score.webp"],
+    productViews: 2890,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_vertimec_real",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Vertimek 018 EC Insektoakaritsid (Syngenta, 250 ml)",
+    productPrice: 195000,
+    productLeftCount: 52,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.25,
+    productDesc: "Issiqxonadagi o'rgimchakkana, trips va barg miner pashshalariga qarshi chuqur singuvchi original preparat.",
+    productImages: ["/img/products/vertimec.webp"],
     productViews: 3200,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    _id: "agro_infinito_bayer_7",
+    _id: "agro_infinito_real",
     productCollection: ProductCollection.FERTILIZERS,
     productStatus: ProductStatus.PROCESS,
     productName: "Infinito 687.5 SC Fitoftoraga Qarshi (Bayer, 1 L)",
-    productPrice: 180000,
-    productLeftCount: 54,
-    productSize: ProductSize.NORMAL,
-    productVolume: 1.0,
-    productDesc: "Kartoshka va pomidor fitoftoroziga qarshi translaminar uzoq himoyali nemis preparati.",
-    productImages: [
-      "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?auto=format&fit=crop&w=600&q=80",
-    ],
-    productViews: 1740,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: "agro_topas_syngenta_8",
-    productCollection: ProductCollection.FERTILIZERS,
-    productStatus: ProductStatus.PROCESS,
-    productName: "Topas 100 EC Un-Shudring Fungitsidi (Syngenta, 1 L)",
-    productPrice: 210000,
+    productPrice: 185000,
     productLeftCount: 40,
     productSize: ProductSize.NORMAL,
     productVolume: 1.0,
-    productDesc: "Bodring va sabzavotlar un-shudringiga qarshi 24 soat ichida davolovchi etalon vosita.",
-    productImages: [
-      "https://images.unsplash.com/photo-1516253593875-bd7ba052fbc5?auto=format&fit=crop&w=600&q=80",
-    ],
-    productViews: 1890,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: "agro_entofito_super_9",
-    productCollection: ProductCollection.FERTILIZERS,
-    productStatus: ProductStatus.PROCESS,
-    productName: "Ento-Fito Super Mis Asosli Fungitsid (IFODA Agro, 1 kg)",
-    productPrice: 85000,
-    productLeftCount: 110,
-    productSize: ProductSize.NORMAL,
-    productVolume: 1.0,
-    productDesc: "Bakterial dog'lanish va kuymaga qarshi arzon, mahalliy sertifikatlangan himoya vositasi.",
-    productImages: [
-      "https://images.unsplash.com/photo-1516253593875-bd7ba052fbc5?auto=format&fit=crop&w=600&q=80",
-    ],
-    productViews: 2100,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: "agro_fitosporin_bio_10",
-    productCollection: ProductCollection.FERTILIZERS,
-    productStatus: ProductStatus.PROCESS,
-    productName: "Fitosporin-M Organik Bio-Fungitsid (1 L)",
-    productPrice: 40000,
-    productLeftCount: 140,
-    productSize: ProductSize.NORMAL,
-    productVolume: 1.0,
-    productDesc: "100% tabiiy va ekologik toza biologik himoya. Hosil uzish kunida ham purkash mumkin.",
-    productImages: [
-      "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=600&q=80",
-    ],
+    productDesc: "Bayer original nemis preparati. Pomidor va kartoshka fitoftorasiga qarshi uzoq muddatli translaminar himoya.",
+    productImages: ["/img/products/bayerdori.jpg"],
     productViews: 2450,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    _id: "agro_drip_tape_11",
-    productCollection: ProductCollection.TOOLS,
-    productStatus: ProductStatus.PROCESS,
-    productName: "Avtomatik Tomchilatib Sug'orish Lenta (1000m, 20cm oraliq)",
-    productPrice: 680000,
-    productLeftCount: 35,
-    productSize: ProductSize.LARGE,
-    productVolume: 25,
-    productDesc: "Labirintli tiqilmaydigan tomizgichlar. Suv va o'g'it sarfini 60% gacha tejaydi.",
-    productImages: [
-      "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?auto=format&fit=crop&w=600&q=80",
-    ],
-    productViews: 1650,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: "agro_smart_sensor_12",
-    productCollection: ProductCollection.TOOLS,
-    productStatus: ProductStatus.PROCESS,
-    productName: "Smart IoT Issiqxona Termo-Gidrometr Sensori (Wi-Fi)",
-    productPrice: 450000,
-    productLeftCount: 22,
-    productSize: ProductSize.NORMAL,
-    productVolume: 0.3,
-    productDesc: "Harorat va namlikni avtomatik nazorat qiladi, Telegramga xavf bildirishnomalarini yuboradi.",
-    productImages: [
-      "https://images.unsplash.com/photo-1558441719-74a622a55856?auto=format&fit=crop&w=600&q=80",
-    ],
-    productViews: 1320,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: "agro_npk_fertilizer_13",
+    _id: "agro_kavach_real",
     productCollection: ProductCollection.FERTILIZERS,
     productStatus: ProductStatus.PROCESS,
-    productName: "Mineral NPK 20-20-20+TE Kompleks O'g'it (Yara, 25 kg)",
-    productPrice: 520000,
-    productLeftCount: 38,
+    productName: "Kavach Kontaktli Fungitsid (Syngenta, 1 L)",
+    productPrice: 135000,
+    productLeftCount: 50,
+    productSize: ProductSize.NORMAL,
+    productVolume: 1.0,
+    productDesc: "Bakterial dog'lanish va antraknozga qarshi yuqori chidamli himoya qatlami hosil qiluvchi dori.",
+    productImages: ["/img/products/kavach.avif"],
+    productViews: 1780,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_plenium_real",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Plenum 50 WG Oqqanot va Shiraga Qarshi (Syngenta, 500 gr)",
+    productPrice: 340000,
+    productLeftCount: 35,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.5,
+    productDesc: "Oqqanot va shira lichinkalarining oziqlanishini zudlik bilan to'xtatuvchi tizimli insektitsid.",
+    productImages: ["/img/products/plenium.jpg"],
+    productViews: 2190,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_curacron_real",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Curacron 500 EC Kompleks Insektitsid (1 L)",
+    productPrice: 160000,
+    productLeftCount: 48,
+    productSize: ProductSize.NORMAL,
+    productVolume: 1.0,
+    productDesc: "Qurtlar, ko'sak qurti va zararkunandalarga qarshi kontaktli-ichak ta'siriga ega kuchli dori.",
+    productImages: ["/img/products/curacron.jpg"],
+    productViews: 1820,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_yaraliva_real",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "YaraLiva Calcinit Kalsiy Selitrasi (Yara Norvegiya, 25 kg)",
+    productPrice: 380000,
+    productLeftCount: 55,
     productSize: ProductSize.LARGE,
     productVolume: 25,
-    productDesc: "Norvegiya etaloni. Tomchilatib sug'orishda 100% cho'kmasiz eriydi, ildizni kuchaytiradi.",
-    productImages: [
-      "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=600&q=80",
-    ],
+    productDesc: "100% suvda eruvchan kalsiy va azot o'g'iti. Pomidorda meva uchi chirishi (apikal chirish)ni to'liq oldini oladi.",
+    productImages: ["/img/products/yara1.jpeg"],
+    productViews: 2950,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_yaramila_real",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "YaraMila Kompleks NPK Granula O'g'it (Yara, 25 kg)",
+    productPrice: 490000,
+    productLeftCount: 42,
+    productSize: ProductSize.LARGE,
+    productVolume: 25,
+    productDesc: "Mikroelementlar bilan boyitilgan, ildiz zonasini baquvvatlantiruvchi premium granulalangan o'g'it.",
+    productImages: ["/img/products/calsium.jpg"],
+    productViews: 2600,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_biogomus_real",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Konsentrlangan Suyuq Biogomus (10 L)",
+    productPrice: 95000,
+    productLeftCount: 75,
+    productSize: ProductSize.NORMAL,
+    productVolume: 10,
+    productDesc: "Tabiiy organik gumus kislotalari. Tuproq mikroflorasini tiklab hosildorlikni 30% oshiradi.",
+    productImages: ["/img/products/gomus.jpg"],
     productViews: 1980,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    _id: "agro_tomato_seedlings_14",
-    productCollection: ProductCollection.PLANTS,
+    _id: "agro_root_real",
+    productCollection: ProductCollection.FERTILIZERS,
     productStatus: ProductStatus.PROCESS,
-    productName: "Gollandiya F1 Pomidor Ko'chatlari (100 tup kassetada)",
-    productPrice: 250000,
-    productLeftCount: 20,
-    productSize: ProductSize.LARGE,
-    productVolume: 5,
-    productDesc: "Ildiz tizimi rivojlangan, profilaktik emlangan 35 kunlik sog'lom baquvvat ko'chatlar.",
-    productImages: [
-      "https://images.unsplash.com/photo-1592417817098-8f3d6910985c?auto=format&fit=crop&w=600&q=80",
-    ],
-    productViews: 1100,
+    productName: "Root Ildiz Baquvvatlantiruvchi Biostimulyator (1 L)",
+    productPrice: 120000,
+    productLeftCount: 65,
+    productSize: ProductSize.NORMAL,
+    productVolume: 1.0,
+    productDesc: "Ko'chat o'tkazilganda ildiz otish foizini 98% ga yetkazuvchi, stressga qarshi aminokislotali dori.",
+    productImages: ["/img/products/root.jpg"],
+    productViews: 2150,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    _id: "agro_strawberry_seedlings_15",
-    productCollection: ProductCollection.PLANTS,
+    _id: "agro_npk_ogit_real",
+    productCollection: ProductCollection.FERTILIZERS,
     productStatus: ProductStatus.PROCESS,
-    productName: "Issiqxona Qulupnay Ko'chati (Alba F1, 100 tup)",
+    productName: "Kristalon 18-18-18 Maxsus NPK O'g'iti (Yara, 25 kg)",
+    productPrice: 460000,
+    productLeftCount: 38,
+    productSize: ProductSize.LARGE,
+    productVolume: 25,
+    productDesc: "Gullash va meva tugish davrida tomchilatib sug'orish orqali beriladigan 100% eruvchan oziqa.",
+    productImages: ["/img/products/ogit.jpg"],
+    productViews: 2340,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+
+  // ===============================================================
+  // 3. SUG'ORISH & USKUNALAR (ProductCollection.TOOLS)
+  // ===============================================================
+  {
+    _id: "agro_sprayer_real",
+    productCollection: ProductCollection.TOOLS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Professional Akkumulyatorli Bog' Purkagichi (16 L, 12V)",
+    productPrice: 380000,
+    productLeftCount: 35,
+    productSize: ProductSize.NORMAL,
+    productVolume: 16,
+    productDesc: "6-8 soat zaryad ushlaydi. Zanglamas teleskopik naychali, 4 xil purkash nasadkalari bilan.",
+    productImages: ["/img/products/sprayer.jpg"],
+    productViews: 3850,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_sugorish_real",
+    productCollection: ProductCollection.TOOLS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Tomchilatib Sug'orish Tizimi To'plami (Lenta 1000m + Fitinglar)",
+    productPrice: 720000,
+    productLeftCount: 28,
+    productSize: ProductSize.LARGE,
+    productVolume: 30,
+    productDesc: "Issiqxona uchun labirintli tiqilmaydigan tomizgichli lenta, kranlar va boshqaruv fitinglari to'plami.",
+    productImages: ["/img/products/sugorish.jpg"],
+    productViews: 2790,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_tube_real",
+    productCollection: ProductCollection.TOOLS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Magistral Polietilen Sug'orish Quvuri (D 32mm, 100m)",
     productPrice: 320000,
+    productLeftCount: 45,
+    productSize: ProductSize.LARGE,
+    productVolume: 22,
+    productDesc: "Yuqori bosimga chidamli qora polietilen quvur. Sovuqqa va quyosh nuriga chidamli.",
+    productImages: ["/img/products/tube.jpg"],
+    productViews: 1450,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_connecter_real",
+    productCollection: ProductCollection.TOOLS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Tomchilatib Sug'orish Maxsus Kranti va Fitinglari (50 dona)",
+    productPrice: 115000,
+    productLeftCount: 60,
+    productSize: ProductSize.NORMAL,
+    productVolume: 2,
+    productDesc: "Rezinkali germetik krantlar va tarmoq ulagichlari to'plami.",
+    productImages: ["/img/products/connecter.jpg"],
+    productViews: 1220,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_scissors_real",
+    productCollection: ProductCollection.TOOLS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Professional Po'lat Bog'dorchilik Qaychisi (Sekator)",
+    productPrice: 140000,
+    productLeftCount: 70,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.3,
+    productDesc: "SK-5 yapon po'lat tig'i. Novdalarni va meva bandlarini shikastlamasdan toza qirqish uchun qaychi.",
+    productImages: ["/img/products/scissors.jpg"],
+    productViews: 1980,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_arava_real",
+    productCollection: ProductCollection.TOOLS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Issiqxona Qalin Temirli Yuk Tashish Aravasi (250 kg)",
+    productPrice: 680000,
     productLeftCount: 15,
     productSize: ProductSize.LARGE,
-    productVolume: 4,
-    productDesc: "Italiya navi, erta hosildor, transportga chidamli yirik qizil rezavor mevalar.",
-    productImages: [
-      "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=600&q=80",
-    ],
-    productViews: 1560,
+    productVolume: 18,
+    productDesc: "Katta yuk ko'taruvchi podshipnikli pnevmo-g'ildirakli mustahkam arava.",
+    productImages: ["/img/products/arava.jpg"],
+    productViews: 1540,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_motorsur_real",
+    productCollection: ProductCollection.TOOLS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Benzinli Motorli Kuchli Dorilash Purkagichi (25 L)",
+    productPrice: 1250000,
+    productLeftCount: 10,
+    productSize: ProductSize.LARGE,
+    productVolume: 12,
+    productDesc: "Katta maydonli issiqxona va bog'lar uchun mayda tuman hosil qilib dori purkash apparati.",
+    productImages: ["/img/products/motorsur.jpg"],
+    productViews: 2110,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_otorar_real",
+    productCollection: ProductCollection.TOOLS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Benzinli Ko'p Funksiyali O't O'rish Apparati (Trimmer)",
+    productPrice: 890000,
+    productLeftCount: 14,
+    productSize: ProductSize.LARGE,
+    productVolume: 8,
+    productDesc: "Issiqxona atrofi va dalalardagi qalin o'tlarni tozalash uchun diskli va po'lat simli apparat.",
+    productImages: ["/img/products/otorar.jpg"],
+    productViews: 1670,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+
+  // ===============================================================
+  // 4. URUG'LAR (ProductCollection.SEEDS - Bodring, Karam, Pomidor)
+  // ===============================================================
+  {
+    _id: "agro_seed_cucumber_miracle",
+    productCollection: ProductCollection.SEEDS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Miracle F1 Bodring Urug'i (Mo''jiza Hosildorlik)",
+    productPrice: 340000,
+    productLeftCount: 45,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.05,
+    productDesc: "Har bir bo'g'indan 3-4 tadan meva tuguvchi guldor partenokarpik bodring gibridi. Un-shudring va viruslarga chidamli.",
+    productImages: ["/img/seeds/seedMIRACLECUCUMBER.jpeg"],
+    productViews: 2450,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_seed_cucumber_parteno",
+    productCollection: ProductCollection.SEEDS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Bodring Urug'i F1 (Partenokarpik Issiqxona Bodringi)",
+    productPrice: 320000,
+    productLeftCount: 50,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.05,
+    productDesc: "Erta bahorgi va kuzgi issiqxonalar uchun o'ta serhosil gibrid. Kasalliklarga va sovuqqa chidamli.",
+    productImages: ["/img/seeds/seedCUCUMBER.webp"],
+    productViews: 2980,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_seed_cucumber_long",
+    productCollection: ProductCollection.SEEDS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Uzun Bodring Urug'i F1 (Long Cucumber, 500 dona)",
+    productPrice: 380000,
+    productLeftCount: 35,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.05,
+    productDesc: "Salatbop uzun to'q yashil yaltiroq mevali bodring. Bozor talabi yuqori, transportbop va uzoq saqlanadi.",
+    productImages: ["/img/seeds/seedCUCUMBERLONG.jpeg"],
+    productViews: 1870,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_seed_tomato_vesta",
+    productCollection: ProductCollection.SEEDS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Vesta F1 Qizil Go'shtdor Pomidor Urug'i (1,000 dona)",
+    productPrice: 420000,
+    productLeftCount: 60,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.1,
+    productDesc: "Yirik mevali (240-280 gr), zich go'shtdor to'q qizil eksportbop pomidor. Fitoftora va nematodaga chidamli.",
+    productImages: ["/img/seeds/seedVESTATOMATO.jpeg"],
+    productViews: 3120,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_seed_tomato_onix",
+    productCollection: ProductCollection.SEEDS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Onix F1 Pushti Pomidor Urug'i (1,000 dona)",
+    productPrice: 450000,
+    productLeftCount: 55,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.1,
+    productDesc: "Andijon va Toshkent issiqxonalarida eng ko'p ekiladigan elita pushti go'shtdor pomidor duragayi.",
+    productImages: ["/img/seeds/seedONIXF1TOMATO.jpeg"],
+    productViews: 3560,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_seed_cabbage_mirage",
+    productCollection: ProductCollection.SEEDS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Mirage F1 Oqbosh Karam Urug'i (2,500 dona)",
+    productPrice: 220000,
+    productLeftCount: 40,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.05,
+    productDesc: "Zich, qat-qat oq mag'izli, yorilishga chidamli erta-o'rtapishar bosh karam gibridi.",
+    productImages: ["/img/seeds/seedMIRAGECABBAGE.jpeg"],
+    productViews: 1940,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_seed_cabbage_korean",
+    productCollection: ProductCollection.SEEDS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Pekin Karami Urug'i F1 (Koreyscha Kimchi Karami)",
+    productPrice: 260000,
+    productLeftCount: 42,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.05,
+    productDesc: "Barglari mayin, shirali va tez pishar Pekin karami. Issiqxona va ochiq dalada 50-55 kunda hosil beradi.",
+    productImages: ["/img/seeds/seedKABBAGEKOREAN.jpeg"],
+    productViews: 2180,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -322,8 +626,6 @@ export default function Products(props: ProductsProps) {
   const location = useLocation();
   const { setProducts } = actionDispatch(useDispatch());
   const { products: storeProducts } = useSelector(productsRetriever);
-
-  const lang = getSavedLanguage();
 
   // URL query search extraction (?search=...)
   const queryParams = new URLSearchParams(location.search);
@@ -345,6 +647,69 @@ export default function Products(props: ProductsProps) {
   const [isDoctorOpen, setIsDoctorOpen] = useState<boolean>(false);
   const [cartSuccessFeedback, setCartSuccessFeedback] = useState<string | null>(null);
 
+  // Like & Wishlist Persistence
+  const [likedProductIds, setLikedProductIds] = useState<string[]>(() =>
+    WishlistService.getLikedIds()
+  );
+
+  // Direct 1-Click Purchase Payment Modal
+  const [directPaymentOpen, setDirectPaymentOpen] = useState<boolean>(false);
+  const [directPaymentOrder, setDirectPaymentOrder] = useState<Order | null>(null);
+
+  useEffect(() => {
+    const handleWishlistChange = () => {
+      setLikedProductIds(WishlistService.getLikedIds());
+    };
+    window.addEventListener("agroolam_wishlist_updated", handleWishlistChange);
+    return () => {
+      window.removeEventListener("agroolam_wishlist_updated", handleWishlistChange);
+    };
+  }, []);
+
+  const handleToggleLike = (product: Product, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const { isLiked } = WishlistService.toggleLike(product._id);
+    setLikedProductIds(WishlistService.getLikedIds());
+    sweetTopSuccessAlert(
+      isLiked ? "❤️ Sevimlilar ro'yxatiga qo'shildi!" : "🤍 Sevimlilardan olib tashlandi"
+    );
+  };
+
+  const handleDirectBuy = async (product: Product, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const orderSvc = new OrderService();
+      const normalizedPrice =
+        product.productPrice < 1000
+          ? product.productPrice * 12850
+          : product.productPrice;
+      const order = await orderSvc.createOrder([
+        {
+          _id: product._id,
+          quantity: 1,
+          name: product.productName,
+          price: normalizedPrice,
+          image: product.productImages[0],
+        },
+      ]);
+      setDirectPaymentOrder(order);
+      setDirectPaymentOpen(true);
+    } catch (err) {
+      console.log("Error in handleDirectBuy:", err);
+      sweetErrorHandling(err).then();
+    }
+  };
+
+  const handleDirectPaymentSuccess = async (orderId: string) => {
+    try {
+      const orderSvc = new OrderService();
+      await orderSvc.updateOrder({ orderId, orderStatus: OrderStatus.PROCESS });
+      sweetTopSuccessAlert("To'lov muvaffaqiyatli qabul qilindi!");
+    } catch (err) {
+      sweetErrorHandling(err).then();
+    }
+  };
+
   // Sync with URL query param if user arrived via Hero Search
   useEffect(() => {
     if (urlSearchQuery && urlSearchQuery !== productSearch.search) {
@@ -353,30 +718,41 @@ export default function Products(props: ProductsProps) {
     }
   }, [urlSearchQuery]);
 
-  // Request backend products, fallback to rich certified agro dataset if server is empty or offline
+  // Request backend products, merge with rich certified agro dataset so user always sees full catalog
   useEffect(() => {
     const productService = new ProductService();
     productService
       .getProducts(productSearch)
       .then((data) => {
+        let combined: Product[] = [];
         if (data && data.length > 0) {
-          setProducts(data);
-        } else {
-          // Intelligent Fallback filtering locally
-          let filtered = [...CERTIFIED_AGRO_PRODUCTS];
-          if (productSearch.productCollection) {
-            filtered = filtered.filter((p) => p.productCollection === productSearch.productCollection);
-          }
-          if (productSearch.search) {
-            const q = productSearch.search.toLowerCase();
-            filtered = filtered.filter(
-              (p) =>
-                p.productName.toLowerCase().includes(q) ||
-                (p.productDesc && p.productDesc.toLowerCase().includes(q))
-            );
-          }
-          setProducts(filtered);
+          combined = [...data];
         }
+        // Merge certified products with real images
+        for (const cp of CERTIFIED_AGRO_PRODUCTS) {
+          const exists = combined.some(
+            (item) =>
+              item._id === cp._id ||
+              item.productName.toLowerCase().trim() === cp.productName.toLowerCase().trim()
+          );
+          if (!exists) {
+            combined.push(cp);
+          }
+        }
+
+        let filtered = combined;
+        if (productSearch.productCollection) {
+          filtered = filtered.filter((p) => p.productCollection === productSearch.productCollection);
+        }
+        if (productSearch.search && productSearch.search.trim().length > 0) {
+          const q = productSearch.search.trim().toLowerCase();
+          filtered = filtered.filter(
+            (p) =>
+              p.productName.toLowerCase().includes(q) ||
+              (p.productDesc && p.productDesc.toLowerCase().includes(q))
+          );
+        }
+        setProducts(filtered);
       })
       .catch((err) => {
         console.warn("Backend unavailable, loading offline certified agro catalog:", err);
@@ -384,8 +760,8 @@ export default function Products(props: ProductsProps) {
         if (productSearch.productCollection) {
           filtered = filtered.filter((p) => p.productCollection === productSearch.productCollection);
         }
-        if (productSearch.search) {
-          const q = productSearch.search.toLowerCase();
+        if (productSearch.search && productSearch.search.trim().length > 0) {
+          const q = productSearch.search.trim().toLowerCase();
           filtered = filtered.filter(
             (p) =>
               p.productName.toLowerCase().includes(q) ||
@@ -394,7 +770,7 @@ export default function Products(props: ProductsProps) {
         }
         setProducts(filtered);
       });
-  }, [productSearch]);
+  }, [productSearch.productCollection, productSearch.search, productSearch.order]);
 
   // Client-side Price & Stock Filtering on active dataset
   const displayedProducts = (storeProducts && storeProducts.length > 0 ? storeProducts : CERTIFIED_AGRO_PRODUCTS)
@@ -412,6 +788,15 @@ export default function Products(props: ProductsProps) {
       if (productSearch.order === "productViews") return b.productViews - a.productViews;
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
+
+  // 9 products per page (3 columns x 3 rows grid)
+  const PAGE_SIZE = 9;
+  const totalPages = Math.max(1, Math.ceil(displayedProducts.length / PAGE_SIZE));
+  const currentPage = Math.min(productSearch.page, totalPages);
+  const paginatedProducts = displayedProducts.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
 
   // Handlers
   const handleCollectionSelect = (col?: ProductCollection) => {
@@ -446,11 +831,15 @@ export default function Products(props: ProductsProps) {
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
     e.stopPropagation();
+    const normalizedPrice =
+      product.productPrice < 1000
+        ? product.productPrice * 12850
+        : product.productPrice;
     onAdd({
       _id: product._id,
       quantity: 1,
       name: product.productName,
-      price: product.productPrice,
+      price: normalizedPrice,
       image: product.productImages[0],
     });
     setCartSuccessFeedback(product.productName);
@@ -491,13 +880,17 @@ export default function Products(props: ProductsProps) {
     }
   };
 
-  const categoriesList = [
+  const categoriesList: {
+    key: ProductCollection | undefined;
+    label: string;
+    icon: React.ReactNode;
+    count: number;
+  }[] = [
     { key: undefined, label: "Barchasi", icon: "🌿", count: CERTIFIED_AGRO_PRODUCTS.length },
-    { key: ProductCollection.SEEDS, label: "Sara Urug'lar (F1)", icon: "🌾", count: 4 },
-    { key: ProductCollection.FERTILIZERS, label: "Dori & O'g'itlar", icon: "💊", count: 6 },
-    { key: ProductCollection.OTHER, label: "Issiqxona Salafanlari", icon: "🏗️", count: 3 },
-    { key: ProductCollection.TOOLS, label: "Sug'orish & Smart IoT", icon: "💧", count: 3 },
-    { key: ProductCollection.PLANTS, label: "Ko'chatlar & O'simliklar", icon: "🌱", count: 2 },
+    { key: ProductCollection.OTHER, label: "Issiqxona Salafanlari", icon: <GreenhouseLogo />, count: 5 },
+    { key: ProductCollection.FERTILIZERS, label: "Dori & O'g'itlar", icon: "💊", count: 13 },
+    { key: ProductCollection.TOOLS, label: "Sug'orish & Uskunalar", icon: "💧", count: 8 },
+    { key: ProductCollection.SEEDS, label: "Urug'lar (Seeds)", icon: "🌱", count: 7 },
   ];
 
   const quickPrompts = [
@@ -842,7 +1235,17 @@ export default function Products(props: ProductsProps) {
                         }}
                       >
                         <Stack direction="row" spacing={1.2} alignItems="center">
-                          <span>{cat.icon}</span>
+                          <Box
+                            component="span"
+                            sx={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              fontSize: "16px",
+                              color: isSelected ? "#fff" : "#1B4332",
+                            }}
+                          >
+                            {cat.icon}
+                          </Box>
                           <span>{cat.label}</span>
                         </Stack>
                         <span
@@ -1053,12 +1456,21 @@ export default function Products(props: ProductsProps) {
                   gap: 3,
                 }}
               >
-                {displayedProducts.map((product) => {
-                  const imagePath = product.productImages[0].startsWith("http")
-                    ? product.productImages[0]
-                    : `${serverApi}/${product.productImages[0]}`;
+                {paginatedProducts.map((product) => {
+                  const imagePath =
+                    product.productImages[0].startsWith("http") ||
+                    product.productImages[0].startsWith("/")
+                      ? product.productImages[0]
+                      : `${serverApi}/${product.productImages[0]}`;
 
-                  const usdPrice = Math.round((product.productPrice / 12600) * 10) / 10;
+                  const uzsPrice =
+                    product.productPrice < 1000
+                      ? product.productPrice * 12850
+                      : product.productPrice;
+                  const usdPrice =
+                    product.productPrice < 1000
+                      ? product.productPrice
+                      : Math.round((product.productPrice / 12850) * 10) / 10;
                   const sizeVolumeText = product.productVolume
                     ? `${product.productVolume} kg/L`
                     : product.productSize;
@@ -1156,6 +1568,32 @@ export default function Products(props: ProductsProps) {
                             4.9
                           </Box>
 
+                          {/* Heart Like / Wishlist Button */}
+                          <IconButton
+                            size="small"
+                            onClick={(e) => handleToggleLike(product, e)}
+                            title={likedProductIds.includes(product._id) ? "Sevimlilardan o'chirish" : "Sevimlilarga qo'shish"}
+                            sx={{
+                              position: "absolute",
+                              top: 10,
+                              right: 68,
+                              bgcolor: "rgba(255, 255, 255, 0.95)",
+                              backdropFilter: "blur(6px)",
+                              boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                              zIndex: 3,
+                              width: 28,
+                              height: 28,
+                              transition: "all 0.2s ease",
+                              "&:hover": { bgcolor: "#ffffff", transform: "scale(1.15)" },
+                            }}
+                          >
+                            {likedProductIds.includes(product._id) ? (
+                              <FavoriteIcon sx={{ color: "#ef4444", fontSize: 16 }} />
+                            ) : (
+                              <FavoriteBorderIcon sx={{ color: "#64748b", fontSize: 16 }} />
+                            )}
+                          </IconButton>
+
                           {/* Bottom Views Badge inside image */}
                           <Box
                             sx={{
@@ -1246,7 +1684,7 @@ export default function Products(props: ProductsProps) {
                           >
                             <div>
                               <Typography variant="subtitle1" sx={{ fontWeight: 900, color: "#1B4332", fontSize: "17px", lineHeight: 1 }}>
-                                {product.productPrice.toLocaleString()}{" "}
+                                {uzsPrice.toLocaleString()}{" "}
                                 <span style={{ fontSize: "12px", fontWeight: 700 }}>UZS</span>
                               </Typography>
                               <Typography variant="caption" sx={{ color: "#64748b", fontSize: "11px", fontWeight: 600 }}>
@@ -1254,28 +1692,53 @@ export default function Products(props: ProductsProps) {
                               </Typography>
                             </div>
 
-                            <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}>
-                              <Button
-                                variant="contained"
-                                size="small"
-                                onClick={(e) => handleAddToCart(product, e)}
-                                startIcon={<AddShoppingCartIcon sx={{ fontSize: 16 }} />}
-                                sx={{
-                                  bgcolor: "#2D6A4F",
-                                  color: "#ffffff",
-                                  px: 2,
-                                  py: 1,
-                                  borderRadius: "12px",
-                                  textTransform: "none",
-                                  fontWeight: 800,
-                                  fontSize: "12px",
-                                  boxShadow: "0 4px 12px rgba(45, 106, 79, 0.25)",
-                                  "&:hover": { bgcolor: "#1B4332" },
-                                }}
-                              >
-                                Savatga
-                              </Button>
-                            </motion.div>
+                            <Stack direction="row" spacing={0.8} alignItems="center">
+                              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                <Button
+                                  variant="outlined"
+                                  size="small"
+                                  onClick={(e) => handleAddToCart(product, e)}
+                                  startIcon={<AddShoppingCartIcon sx={{ fontSize: 14 }} />}
+                                  sx={{
+                                    borderColor: "#2D6A4F",
+                                    color: "#2D6A4F",
+                                    px: 1.2,
+                                    py: 0.7,
+                                    borderRadius: "10px",
+                                    textTransform: "none",
+                                    fontWeight: 700,
+                                    fontSize: "11px",
+                                    lineHeight: 1.2,
+                                    "&:hover": { borderColor: "#1B4332", bgcolor: "#f0fdf4" },
+                                  }}
+                                >
+                                  Savatga
+                                </Button>
+                              </motion.div>
+                              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                <Button
+                                  variant="contained"
+                                  size="small"
+                                  onClick={(e) => handleDirectBuy(product, e)}
+                                  startIcon={<BoltIcon sx={{ fontSize: 15, color: "#fef08a" }} />}
+                                  sx={{
+                                    bgcolor: "#1B4332",
+                                    color: "#ffffff",
+                                    px: 1.4,
+                                    py: 0.7,
+                                    borderRadius: "10px",
+                                    textTransform: "none",
+                                    fontWeight: 800,
+                                    fontSize: "11px",
+                                    lineHeight: 1.2,
+                                    boxShadow: "0 3px 10px rgba(27, 67, 50, 0.25)",
+                                    "&:hover": { bgcolor: "#0E271D" },
+                                  }}
+                                >
+                                  Xarid
+                                </Button>
+                              </motion.div>
+                            </Stack>
                           </Box>
                         </Box>
                       </Box>
@@ -1319,27 +1782,46 @@ export default function Products(props: ProductsProps) {
             )}
 
             {/* PAGINATION SECTION */}
-            <Box sx={{ mt: 6, display: "flex", justifyContent: "center" }}>
-              <Pagination
-                count={Math.max(1, Math.ceil(displayedProducts.length / 12))}
-                page={productSearch.page}
-                onChange={(_, page) => setProductSearch((prev) => ({ ...prev, page }))}
-                renderItem={(item) => (
-                  <PaginationItem
-                    components={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
-                    {...item}
-                    sx={{
-                      "&.Mui-selected": {
-                        bgcolor: "#2D6A4F !important",
-                        color: "#fff",
-                        fontWeight: 800,
-                      },
-                      borderRadius: "10px",
-                    }}
-                  />
-                )}
-              />
-            </Box>
+            {totalPages > 1 && (
+              <Box
+                sx={{
+                  mt: 7,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 1.5,
+                }}
+              >
+                <Pagination
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={(_, page) => {
+                    setProductSearch((prev) => ({ ...prev, page }));
+                    window.scrollTo({ top: 380, behavior: "smooth" });
+                  }}
+                  showFirstButton
+                  showLastButton
+                  size="large"
+                  renderItem={(item) => (
+                    <PaginationItem
+                      components={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                      {...item}
+                      sx={{
+                        "&.Mui-selected": {
+                          bgcolor: "#2D6A4F !important",
+                          color: "#fff",
+                          fontWeight: 800,
+                        },
+                        borderRadius: "10px",
+                      }}
+                    />
+                  )}
+                />
+                <Typography variant="caption" sx={{ color: "#64748b", fontWeight: 600 }}>
+                  Jami {displayedProducts.length} ta mahsulot • Sahifa {currentPage} / {totalPages}
+                </Typography>
+              </Box>
+            )}
           </Box>
         </Box>
       </Container>
@@ -1407,6 +1889,17 @@ export default function Products(props: ProductsProps) {
         open={isDoctorOpen}
         onClose={() => setIsDoctorOpen(false)}
         onAdd={onAdd}
+      />
+
+      {/* Standalone Direct Buy Payment Gateway */}
+      <PaymentModal
+        open={directPaymentOpen}
+        order={directPaymentOrder}
+        onClose={() => {
+          setDirectPaymentOpen(false);
+          setDirectPaymentOrder(null);
+        }}
+        onPaymentSuccess={handleDirectPaymentSuccess}
       />
     </Box>
   );

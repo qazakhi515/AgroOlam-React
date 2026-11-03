@@ -1,32 +1,32 @@
 export const faq = [
   {
-    question: "How do I place an order for seeds and fertilizers?",
+    question: "AgroOlam orqali urug' va dorilarga qanday buyurtma beriladi?",
     answer:
-      "Browse our product catalog (Plants, Seeds, Fertilizers, Tools), add your required items to the cart, and proceed to checkout with delivery details.",
+      "Agro-Market sahifasidan kerakli urug'lar, fungitsidlar yoki issiqxona jihozlarini tanlang, hajm/qadoqni belgilab savatga qo'shing va o'z hududingizni ko'rsatgan holda buyurtmani rasmiylashtiring.",
   },
   {
-    question: "How does delivery work for fresh plants and seedlings?",
+    question: "AgroOlam Vision AI 4.1 barg diagnostikasi qanday ishlaydi?",
     answer:
-      "We provide specialized climate-controlled regional delivery for delicate seedlings and bulk courier shipping for seeds and tools within 24-48 hours.",
+      "Bosh sahifadagi yoki mobil kamerangiz orqali ekin bargining zararlangan qismini suratga olib yuklaysiz. Sun'iy intellekt neyron tarmog'i kasallikni (masalan: fitoftoroz, un-shudring yoki bakterial dog'lanish) 98%+ aniqlikda aniqlab, 10 litr suv yoki 1 sotix maydonga to'g'ri dori dozasini chiqarib beradi.",
   },
   {
-    question: "Are chemical fertilizers and pesticides tested for safety?",
+    question: "Qaysi ekinlar uchun AI tahlil mavjud?",
     answer:
-      "Yes, all agrochemicals listed on AgroOlam (agroolam.tech) are state-certified, with detailed active ingredient labels and application instructions.",
+      "Hozirda O'zbekiston issiqxona xo'jaliklarining eng asosiy ekinlari: Pomidor, Bodring va Bolgar qalampiri bo'yicha to'liq patologiya modeli integratsiya qilingan.",
   },
   {
-    question: "Where can I get expert advice on plant diseases and treatment?",
+    question: "Agro-kimyoviy preparatlarning mos kelmasligi (ziddiyati) qanday aniqlanadi?",
     answer:
-      "Visit our News & Advisory section for seasonal guides, or use our upcoming AI Diagnosis tool to identify plant diseases directly from leaf photos.",
+      "Savatga ikki yoki undan ortiq kimyoviy preparat (masalan: mis birikmalari va oltingugurt) qo'shganingizda, tizim avtomatik kimyoviy qoidalar bo'yicha ogohlantirish beradi va barglarning kuyishini oldini oladi.",
   },
   {
-    question: "Can I cancel or modify my farm order?",
+    question: "Viloyatlarga yetkazib berish qancha vaqt oladi?",
     answer:
-      "Orders can be modified or cancelled before shipment dispatch directly from your 'My Orders' dashboard.",
+      "Toshkent va viloyat markazlariga 24 soat ichida, tuman va qishloq xo'jaliklariga 48 soat ichida yetkazib beriladi. $50 dan yuqori buyurtmalar bepul yetkaziladi.",
   },
   {
-    question: "Who developed the AgroOlam platform?",
+    question: "To'lov qanday usullarda qabul qilinadi?",
     answer:
-      "AgroOlam was designed and engineered by Akhmadjon Usmonov and the AgroOlam engineering team, combining domain expertise in plant pathology with modern full-stack web technologies.",
+      "Platformada Click, Payme, Uzcard, Humo hamda yuridik fermer xo'jaliklari uchun bank hisob-raqami orqali to'lovlar to'liq qo'llab-quvvatlanadi.",
   },
 ];

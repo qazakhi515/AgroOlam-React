@@ -1,9 +1,12 @@
-import { Box } from "@mui/material";
-import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
-import Button from "@mui/material/Button";
+import { Box, Button } from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import SaveIcon from "@mui/icons-material/Save";
+import AgricultureIcon from "@mui/icons-material/Agriculture";
+import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import YardIcon from "@mui/icons-material/Yard";
 import { useGlobals } from "../../components/hooks/useGlobals";
 import { useState } from "react";
-import { MemberType } from "../../../lib/enums/member.enum";
 import { MemberUpdateInput } from "../../../lib/types/member";
 import { T } from "../../../lib/types/common";
 import {
@@ -13,25 +16,48 @@ import {
 import { Messages, serverApi } from "../../../lib/config";
 import MemberService from "../../services/memberService";
 
+const COMMON_CROPS = [
+  "Pomidor (Issiqxona)",
+  "Bodring (F1)",
+  "Bolgar qalampiri",
+  "Achchiq qalampir",
+  "Qulupnay",
+  "Ko'katlar",
+  "Baqlajon",
+];
+
+const COMMON_REGIONS = [
+  "Toshkent viloyati",
+  "Samarqand viloyati",
+  "Farg'ona vodiysi",
+  "Buxoro viloyati",
+  "Surxondaryo viloyati",
+  "Qashqadaryo viloyati",
+  "Andijon viloyati",
+  "Namangan viloyati",
+  "Xorazm viloyati",
+  "Navoiy viloyati",
+  "Jizzax viloyati",
+  "Sirdaryo viloyati",
+];
+
 export function Settings() {
   const { authMember, setAuthMember } = useGlobals();
   const [memberImage, setMemberImage] = useState<string>(
     authMember?.memberImage
-      ? `${serverApi}/${authMember.memberImage}`
+      ? (authMember.memberImage.startsWith("http")
+          ? authMember.memberImage
+          : `${serverApi}/${authMember.memberImage}`)
       : "/icons/default-user.svg",
   );
 
-  const [memberUpdateInput, setMemberUpdateInput] = useState<MemberUpdateInput>(
-    {
-      memberNick: authMember?.memberNick,
-      memberPhone: authMember?.memberPhone,
-      memberAddress: authMember?.memberAddress,
-      memberDesc: authMember?.memberDesc,
-      memberImage: authMember?.memberImage,
-    },
-  );
-
-  /*** HANDLERS ***/
+  const [memberUpdateInput, setMemberUpdateInput] = useState<MemberUpdateInput>({
+    memberNick: authMember?.memberNick || "",
+    memberPhone: authMember?.memberPhone || "",
+    memberAddress: authMember?.memberAddress || "",
+    memberDesc: authMember?.memberDesc || "",
+    memberImage: authMember?.memberImage,
+  });
 
   const memberNickHandler = (e: T) => {
     memberUpdateInput.memberNick = e.target.value;
@@ -53,24 +79,34 @@ export function Settings() {
     setMemberUpdateInput({ ...memberUpdateInput });
   };
 
+  const handleSelectCrop = (crop: string) => {
+    const current = memberUpdateInput.memberDesc || "";
+    if (current.includes(crop)) return;
+    const updated = current ? `${current}, ${crop}` : `Asosiy ekinlar: ${crop}`;
+    memberUpdateInput.memberDesc = updated;
+    setMemberUpdateInput({ ...memberUpdateInput });
+  };
+
+  const handleSelectRegion = (region: string) => {
+    memberUpdateInput.memberAddress = region;
+    setMemberUpdateInput({ ...memberUpdateInput });
+  };
+
   const handleSubmitButton = async () => {
     try {
       if (!authMember) throw new Error(Messages.error2);
       if (
-        memberUpdateInput.memberNick === "" ||
-        memberUpdateInput.memberPhone === "" ||
-        memberUpdateInput.memberAddress === "" ||
-        memberUpdateInput.memberDesc === ""
+        !memberUpdateInput.memberNick ||
+        !memberUpdateInput.memberPhone
       ) {
-        throw new Error(Messages.error3);
+        throw new Error("Iltimos, ism va telefon raqamingizni to'ldiring!");
       }
 
       const member = new MemberService();
-
       const result = await member.updateMember(memberUpdateInput);
       setAuthMember(result);
 
-      await sweetTopSmallSuccessAlert("Modified successfully!", 700);
+      await sweetTopSmallSuccessAlert("Fermer profili muvaffaqiyatli saqlandi!", 1000);
     } catch (err) {
       console.log(err);
       sweetErrorHandling(err).then();
@@ -78,95 +114,149 @@ export function Settings() {
   };
 
   const handleImageViewer = (e: T) => {
-    const file = e.target.files[0];
-    console.log("file:", file);
-    const fileType = file.type,
-      validateImageTypes = ["image/jpg", "image/jpeg", "image/png"];
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const fileType = file.type;
+    const validateImageTypes = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
 
     if (!validateImageTypes.includes(fileType)) {
       sweetErrorHandling(Messages.error5).then();
     } else {
-      if (file) {
-        memberUpdateInput.memberImage = file;
-        setMemberUpdateInput({ ...memberUpdateInput });
-        setMemberImage(URL.createObjectURL(file));
-      }
+      memberUpdateInput.memberImage = file;
+      setMemberUpdateInput({ ...memberUpdateInput });
+      setMemberImage(URL.createObjectURL(file));
     }
   };
 
   return (
-    <Box className={"settings"}>
-      <Box className={"member-media-frame"}>
-        <img src={memberImage} className={"mb-image"} alt="" />
-        <div className={"media-change-box"}>
-          <span>Upload image</span>
-          <p>JPG, JPEG, PNG formats only!</p>
-          <div className={"up-del-box"}>
-            <Button component="label" onChange={handleImageViewer}>
-              <CloudDownloadIcon />
-              <input type="file" hidden />
+    <Box className="settings">
+      {/* Avatar Upload */}
+      <Box className="member-media-frame">
+        <img
+          src={memberImage}
+          className="mb-image"
+          alt="Avatar"
+          onError={(e: any) => {
+            e.target.src = "/icons/default-user.svg";
+          }}
+        />
+        <div className="media-change-box">
+          <span>Profil fotosurati</span>
+          <p>JPG, PNG yoki WEBP formatidagi fermer yoki xo'jalik logotipi</p>
+          <div className="up-del-box">
+            <Button
+              component="label"
+              className="upload-btn-styled"
+              startIcon={<CloudUploadIcon sx={{ fontSize: 16 }} />}
+            >
+              Suratni yangilash
+              <input type="file" hidden accept="image/*" onChange={handleImageViewer} />
             </Button>
           </div>
         </div>
       </Box>
-      <Box className={"input-frame"}>
-        <div className={"long-input"}>
-          <label className={"spec-label"}>Username</label>
+
+      {/* Row 1: Farmer Name & Phone */}
+      <Box className="input-frame">
+        <div className="short-input">
+          <label className="spec-label">
+            <AgricultureIcon sx={{ fontSize: 18, color: "#1B4332" }} />
+            Fermer ismi / Xo'jalik nomi *
+          </label>
           <input
-            className={"spec-input mb-nick"}
+            className="spec-input"
             type="text"
-            placeholder={authMember?.memberNick}
-            value={memberUpdateInput.memberNick}
-            name="memberNick"
+            placeholder="Masalan: Sardor Rahimov / Agro Fayz MCHJ"
+            value={memberUpdateInput.memberNick || ""}
             onChange={memberNickHandler}
           />
         </div>
-      </Box>
-      <Box className={"input-frame"}>
-        <div className={"short-input"}>
-          <label className={"spec-label"}>Phone</label>
+
+        <div className="short-input">
+          <label className="spec-label">
+            <PhoneIphoneIcon sx={{ fontSize: 18, color: "#1B4332" }} />
+            Telefon raqam *
+          </label>
           <input
-            className={"spec-input mb-phone"}
+            className="spec-input"
             type="text"
-            placeholder={authMember?.memberPhone ?? "no phone"}
-            value={memberUpdateInput.memberPhone}
-            name="memberPhone"
+            placeholder="+998 90 123 45 67"
+            value={memberUpdateInput.memberPhone || ""}
             onChange={memberPhoneHandler}
           />
         </div>
-        <div className={"short-input"}>
-          <label className={"spec-label"}>Address</label>
+      </Box>
+
+      {/* Row 2: Location with preset regions */}
+      <Box className="input-frame">
+        <div className="long-input">
+          <label className="spec-label">
+            <LocationOnIcon sx={{ fontSize: 18, color: "#1B4332" }} />
+            Joylashuv (Viloyat va tuman)
+          </label>
           <input
-            className={"spec-input  mb-address"}
+            className="spec-input"
             type="text"
-            placeholder={
-              authMember?.memberAddress
-                ? authMember.memberAddress
-                : "no address"
-            }
-            value={memberUpdateInput.memberAddress}
-            name="memberAddress"
+            placeholder="Masalan: Toshkent viloyati, Zangiota tumani"
+            value={memberUpdateInput.memberAddress || ""}
             onChange={memberAddressHandler}
           />
+
+          {/* Quick Region Selector Chips */}
+          <div className="farm-spec-tag-group">
+            {COMMON_REGIONS.slice(0, 6).map((region) => (
+              <span
+                key={region}
+                className={`farm-spec-tag ${memberUpdateInput.memberAddress?.includes(region) ? "selected" : ""}`}
+                onClick={() => handleSelectRegion(region)}
+              >
+                📍 {region}
+              </span>
+            ))}
+          </div>
         </div>
       </Box>
-      <Box className={"input-frame"}>
-        <div className={"long-input"}>
-          <label className={"spec-label"}>Description</label>
+
+      {/* Row 3: Farm specs & Primary crops */}
+      <Box className="input-frame">
+        <div className="long-input">
+          <label className="spec-label">
+            <YardIcon sx={{ fontSize: 18, color: "#1B4332" }} />
+            Issiqxona maydoni va Asosiy ekinlar
+          </label>
+
+          {/* Crop quick-add chips */}
+          <div className="farm-spec-tag-group" style={{ marginBottom: 10 }}>
+            {COMMON_CROPS.map((crop) => (
+              <span
+                key={crop}
+                className={`farm-spec-tag ${memberUpdateInput.memberDesc?.includes(crop) ? "selected" : ""}`}
+                onClick={() => handleSelectCrop(crop)}
+              >
+                🌱 + {crop}
+              </span>
+            ))}
+          </div>
+
           <textarea
-            className={"spec-textarea mb-description"}
-            placeholder={
-              authMember?.memberDesc ? authMember.memberDesc : "no description"
-            }
-            value={memberUpdateInput.memberDesc}
-            name="memberDesc"
+            className="spec-textarea"
+            placeholder="Issiqxona maydoni (masalan: 12 sotix), yetishtiriladigan gibridlar, sug'orish turi (tomchilatib) va ehtiyojlar..."
+            value={memberUpdateInput.memberDesc || ""}
             onChange={memberDescriptionHandler}
           />
         </div>
       </Box>
-      <Box className={"save-box"}>
-        <Button variant={"contained"} onClick={handleSubmitButton}>
-          Save
+
+      {/* Save Button */}
+      <Box className="save-box">
+        <Button
+          variant="contained"
+          className="save-btn"
+          startIcon={<SaveIcon sx={{ fontSize: 18 }} />}
+          onClick={handleSubmitButton}
+        >
+          O'zgarishlarni saqlash
         </Button>
       </Box>
     </Box>

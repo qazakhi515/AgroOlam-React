@@ -9,7 +9,6 @@ import {
   Chip,
   IconButton,
 } from "@mui/material";
-import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -17,10 +16,13 @@ import ThermostatIcon from "@mui/icons-material/Thermostat";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import OpacityIcon from "@mui/icons-material/Opacity";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import VideocamIcon from "@mui/icons-material/Videocam";
 import { motion, AnimatePresence } from "framer-motion";
 import { CartItem } from "../../../lib/types/search";
 import { getSavedLanguage } from "../../../lib/i18n";
-import { MOCK_DIAGNOSIS_SAMPLES } from "../../components/ai/PlantDoctorModal";
+import PlantDoctorModal, { MOCK_DIAGNOSIS_SAMPLES } from "../../components/ai/PlantDoctorModal";
 
 interface AiScannerSectionProps {
   onAdd: (item: CartItem) => void;
@@ -31,9 +33,32 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
   const [activeKey, setActiveKey] = useState<"tomato" | "cucumber" | "pepper">("tomato");
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [customImage, setCustomImage] = useState<string | null>(null);
+  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const [isDoctorOpen, setIsDoctorOpen] = useState<boolean>(false);
 
   const currentData = MOCK_DIAGNOSIS_SAMPLES[activeKey];
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+
+  const handleSpeakAdvice = () => {
+    if (!("speechSynthesis" in window)) {
+      alert("Brauzeringiz ovozli o'qishni qo'llab-quvvatlamaydi");
+      return;
+    }
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+    const textToSpeak = `Aniqlangan kasallik: ${currentData.diseaseName}. Aniqlik darajasi: foizda ${currentData.confidence}. Tavsiya etiladigan chora: ${currentData.treatment}`;
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    utterance.lang = "uz-UZ";
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  };
 
   const handleSelectSample = (key: "tomato" | "cucumber" | "pepper") => {
     setActiveKey(key);
@@ -128,14 +153,32 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                   <Typography variant="caption" sx={{ fontWeight: 800, color: "#64748b", textTransform: "uppercase" }}>
                     Namuna bargni tanlang:
                   </Typography>
-                  <Button
-                    size="small"
-                    startIcon={<UploadFileIcon sx={{ fontSize: 16 }} />}
-                    onClick={() => fileInputRef.current?.click()}
-                    sx={{ color: "#2D6A4F", fontWeight: 700, textTransform: "none", fontSize: "12px" }}
-                  >
-                    Rasm yuklash
-                  </Button>
+                  <Stack direction="row" spacing={1}>
+                    <Button
+                      size="small"
+                      startIcon={<VideocamIcon sx={{ fontSize: 16 }} />}
+                      onClick={() => setIsDoctorOpen(true)}
+                      sx={{
+                        color: "#065f46",
+                        bgcolor: "#d1fae5",
+                        fontWeight: 700,
+                        textTransform: "none",
+                        fontSize: "12px",
+                        borderRadius: "8px",
+                        "&:hover": { bgcolor: "#a7f3d0" },
+                      }}
+                    >
+                      🎥 Jonli Kamera
+                    </Button>
+                    <Button
+                      size="small"
+                      startIcon={<UploadFileIcon sx={{ fontSize: 16 }} />}
+                      onClick={() => fileInputRef.current?.click()}
+                      sx={{ color: "#2D6A4F", fontWeight: 700, textTransform: "none", fontSize: "12px" }}
+                    >
+                      Rasm yuklash
+                    </Button>
+                  </Stack>
                   <input
                     type="file"
                     accept="image/*"
@@ -378,7 +421,31 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                           Toifa: {currentData.pathogen}
                         </Typography>
                       </div>
-                      <Stack direction="row" spacing={1} alignItems="center">
+                      <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" sx={{ gap: 1 }}>
+                        <Button
+                          size="small"
+                          onClick={handleSpeakAdvice}
+                          startIcon={
+                            isSpeaking ? (
+                              <VolumeOffIcon sx={{ fontSize: 16 }} />
+                            ) : (
+                              <VolumeUpIcon sx={{ fontSize: 16 }} />
+                            )
+                          }
+                          variant={isSpeaking ? "contained" : "outlined"}
+                          sx={{
+                            textTransform: "none",
+                            fontWeight: 700,
+                            fontSize: "11.5px",
+                            borderRadius: "20px",
+                            color: isSpeaking ? "#fff" : "#1B4332",
+                            bgcolor: isSpeaking ? "#1B4332" : "#f0fdf4",
+                            borderColor: "#10b981",
+                            "&:hover": { bgcolor: isSpeaking ? "#0E271D" : "#dcfce7" },
+                          }}
+                        >
+                          {isSpeaking ? "To'xtatish" : "🔊 Ovozli Maslahat"}
+                        </Button>
                         <Chip
                           icon={<CheckCircleIcon sx={{ fontSize: "14px !important" }} />}
                           label={`Aniqlik: ${currentData.confidence}%`}
@@ -527,6 +594,13 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
           </Grid>
         </Box>
       </Container>
+
+      {/* Plant Doctor Modal with Live Camera & Speech Synthesis */}
+      <PlantDoctorModal
+        open={isDoctorOpen}
+        onClose={() => setIsDoctorOpen(false)}
+        onAdd={onAdd}
+      />
     </Box>
   );
 }

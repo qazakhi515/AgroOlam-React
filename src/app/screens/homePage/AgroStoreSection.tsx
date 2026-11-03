@@ -1,13 +1,21 @@
-import React, { useState } from "react";
-import { Container, Stack, Box, Typography, Button, Chip } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Container, Stack, Box, Typography, Button, Chip, IconButton } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import StarIcon from "@mui/icons-material/Star";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import VerifiedIcon from "@mui/icons-material/Verified";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import BoltIcon from "@mui/icons-material/Bolt";
 import { NavLink } from "react-router-dom";
 import { CartItem } from "../../../lib/types/search";
-import { getSavedLanguage } from "../../../lib/i18n";
+import WishlistService from "../../services/WishlistService";
+import PaymentModal from "../../components/payment/PaymentModal";
+import OrderService from "../../services/OrdersService";
+import { OrderStatus } from "../../../lib/enums/order.enum";
+import { Order } from "../../../lib/types/order";
+import { sweetTopSuccessAlert, sweetErrorHandling } from "../../../lib/sweetAlert";
 
 interface AgroStoreSectionProps {
   onAdd: (item: CartItem) => void;
@@ -29,29 +37,29 @@ interface DemoAgroProduct {
 
 const AGRO_PRODUCTS_CATALOG: DemoAgroProduct[] = [
   {
-    _id: "prod_clorofill_tomato_1",
-    name: "Clorofill F1 Gibrid Pomidor Urug'i (1,000 dona)",
+    _id: "prod_vesta_tomato_1",
+    name: "Vesta F1 Qizil Pomidor Urug'i (1,000 dona)",
     category: "seeds",
     categoryLabel: "Gibrid Pomidor Urug'i",
-    badge: "Gollandiya F1",
+    badge: "Vesta F1",
     rating: 4.9,
     priceUzs: 420000,
     oldPriceUzs: 480000,
     priceUsd: 33.3,
-    image: "https://images.unsplash.com/photo-1592417817098-8f3d6910985c?auto=format&fit=crop&w=600&q=80",
-    desc: "Virus va fitoftoraga yuqori chidamli, hosildorligi 1 tupdan 12-15 kg gacha.",
+    image: "/img/seeds/seedVESTATOMATO.jpeg",
+    desc: "Virus va fitoftoraga yuqori chidamli, go'shtdor yirik pomidor.",
   },
   {
     _id: "prod_greenhouse_film_3layer",
-    name: "3 Qavatli Termo-Diffuz Plyonka (150 mkr, 12m x 50m)",
+    name: "6 Metrlik Ko'p Yillik Antikaplya Salafan (150 mkr, 6m x 100m)",
     category: "film",
     categoryLabel: "Issiqxona Salafani",
-    badge: "UV 5 Yillik Kafolat",
+    badge: "Antikaplya Termo",
     rating: 5.0,
-    priceUzs: 3450000,
-    oldPriceUzs: 3800000,
-    priceUsd: 273.8,
-    image: "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=600&q=80",
+    priceUzs: 2650000,
+    oldPriceUzs: 2900000,
+    priceUsd: 206.2,
+    image: "/img/salafan/Salafan6M.jpg",
     desc: "Antikondensat va yorug'likni teng tarqatuvchi EVA qoplamali mustahkam plyonka.",
   },
   {
@@ -61,10 +69,10 @@ const AGRO_PRODUCTS_CATALOG: DemoAgroProduct[] = [
     categoryLabel: "Fungitsid Himoya",
     badge: "Original Syngenta",
     rating: 4.8,
-    priceUzs: 145000,
-    oldPriceUzs: 165000,
-    priceUsd: 11.5,
-    image: "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=600&q=80",
+    priceUzs: 165000,
+    oldPriceUzs: 185000,
+    priceUsd: 12.8,
+    image: "/img/products/ridomilgold.jpg",
     desc: "Fitoftora va peronosporozga qarshi O'zbekistondagi 1-raqamli tizimli fungitsid.",
   },
   {
@@ -72,26 +80,26 @@ const AGRO_PRODUCTS_CATALOG: DemoAgroProduct[] = [
     name: "Avtomatik Tomchilatib Sug'orish Lenta (1000m, 20cm oraliq)",
     category: "tools",
     categoryLabel: "Sug'orish Tizimlari",
-    badge: "Isroil Texnologiyasi",
+    badge: "Tiqilmas Labirint",
     rating: 4.9,
-    priceUzs: 680000,
-    oldPriceUzs: 750000,
-    priceUsd: 53.9,
-    image: "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?auto=format&fit=crop&w=600&q=80",
+    priceUzs: 720000,
+    oldPriceUzs: 780000,
+    priceUsd: 56.0,
+    image: "/img/products/sugorish.jpg",
     desc: "Labirintli tiqilmaydigan tomizgichlar, suv sarfini 60% gacha tejaydi.",
   },
   {
-    _id: "prod_severin_cucumber",
-    name: "Severin F1 Partenokarpik Bodring Urug'i (Enza Zaden, 500 dona)",
+    _id: "prod_miracle_cucumber",
+    name: "Miracle F1 Bodring Urug'i (Mo''jiza Hosildorlik)",
     category: "seeds",
     categoryLabel: "Bodring Urug'i",
-    badge: "Enza Zaden F1",
+    badge: "Miracle F1",
     rating: 4.9,
-    priceUzs: 390000,
-    oldPriceUzs: 430000,
-    priceUsd: 30.9,
-    image: "https://images.unsplash.com/photo-1449339854873-750e6913301b?auto=format&fit=crop&w=600&q=80",
-    desc: "Erta bahor va kech kuzgi issiqxonalar uchun eng serhosil parteno-bodring.",
+    priceUzs: 340000,
+    oldPriceUzs: 380000,
+    priceUsd: 26.5,
+    image: "/img/seeds/seedMIRACLECUCUMBER.jpeg",
+    desc: "Har bir bo'g'indan 3-4 tadan meva tuguvchi guldor partenokarpik bodring gibridi.",
   },
   {
     _id: "prod_topas_100_ec",
@@ -134,6 +142,59 @@ const AGRO_PRODUCTS_CATALOG: DemoAgroProduct[] = [
 
 export default function AgroStoreSection({ onAdd }: AgroStoreSectionProps) {
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [likedIds, setLikedIds] = useState<string[]>(() => WishlistService.getLikedIds());
+  const [directPaymentOpen, setDirectPaymentOpen] = useState<boolean>(false);
+  const [directPaymentOrder, setDirectPaymentOrder] = useState<Order | null>(null);
+
+  useEffect(() => {
+    const handleWishlistChange = () => {
+      setLikedIds(WishlistService.getLikedIds());
+    };
+    window.addEventListener("agroolam_wishlist_updated", handleWishlistChange);
+    return () => {
+      window.removeEventListener("agroolam_wishlist_updated", handleWishlistChange);
+    };
+  }, []);
+
+  const handleToggleLike = (prodId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const { isLiked } = WishlistService.toggleLike(prodId);
+    setLikedIds(WishlistService.getLikedIds());
+    sweetTopSuccessAlert(
+      isLiked ? "❤️ Sevimlilar ro'yxatiga qo'shildi!" : "🤍 Sevimlilardan olib tashlandi"
+    );
+  };
+
+  const handleDirectBuy = async (prod: DemoAgroProduct, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const orderSvc = new OrderService();
+      const order = await orderSvc.createOrder([
+        {
+          _id: prod._id,
+          quantity: 1,
+          name: prod.name,
+          price: prod.priceUzs,
+          image: prod.image,
+        },
+      ]);
+      setDirectPaymentOrder(order);
+      setDirectPaymentOpen(true);
+    } catch (err) {
+      console.log("Direct buy error:", err);
+      sweetErrorHandling(err).then();
+    }
+  };
+
+  const handlePaymentSuccess = async (orderId: string) => {
+    try {
+      const orderSvc = new OrderService();
+      await orderSvc.updateOrder({ orderId, orderStatus: OrderStatus.PROCESS });
+      sweetTopSuccessAlert("To'lov muvaffaqiyatli qabul qilindi!");
+    } catch (err) {
+      sweetErrorHandling(err).then();
+    }
+  };
 
   const filteredProducts =
     activeCategory === "all"
@@ -324,6 +385,32 @@ export default function AgroStoreSection({ onAdd }: AgroStoreSectionProps) {
                       <StarIcon sx={{ fontSize: 15, color: "#f59e0b" }} />
                       {prod.rating.toFixed(1)}
                     </Box>
+
+                    {/* Heart Like / Wishlist Button */}
+                    <IconButton
+                      size="small"
+                      onClick={(e) => handleToggleLike(prod._id, e)}
+                      title={likedIds.includes(prod._id) ? "Sevimlilardan o'chirish" : "Sevimlilarga qo'shish"}
+                      sx={{
+                        position: "absolute",
+                        top: 12,
+                        right: 70,
+                        bgcolor: "rgba(255, 255, 255, 0.95)",
+                        backdropFilter: "blur(6px)",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                        zIndex: 3,
+                        width: 28,
+                        height: 28,
+                        transition: "all 0.2s ease",
+                        "&:hover": { bgcolor: "#ffffff", transform: "scale(1.15)" },
+                      }}
+                    >
+                      {likedIds.includes(prod._id) ? (
+                        <FavoriteIcon sx={{ color: "#ef4444", fontSize: 16 }} />
+                      ) : (
+                        <FavoriteBorderIcon sx={{ color: "#64748b", fontSize: 16 }} />
+                      )}
+                    </IconButton>
                   </Box>
 
                   {/* Body Details */}
@@ -406,31 +493,58 @@ export default function AgroStoreSection({ onAdd }: AgroStoreSectionProps) {
                         </Typography>
                       </div>
 
-                      <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}>
-                        <Button
-                          variant="contained"
-                          size="small"
-                          onClick={() =>
-                            onAdd({
-                              _id: prod._id,
-                              quantity: 1,
-                              name: prod.name,
-                              price: prod.priceUzs,
-                              image: prod.image,
-                            })
-                          }
-                          sx={{
-                            bgcolor: "#2D6A4F",
-                            "&:hover": { bgcolor: "#1B4332" },
-                            borderRadius: "12px",
-                            minWidth: "40px",
-                            p: 1.2,
-                            boxShadow: "0 4px 10px rgba(45, 106, 79, 0.25)",
-                          }}
-                        >
-                          <AddIcon sx={{ fontSize: 20 }} />
-                        </Button>
-                      </motion.div>
+                      <Stack direction="row" spacing={0.8} alignItems="center">
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => {
+                              onAdd({
+                                _id: prod._id,
+                                quantity: 1,
+                                name: prod.name,
+                                price: prod.priceUzs,
+                                image: prod.image,
+                              });
+                              sweetTopSuccessAlert("Savatga qo'shildi!");
+                            }}
+                            sx={{
+                              borderColor: "#2D6A4F",
+                              color: "#2D6A4F",
+                              minWidth: "36px",
+                              p: 0.8,
+                              borderRadius: "10px",
+                              "&:hover": { borderColor: "#1B4332", bgcolor: "#f0fdf4" },
+                            }}
+                            title="Savatga qo'shish"
+                          >
+                            <AddIcon sx={{ fontSize: 18 }} />
+                          </Button>
+                        </motion.div>
+
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                          <Button
+                            variant="contained"
+                            size="small"
+                            onClick={(e) => handleDirectBuy(prod, e)}
+                            startIcon={<BoltIcon sx={{ fontSize: 15, color: "#fef08a" }} />}
+                            sx={{
+                              bgcolor: "#1B4332",
+                              color: "#ffffff",
+                              px: 1.4,
+                              py: 0.8,
+                              borderRadius: "10px",
+                              textTransform: "none",
+                              fontWeight: 800,
+                              fontSize: "11px",
+                              boxShadow: "0 3px 10px rgba(27, 67, 50, 0.25)",
+                              "&:hover": { bgcolor: "#0E271D" },
+                            }}
+                          >
+                            Xarid
+                          </Button>
+                        </motion.div>
+                      </Stack>
                     </Box>
                   </Box>
                 </Box>
@@ -467,6 +581,17 @@ export default function AgroStoreSection({ onAdd }: AgroStoreSectionProps) {
           </NavLink>
         </Box>
       </Container>
+
+      {/* Standalone Direct Buy Payment Gateway */}
+      <PaymentModal
+        open={directPaymentOpen}
+        order={directPaymentOrder}
+        onClose={() => {
+          setDirectPaymentOpen(false);
+          setDirectPaymentOrder(null);
+        }}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
     </Box>
   );
 }

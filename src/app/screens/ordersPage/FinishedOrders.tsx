@@ -1,13 +1,18 @@
 import React from "react";
-import { Box, Stack } from "@mui/material";
-import TabPanel from "@mui/lab/TabPanel";
-
+import { Box, Stack, Typography, Button, Chip } from "@mui/material";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
-import { retrieveFinishedOrders, retrievePausedOrders } from "./selector";
+import { retrieveFinishedOrders } from "./selector";
 import { serverApi } from "../../../lib/config";
 import { Order, OrderItem } from "../../../lib/types/order";
 import { Product } from "../../../lib/types/product";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import moment from "moment";
+
+const USD_TO_UZS = 12850;
 
 const finishedOrdersRetriever = createSelector(
   retrieveFinishedOrders,
@@ -16,70 +21,141 @@ const finishedOrdersRetriever = createSelector(
 
 export default function FinishedOrders() {
   const { finishedOrders } = useSelector(finishedOrdersRetriever);
+
+  const getProductImage = (product?: Product) => {
+    const raw = product?.productImages?.[0];
+    if (!raw) return "/img/default-agro.png";
+    if (raw.startsWith("http://") || raw.startsWith("https://") || raw.startsWith("/img/")) {
+      return raw;
+    }
+    return `${serverApi}/${raw}`;
+  };
+
   return (
-    <TabPanel value={"3"}>
-      <Stack>
-        {finishedOrders.map((order: Order) => {
-          return (
-            <Box key={order._id} className={"order-main-box"}>
-              <Box className={"order-box-scroll"}>
-                {order?.orderItems?.map((item: OrderItem) => {
-                  const product: Product = order.productData.filter(
-                    (ele: Product) => item.productId === ele._id,
-                  )[0];
-                  const imagePath = `${serverApi}/${product.productImages[0]}`;
-                  return (
-                    <Box key={item._id} className={"orders-name-price"}>
-                      <img src={imagePath} className={"order-dish-img order-product-img"} alt={product.productName} />
+    <Stack spacing={2.5}>
+      {finishedOrders?.map((order: Order) => {
+        const totalUzs = (order.orderTotal * USD_TO_UZS).toLocaleString("uz-UZ");
+        const orderDate = order.createdAt
+          ? moment(order.createdAt).format("DD.MM.YYYY, HH:mm")
+          : moment().format("DD.MM.YYYY");
 
-                      <p className={"title-dish title-product"}>{product.productName}</p>
-                      <Box className={"price-box"}>
-                        <p>${item.itemPrice}</p>
-                        <img src={"/icons/close.svg"} />
-                        <p>{item.itemQuantity}</p>
-                        <img src={"/icons/pause.svg"} />
-                        <p style={{ marginLeft: "15px" }}>
-                          {" "}
-                          ${item.itemQuantity * item.itemPrice}
-                        </p>
-                      </Box>
-                    </Box>
-                  );
-                })}
-              </Box>
-              <Box className={"total-price-box"}>
-                <Box className={"box-total"}>
-                  <p>Product price</p>
-                  <p>${order.orderTotal - order.orderDelivery}</p>
-                  <img src={"/icons/plus.svg"} style={{ marginLeft: "20px" }} />
-                  <p>Delivery cost</p>
-                  <p>${order.orderDelivery}</p>
-                  <img
-                    src={"/icons/pause.svg"}
-                    style={{ marginLeft: "20px" }}
-                  />
-                  <p>Total</p>
-                  <p>${order.orderTotal}</p>
-                </Box>
-              </Box>
-            </Box>
-          );
-        })}
-
-        {!finishedOrders ||
-          (finishedOrders.length === 0 && (
-            <Box
-              display={"flex"}
-              flexDirection={"row"}
-              justifyContent={"center"}
-            >
-              <img
-                src={"/icons/noimage-list.svg"}
-                style={{ width: 300, height: 300 }}
+        return (
+          <Box key={order._id} className="order-main-box">
+            {/* Header */}
+            <div className="order-box-header">
+              <div className="order-header-left">
+                <span className="order-id-label">
+                  Buyurtma #{order._id.slice(-6).toUpperCase()}
+                </span>
+                <span className="order-date-text">
+                  <AccessTimeIcon sx={{ fontSize: 13, mr: 0.4 }} />
+                  {orderDate}
+                </span>
+              </div>
+              <Chip
+                icon={<CheckCircleIcon sx={{ fontSize: 16, color: "#166534" }} />}
+                label="Yetkazilgan"
+                size="small"
+                sx={{
+                  bgcolor: "#DCFCE7",
+                  color: "#166534",
+                  fontWeight: 700,
+                  fontSize: 11.5,
+                  borderRadius: "8px",
+                  border: "1px solid #BBF7D0",
+                }}
               />
+            </div>
+
+            {/* Product items */}
+            <Box className="order-box-scroll">
+              {order?.orderItems?.map((item: OrderItem) => {
+                const product: Product | undefined = order.productData?.find(
+                  (ele: Product) => item.productId === ele._id,
+                );
+                const imagePath = getProductImage(product);
+                const productName = product?.productName || "Agromahsulot";
+                const itemTotalUSD = item.itemQuantity * item.itemPrice;
+                const itemTotalUZS = (itemTotalUSD * USD_TO_UZS).toLocaleString("uz-UZ");
+
+                return (
+                  <Box key={item._id} className="orders-name-price">
+                    <img
+                      src={imagePath}
+                      className="order-product-img"
+                      alt={productName}
+                      onError={(e: any) => {
+                        e.target.src = "/img/default-agro.png";
+                      }}
+                    />
+
+                    <div className="order-item-desc">
+                      <p className="title-product">{productName}</p>
+                      <span className="unit-price-text">
+                        ${item.itemPrice} × {item.itemQuantity} ta
+                      </span>
+                    </div>
+
+                    <Box className="price-box">
+                      <span className="item-usd">${itemTotalUSD}</span>
+                      <span className="item-uzs">~{itemTotalUZS} so'm</span>
+                    </Box>
+                  </Box>
+                );
+              })}
             </Box>
-          ))}
-      </Stack>
-    </TabPanel>
+
+            {/* Total summary */}
+            <Box className="total-price-box">
+              <Box className="box-total">
+                <div className="price-item">
+                  <span>Mahsulotlar:</span>
+                  <strong>${order.orderTotal - order.orderDelivery}</strong>
+                </div>
+                <span className="divider-dot">•</span>
+                <div className="price-item">
+                  <span>Yetkazish:</span>
+                  <strong style={{ color: order.orderDelivery === 0 ? "#059669" : "inherit" }}>
+                    {order.orderDelivery === 0 ? "Bepul" : `$${order.orderDelivery}`}
+                  </strong>
+                </div>
+                <span className="divider-dot">•</span>
+                <div className="price-item total-highlight">
+                  <span>Jami to'langan:</span>
+                  <strong>${order.orderTotal}</strong>
+                  <small>({totalUzs} so'm)</small>
+                </div>
+              </Box>
+
+              <div className="order-action-btns">
+                <Button
+                  variant="outlined"
+                  size="small"
+                  className="invoice-button"
+                  startIcon={<ReceiptIcon sx={{ fontSize: 16 }} />}
+                  onClick={() => alert(`Buyurtma #${order._id.slice(-6).toUpperCase()} elektron cheki: To'lov muvaffaqiyatli qabul qilingan.`)}
+                >
+                  Chekni ko'rish
+                </Button>
+              </div>
+            </Box>
+          </Box>
+        );
+      })}
+
+      {(!finishedOrders || finishedOrders.length === 0) && (
+        <Box className="empty-orders-card">
+          <div className="empty-icon-wrap">
+            <ShoppingBagOutlinedIcon sx={{ fontSize: 40, color: "#94a3b8" }} />
+          </div>
+          <Typography sx={{ fontWeight: 700, fontSize: 17, color: "#1e293b", mt: 1 }}>
+            Yakunlangan buyurtmalar hozircha yo'q
+          </Typography>
+          <Typography sx={{ fontSize: 13, color: "#64748b", mt: 0.5, maxWidth: 320 }}>
+            Yetkazib berilgan barcha muvaffaqiyatli buyurtmalar arxiv sifatida shu yerda saqlanadi.
+          </Typography>
+        </Box>
+      )}
+    </Stack>
   );
 }

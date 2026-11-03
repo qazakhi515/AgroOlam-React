@@ -4,7 +4,6 @@ import {
   Container,
   Grid,
   Typography,
-  Stack,
   Button,
   TextField,
   MenuItem,
@@ -15,10 +14,8 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { motion } from "framer-motion";
-import { getSavedLanguage } from "../../../lib/i18n";
 
 export default function FarmerConsultationSection() {
-  const lang = getSavedLanguage();
 
   const [formData, setFormData] = useState({
     name: "",

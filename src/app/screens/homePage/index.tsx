@@ -4,6 +4,7 @@ import AiScannerSection from "./AiScannerSection";
 import AgroStoreSection from "./AgroStoreSection";
 import ServicesSection from "./ServicesSection";
 import GlobalProjectsMap from "./GlobalProjectsMap";
+import FarmerTestimonialCarousel from "./FarmerTestimonialCarousel";
 import FarmerConsultationSection from "./FarmerConsultationSection";
 import { CartItem } from "../../../lib/types/search";
 import "../../../css/home.css";
@@ -30,7 +31,10 @@ export default function HomePage({ onAdd = () => {} }: HomePageProps) {
       {/* 5. Global Projects Map & Statistics */}
       <GlobalProjectsMap />
 
-      {/* 6. Farmer Testimonial & 15-Minute Free Consultation Form */}
+      {/* 6. Dynamic 3D Farmer Testimonials Carousel (High-Trust Proof) */}
+      <FarmerTestimonialCarousel />
+
+      {/* 7. 15-Minute Free Consultation Form */}
       <FarmerConsultationSection />
     </div>
   );

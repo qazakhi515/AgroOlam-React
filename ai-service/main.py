@@ -1,5 +1,5 @@
 """
-AgroPlant Vision AI 4.1 — FastAPI Microservice
+AgroOlam Vision AI 4.1 — FastAPI Microservice
 Providing real-time plant pathology diagnosis and registered agrochemical prescriptions
 for Uzbekistan agriculture (Pomidor, Bodring, Balgar, etc.)
 """
@@ -15,11 +15,11 @@ from pydantic import BaseModel
 from PIL import Image
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("agroplant-ai")
+logger = logging.getLogger("agroolam-ai")
 
 app = FastAPI(
-    title="AgroPlant Vision AI 4.1 API",
-    description="Real-time crop disease detection & registered agrochemical prescription engine for Uzbekistan.",
+    title="AgroOlam Vision AI 4.1 API",
+    description="Real-time crop disease detection & registered agrochemical prescription engine for Uzbekistan (agroolam.tech).",
     version="4.1.0"
 )
 

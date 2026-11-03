@@ -243,6 +243,21 @@ export default function PaymentModal({
                   <Typography variant="caption" color="text.secondary">Visa / Master / Shinhan</Typography>
                 </Box>
 
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  <Chip
+                    label="⚡ Test Visa (4000...)"
+                    size="small"
+                    clickable
+                    onClick={() => {
+                      setCardNumber("4000 1234 5678 9010");
+                      setCardExpiry("12/28");
+                      setCardCvv("789");
+                      setCardHolder("AKHMADJON USMONOV");
+                    }}
+                    sx={{ bgcolor: "#E0E7FF", color: "#4338CA", fontWeight: 700, fontSize: 11 }}
+                  />
+                </Box>
+
                 <TextField
                   label="Card Number"
                   placeholder="4000 1234 5678 9010"
@@ -305,6 +320,35 @@ export default function PaymentModal({
                     />
                   )}
                 </Box>
+
+                <Stack direction="row" spacing={1}>
+                  <Chip
+                    label="⚡ Test Uzcard (8600...)"
+                    size="small"
+                    clickable
+                    onClick={() => {
+                      setUzCardNumber("8600 4512 8890 1234");
+                      setUzCardExpiry("12/28");
+                      setUzCardPhone("+998 90 123 45 67");
+                      setSmsSent(true);
+                      setSmsCode("7891");
+                    }}
+                    sx={{ bgcolor: "#E0F2FE", color: "#0369A1", fontWeight: 700, fontSize: 11 }}
+                  />
+                  <Chip
+                    label="⚡ Test Humo (9860...)"
+                    size="small"
+                    clickable
+                    onClick={() => {
+                      setUzCardNumber("9860 1200 4589 7712");
+                      setUzCardExpiry("08/29");
+                      setUzCardPhone("+998 93 987 65 43");
+                      setSmsSent(true);
+                      setSmsCode("7891");
+                    }}
+                    sx={{ bgcolor: "#FCE7F3", color: "#BE185D", fontWeight: 700, fontSize: 11 }}
+                  />
+                </Stack>
 
                 <TextField
                   label="Uzcard yoki Humo karta raqami"
@@ -461,13 +505,22 @@ export default function PaymentModal({
             </Stack>
           </Box>
 
-          <Button
-            variant="contained"
-            onClick={handleResetAndClose}
-            sx={{ bgcolor: "#2e7d32", "&:hover": { bgcolor: "#1b5e20" }, px: 4, fontWeight: 700 }}
-          >
-            {lang === "ko" ? "확인" : lang === "uz" ? "Tayyor" : "Done"}
-          </Button>
+          <Stack direction="row" spacing={2} justifyContent="center">
+            <Button
+              variant="outlined"
+              onClick={() => window.print()}
+              sx={{ borderColor: "#2e7d32", color: "#2e7d32", px: 3, fontWeight: 700 }}
+            >
+              🖨️ Chekni chop etish
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleResetAndClose}
+              sx={{ bgcolor: "#2e7d32", "&:hover": { bgcolor: "#1b5e20" }, px: 4, fontWeight: 700 }}
+            >
+              {lang === "ko" ? "확인" : lang === "uz" ? "Tayyor" : "Done"}
+            </Button>
+          </Stack>
         </Box>
       )}
     </Dialog>

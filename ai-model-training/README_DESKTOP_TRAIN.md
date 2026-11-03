@@ -1,6 +1,6 @@
-# 🚀 AgroPlant AI 4.1: Desktop (RTX 4070 Ti Super 16GB) O'qitish Qo'llanmasi
+# 🚀 AgroOlam Vision AI 4.1: Desktop (RTX 4070 Ti Super 16GB) O'qitish Qo'llanmasi
 
-Ushbu qo'llanma sizning ikkinchi kompyuteringiz — **Intel Core i7-14700K + NVIDIA GeForce RTX 4070 Ti Super (16GB VRAM)** quvvatidan maksimal foydalanib, **Pomidor**, **Bodring** va **Balgar** ekinlari kasalliklarini aniqlovchi **YOLOv8m** modelini o'qitish uchun tayyorlandi.
+Ushbu qo'llanma sizning ikkinchi kompyuteringiz — **Intel Core i7-14700K + NVIDIA GeForce RTX 4070 Ti Super (16GB VRAM)** quvvatidan maksimal foydalanib, **Pomidor**, **Bodring** va **Balgar** ekinlari kasalliklarini aniqlovchi **YOLOv8m** modelini o'qitish uchun tayyorlandi. Rasmiy domen: **agroolam.tech**.
 
 ---
 
@@ -72,7 +72,7 @@ Skript avtomatik ravishda:
 1. RTX 4070 Ti Super va 16GB VRAM borligini tasdiqlaydi.
 2. Tensor Cores (AMP FP16) rejimini yoqadi.
 3. 100 epoch davomida o'qitadi.
-4. Natijani `agroplant_ai_run/crops_v8m_desktop/weights/best.pt` fayliga saqlaydi.
+4. Natijani `agroolam_ai_run/crops_v8m_desktop/weights/best.pt` fayliga saqlaydi.
 5. Avtomatik `best.onnx` faylini ham yaratadi.
 
 ---
@@ -83,7 +83,7 @@ O'qitish tugagach:
 1. Desktopingizdagi `best.pt` faylini oling.
 2. Hozir ishlayotgan Mac kompyuteringizdagi ushbu loyiha papkasiga joylashtiring:
    ```
-   AgroPlant-React/
+   AgroOlam (agroolam.tech)/
      └── ai-service/
            └── weights/
                  └── best.pt    <-- SHU YERGA TASHLANG

@@ -7,6 +7,7 @@ import {
   Menu,
   MenuItem,
   Stack,
+  Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
@@ -41,7 +42,6 @@ export default function OtherNavbar(props: OtherNavbarProps) {
     onRemove,
     onDelete,
     onDeleteAll,
-    setSignupOpen,
     setLoginOpen,
     handleLogoutClick,
     anchorEl,
@@ -75,12 +75,20 @@ export default function OtherNavbar(props: OtherNavbarProps) {
             {/* 1. Brand Logo */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <NavLink to="/" className="brand-logo-wrapper">
-                <img className="brand-logo" src="/icons/agroolam-logo.svg" alt="AgroOlam.tech" />
+                <img
+                  className="brand-logo"
+                  src="/icons/agroolam-logo.svg"
+                  alt="AgroOlam.tech"
+                />
               </NavLink>
             </motion.div>
 
             {/* 2. Center Navigation Links */}
-            <Stack direction="row" className="nav-center-links" spacing={{ xs: 1.5, md: 3 }}>
+            <Stack
+              direction="row"
+              className="nav-center-links"
+              spacing={{ xs: 1.5, md: 3 }}
+            >
               <Box className="hover-line">
                 <NavLink to="/" exact activeClassName="underline">
                   {t.home}
@@ -118,15 +126,57 @@ export default function OtherNavbar(props: OtherNavbarProps) {
             </Stack>
 
             {/* 3. Action Group */}
-            <Stack direction="row" className="nav-actions-group" spacing={1.8} alignItems="center">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Stack
+              direction="row"
+              className="nav-actions-group"
+              spacing={1.5}
+              alignItems="center"
+            >
+              {/* Andijan Real-time Agro Weather Chip */}
+              <NavLink to="/news" style={{ textDecoration: "none" }}>
+                <Box
+                  sx={{
+                    display: { xs: "none", sm: "flex" },
+                    alignItems: "center",
+                    gap: 0.6,
+                    bgcolor: "rgba(16, 185, 129, 0.12)",
+                    border: "1px solid rgba(16, 185, 129, 0.25)",
+                    borderRadius: "20px",
+                    px: 1.5,
+                    py: 0.6,
+                    transition: "all 0.2s ease",
+                    "&:hover": { bgcolor: "rgba(16, 185, 129, 0.22)" },
+                  }}
+                >
+                  <span style={{ fontSize: "14px" }}>🌤️</span>
+                  <Typography
+                    sx={{
+                      fontWeight: 800,
+                      fontSize: "11px",
+                      color: "#1B4332",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    Andijon: +19°C
+                  </Typography>
+                </Box>
+              </NavLink>
+
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Button
                   size="small"
                   className="plant-doctor-btn"
                   startIcon={<PhotoCameraIcon sx={{ fontSize: 16 }} />}
                   onClick={() => setIsDoctorOpen(true)}
                 >
-                  {lang === "ko" ? "AI 닥터" : lang === "uz" ? "AI Shifokor" : "Plant Doctor"}
+                  {lang === "ko"
+                    ? "AI 닥터"
+                    : lang === "uz"
+                      ? "AI Shifokor"
+                      : "Plant Doctor"}
                 </Button>
               </motion.div>
 
@@ -147,7 +197,10 @@ export default function OtherNavbar(props: OtherNavbarProps) {
               <LanguageSelector />
 
               {!authMember ? (
-                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
+                <motion.div
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                >
                   <Button
                     variant="contained"
                     className="login-button"
@@ -157,7 +210,10 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                   </Button>
                 </motion.div>
               ) : (
-                <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}>
+                <motion.div
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.92 }}
+                >
                   <img
                     className="user-avatar"
                     src={
@@ -211,7 +267,10 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
-                <MenuItem onClick={handleLogoutRequest} sx={{ color: "#f87171", fontWeight: 600 }}>
+                <MenuItem
+                  onClick={handleLogoutRequest}
+                  sx={{ color: "#f87171", fontWeight: 600 }}
+                >
                   <ListItemIcon>
                     <Logout fontSize="small" sx={{ color: "#f87171" }} />
                   </ListItemIcon>

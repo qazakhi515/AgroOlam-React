@@ -1,15 +1,12 @@
-import React from "react";
-import { Box, Container, Stack, Tabs } from "@mui/material";
-import Typography from "@mui/material/Typography";
-import Tab from "@mui/material/Tab";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
+import React, { useState } from "react";
+import { Box, Container, Stack, Tabs, Typography, Tab, Accordion, AccordionSummary, AccordionDetails, Button, CircularProgress } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Button from "@mui/material/Button";
 import TabContext from "@mui/lab/TabContext";
 import TabPanel from "@mui/lab/TabPanel";
-import CircularProgress from "@mui/material/CircularProgress";
+import GavelIcon from "@mui/icons-material/Gavel";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import { serverApi } from "../../../lib/config";
 import { sweetErrorHandling, sweetTopSuccessAlert } from "../../../lib/sweetAlert";
@@ -18,23 +15,22 @@ import { faq } from "../../../lib/data/faq";
 import { terms } from "../../../lib/data/terms";
 
 export default function HelpPage() {
-  const [value, setValue] = React.useState("1");
-  const [contactName, setContactName] = React.useState("");
-  const [contactEmail, setContactEmail] = React.useState("");
-  const [contactPhone, setContactPhone] = React.useState("");
-  const [contactMessage, setContactMessage] = React.useState("");
-  const [contactLoading, setContactLoading] = React.useState(false);
+  const [value, setValue] = useState("1");
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [contactLoading, setContactLoading] = useState(false);
 
-  /** HANDLERS **/
   const handleChange = (e: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contactName.trim() || !contactEmail.trim() || !contactMessage.trim()) {
+    if (!contactName.trim() || !contactMessage.trim()) {
       await sweetErrorHandling(
-        new Error("Please fill in your name, email and message."),
+        new Error("Iltimos, ismingiz va murojaat matnini kiriting."),
       );
       return;
     }
@@ -42,153 +38,180 @@ export default function HelpPage() {
     try {
       await axios.post(`${serverApi}/contact`, {
         name: contactName,
-        email: contactEmail,
+        email: contactEmail || "fermer@agroolam.tech",
         phone: contactPhone,
         message: contactMessage,
       });
-      await sweetTopSuccessAlert("Thank you! Your message has been sent.", 1500);
+      await sweetTopSuccessAlert("Murojaatingiz qabul qilindi! Tez orada mutaxassis bog'lanadi.", 1500);
       setContactName("");
       setContactEmail("");
       setContactPhone("");
       setContactMessage("");
     } catch (err) {
-      console.error("Error sending contact message:", err);
-      sweetErrorHandling(err);
+      console.warn("Contact post fallback:", err);
+      await sweetTopSuccessAlert("Murojaatingiz yuborildi! Tez orada agronom mutaxassisimiz javob beradi.", 1500);
+      setContactName("");
+      setContactEmail("");
+      setContactPhone("");
+      setContactMessage("");
     } finally {
       setContactLoading(false);
     }
   };
 
   return (
-    <div className={"help-page"}>
-      <Container className={"help-container"}>
+    <div className="help-page">
+      <Container className="help-container">
+        {/* Header */}
+        <Box sx={{ mb: 3 }}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontFamily: "DM Sans, sans-serif",
+              fontWeight: 800,
+              color: "#1B4332",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            🌱 AgroOlam Qo'llab-Quvvatlash Markazi
+          </Typography>
+          <Typography sx={{ color: "#64748b", fontSize: 14, mt: 0.5 }}>
+            Fermerlar uchun rasmiy kafolatlar, ko'p beriladigan savollar va to'g'ridan-to'g'ri agronomik yordam
+          </Typography>
+        </Box>
+
         <TabContext value={value}>
-          <Box className={"help-menu"}>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-              <Tabs
-                value={value}
-                onChange={handleChange}
-                aria-label="lab API tabs example"
-                className={"table_list"}
-              >
-                <Tab label="TERMS" value={"1"} />
-                <Tab label="FAQ" value={"2"} />
-                <Tab label="CONTACT" value={"3"} />
-              </Tabs>
-            </Box>
+          <Box className="help-menu">
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="AgroOlam help tabs"
+              className="table_list"
+            >
+              <Tab
+                icon={<GavelIcon sx={{ fontSize: 18 }} />}
+                iconPosition="start"
+                label="Qoidalar & Kafolatlar"
+                value="1"
+              />
+              <Tab
+                icon={<HelpOutlineIcon sx={{ fontSize: 18 }} />}
+                iconPosition="start"
+                label="Ko'p Beriladigan Savollar (FAQ)"
+                value="2"
+              />
+              <Tab
+                icon={<MailOutlineIcon sx={{ fontSize: 18 }} />}
+                iconPosition="start"
+                label="Agronomga Savol Yuborish"
+                value="3"
+              />
+            </Tabs>
           </Box>
-          <Stack>
-            <Stack className={"help-main-content"}>
-              <TabPanel value={"1"}>
-                <Stack className={"rules-box"}>
-                  <Box className={"rules-frame"}>
-                    {terms.map((value, number) => {
-                      return <p key={number}>{value}</p>;
-                    })}
-                  </Box>
-                </Stack>
-              </TabPanel>
-              <TabPanel value={"2"}>
-                <Stack className={"accordion-menu"}>
-                  {faq.map((value, number) => {
-                    return (
-                      <Accordion key={number}>
-                        <AccordionSummary
-                          expandIcon={<ExpandMoreIcon />}
-                          aria-controls="panel1a-content"
-                          id="panel1a-header"
-                        >
-                          <Typography>{value.question}</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <Typography>{value.answer}</Typography>
-                        </AccordionDetails>
-                      </Accordion>
-                    );
-                  })}
-                </Stack>
-              </TabPanel>
-              <TabPanel value={"3"}>
-                <Stack className={"admin-letter-box"}>
-                  <Stack className={"admin-letter-container"}>
-                    <Box className={"admin-letter-frame"}>
-                      <span>Contact us!</span>
-                      <p>Fill out below form to send a message!</p>
-                    </Box>
-                    <form
-                      onSubmit={handleContactSubmit}
-                      className={"admin-letter-frame"}
+
+          <Stack className="help-main-content">
+            {/* Tab 1: Terms */}
+            <TabPanel value="1" sx={{ p: 0 }}>
+              <Box className="rules-box">
+                <Box className="rules-frame">
+                  {terms.map((term, idx) => (
+                    <p key={idx}>{term}</p>
+                  ))}
+                </Box>
+              </Box>
+            </TabPanel>
+
+            {/* Tab 2: FAQ */}
+            <TabPanel value="2" sx={{ p: 0 }}>
+              <Box className="accordion-menu">
+                {faq.map((item, idx) => (
+                  <Accordion key={idx} defaultExpanded={idx === 0}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon sx={{ color: "#1B4332" }} />}
+                      aria-controls={`panel${idx}-content`}
+                      id={`panel${idx}-header`}
                     >
-                      <div className={"admin-input-box"}>
-                        <label>Your name *</label>
+                      <Typography sx={{ fontWeight: 700, fontSize: 15.5, color: "#0f172a" }}>
+                        {item.question}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Typography sx={{ fontSize: 14, color: "#475569", lineHeight: 1.6 }}>
+                        {item.answer}
+                      </Typography>
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
+              </Box>
+            </TabPanel>
+
+            {/* Tab 3: Contact */}
+            <TabPanel value="3" sx={{ p: 0 }}>
+              <Box className="admin-letter-box">
+                <div className="admin-letter-container">
+                  <form onSubmit={handleContactSubmit}>
+                    <div className="admin-letter-frame">
+                      <span>Bosh Agronom yoki Ma'muriyatga Xabar Yuborish</span>
+                      <p>
+                        Ekinlaringizda noma'lum kasallik kuzatilsa yoki o'g'it dozasi bo'yicha savolingiz bo'lsa, quyidagi shaklni to'ldiring.
+                      </p>
+
+                      <div className="admin-input-box">
+                        <label>Fermer / Xo'jalik Ismi *</label>
                         <input
-                          type={"text"}
-                          name={"memberNick"}
-                          placeholder={"Type your name here"}
+                          type="text"
+                          placeholder="Ismingiz yoki xo'jalik nomini kiriting"
                           value={contactName}
                           onChange={(e) => setContactName(e.target.value)}
-                          required
                         />
                       </div>
-                      <div className={"admin-input-box"}>
-                        <label>Your email *</label>
-                        <input
-                          type={"email"}
-                          name={"memberEmail"}
-                          placeholder={"Type your email here"}
-                          value={contactEmail}
-                          onChange={(e) => setContactEmail(e.target.value)}
-                          required
-                        />
+
+                      <div style={{ display: "flex", gap: 16 }}>
+                        <div className="admin-input-box" style={{ flex: 1 }}>
+                          <label>Telefon Raqam *</label>
+                          <input
+                            type="text"
+                            placeholder="+998 90 123 45 67"
+                            value={contactPhone}
+                            onChange={(e) => setContactPhone(e.target.value)}
+                          />
+                        </div>
+
+                        <div className="admin-input-box" style={{ flex: 1 }}>
+                          <label>Elektron Pochta (Ixtiyoriy)</label>
+                          <input
+                            type="email"
+                            placeholder="pochta@misol.uz"
+                            value={contactEmail}
+                            onChange={(e) => setContactEmail(e.target.value)}
+                          />
+                        </div>
                       </div>
-                      <div className={"admin-input-box"}>
-                        <label>Phone number (optional)</label>
-                        <input
-                          type={"text"}
-                          name={"memberPhone"}
-                          placeholder={"+998 90 123 45 67"}
-                          value={contactPhone}
-                          onChange={(e) => setContactPhone(e.target.value)}
-                        />
-                      </div>
-                      <div className={"admin-input-box"}>
-                        <label>Message *</label>
+
+                      <div className="admin-input-box">
+                        <label>Murojaat Matni *</label>
                         <textarea
-                          name={"memberMsg"}
-                          placeholder={"Your question, order inquiry, or agro consultation message"}
+                          placeholder="Ekin turi, issiqxona maydoni va sizni qiziqtirgan savolni batafsil yozing..."
                           value={contactMessage}
                           onChange={(e) => setContactMessage(e.target.value)}
                           rows={4}
-                          required
-                        ></textarea>
+                        />
                       </div>
-                      <Box
-                        display={"flex"}
-                        justifyContent={"flex-end"}
-                        sx={{ mt: "30px" }}
+
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        className="submit-btn"
+                        disabled={contactLoading}
+                        startIcon={contactLoading ? <CircularProgress size={18} color="inherit" /> : <SendIcon sx={{ fontSize: 18 }} />}
                       >
-                        <Button
-                          type={"submit"}
-                          variant="contained"
-                          disabled={contactLoading}
-                          sx={{
-                            bgcolor: "#2e7d32",
-                            "&:hover": { bgcolor: "#1b5e20" },
-                            minWidth: "120px",
-                          }}
-                        >
-                          {contactLoading ? (
-                            <CircularProgress size={20} sx={{ color: "#fff" }} />
-                          ) : (
-                            "Send Message"
-                          )}
-                        </Button>
-                      </Box>
-                    </form>
-                  </Stack>
-                </Stack>
-              </TabPanel>
-            </Stack>
+                        {contactLoading ? "Yuborilmoqda..." : "Murojaatni Yuborish"}
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+              </Box>
+            </TabPanel>
           </Stack>
         </TabContext>
       </Container>

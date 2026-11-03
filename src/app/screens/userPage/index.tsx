@@ -1,8 +1,12 @@
-import { Box, Container, Stack } from "@mui/material";
+import { Box, Container, Stack, Chip, Button } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import TelegramIcon from "@mui/icons-material/Telegram";
 import YouTubeIcon from "@mui/icons-material/YouTube";
+import VerifiedIcon from "@mui/icons-material/Verified";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import DocumentScannerIcon from "@mui/icons-material/DocumentScanner";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { Settings } from "./Settings";
 import { useGlobals } from "../../components/hooks/useGlobals";
 import { useHistory } from "react-router-dom";
@@ -15,75 +19,125 @@ export default function UserPage() {
   const history = useHistory();
   const { authMember } = useGlobals();
 
-  if (!authMember) history.push("/");
+  if (!authMember) {
+    history.push("/");
+    return null;
+  }
+
+  const memberImg = authMember.memberImage
+    ? (authMember.memberImage.startsWith("http")
+        ? authMember.memberImage
+        : `${serverApi}/${authMember.memberImage}`)
+    : "/icons/default-user.svg";
+
   return (
-    <div className={"user-page"}>
+    <div className="user-page">
       <Container>
-        <Stack className={"my-page-frame"}>
-          <Stack className={"my-page-left"}>
-            <Box display={"flex"} flexDirection={"column"}>
-              <Box className={"menu-name"}>Modify Member Details</Box>
-              <Box className={"menu-content"}>
-                <Settings />
-              </Box>
+        <Stack className="my-page-frame">
+          {/* LEFT: SETTINGS FORM */}
+          <Stack className="my-page-left">
+            <Box className="menu-name">
+              <span>🌱 Fermer Profili va Issiqxona Sozlamalari</span>
+            </Box>
+            <Box className="menu-content">
+              <Settings />
             </Box>
           </Stack>
 
-          <Stack className={"my-page-right"}>
-            <Box className={"order-info-box"}>
-              <Box
-                display={"flex"}
-                flexDirection={"column"}
-                alignItems={"center"}
-              >
-                <div className={"order-user-img"}>
-                  <img
-                    src={
-                      authMember?.memberImage
-                        ? `${serverApi}/${authMember.memberImage}`
-                        : "/icons/default-user.svg"
-                    }
-                    alt=""
-                    className={"order-user-avatar"}
-                  />
-                  <div className={"order-user-icon-box"}>
-                    <img
-                      src={
-                        authMember?.memberType === MemberType.RESTAURANT
-                          ? "/icons/favicon.svg"
-                          : "/icons/user-badge.svg"
-                      }
-                      alt=""
-                    />
-                  </div>
+          {/* RIGHT: FARMER CARD & ACTIONS */}
+          <Stack className="my-page-right">
+            <Box className="order-info-box">
+              <div className="order-user-img">
+                <img
+                  src={memberImg}
+                  alt="Farmer"
+                  className="order-user-avatar"
+                  onError={(e: any) => {
+                    e.target.src = "/icons/default-user.svg";
+                  }}
+                />
+                <div className="order-user-icon-box">
+                  <VerifiedIcon sx={{ fontSize: 16, color: "#ffffff" }} />
                 </div>
-                <span className={"order-user-name"}>
-                  {authMember?.memberNick}
-                </span>
-                <span className={"order-user-prof"}>
-                  {authMember?.memberType}
-                </span>
-                <span className={"order-user-prof"}>
-                  {authMember?.memberAddress
-                    ? authMember.memberDesc
-                    : "no address"}
-                </span>
+              </div>
+
+              <span className="order-user-name">
+                {authMember.memberNick || "Fermer xo'jaligi"}
+              </span>
+
+              <Chip
+                label={authMember.memberType === MemberType.RESTAURANT ? "Bosh Agro-Ta'minotchi" : "Sertifikatlangan Fermer"}
+                size="small"
+                sx={{
+                  mt: 0.8,
+                  bgcolor: "#ECFDF5",
+                  color: "#065F46",
+                  fontWeight: 700,
+                  fontSize: 11,
+                  border: "1px solid #A7F3D0",
+                }}
+              />
+
+              <Box sx={{ width: "100%", mt: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5, color: "#64748b", fontSize: 13 }}>
+                <LocationOnIcon sx={{ fontSize: 18, color: "#059669" }} />
+                <span>{authMember.memberAddress || "O'zbekiston"}</span>
               </Box>
-              <Box className={"user-media-box"}>
+
+              <div className="user-desc">
+                {authMember.memberDesc || "Issiqxona va ekinlar haqida ma'lumotlar bu yerda aks etadi."}
+              </div>
+
+              {/* Quick Action Navigation */}
+              <Stack spacing={1} sx={{ width: "100%", mt: 2.5 }}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  startIcon={<DocumentScannerIcon sx={{ fontSize: 18 }} />}
+                  onClick={() => history.push("/#ai-scanner")}
+                  sx={{
+                    borderColor: "#1B4332",
+                    color: "#1B4332",
+                    fontWeight: 700,
+                    textTransform: "none",
+                    borderRadius: "10px",
+                    "&:hover": { bgcolor: "#ecfdf5", borderColor: "#1B4332" },
+                  }}
+                >
+                  Barg Patologiyasi Skaneri (AI)
+                </Button>
+
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  startIcon={<ShoppingBagOutlinedIcon sx={{ fontSize: 18 }} />}
+                  onClick={() => history.push("/orders")}
+                  sx={{
+                    borderColor: "#cbd5e1",
+                    color: "#475569",
+                    fontWeight: 700,
+                    textTransform: "none",
+                    borderRadius: "10px",
+                    "&:hover": { bgcolor: "#f8fafc", borderColor: "#94a3b8" },
+                  }}
+                >
+                  Buyurtmalar tarixi
+                </Button>
+              </Stack>
+
+              <Box className="user-media-box">
                 <FacebookIcon />
                 <InstagramIcon />
-                <TelegramIcon />
+                <TelegramIcon onClick={() => window.open("https://t.me/agroolam_uz", "_blank")} />
                 <YouTubeIcon />
               </Box>
-              <p className={"user-desc"}>
-                {authMember?.memberDesc
-                  ? authMember.memberDesc
-                  : "no description"}
-              </p>
             </Box>
 
             {/* Telegram Agro-Alerts Card */}
-            <TelegramAlertCard />
+            <Box sx={{ mt: 2.5 }}>
+              <TelegramAlertCard />
+            </Box>
           </Stack>
         </Stack>
       </Container>

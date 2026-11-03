@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Box, Container, Typography, Stack, Grid, Chip } from "@mui/material";
 import PublicIcon from "@mui/icons-material/Public";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { motion, AnimatePresence } from "framer-motion";
-import { getSavedLanguage } from "../../../lib/i18n";
 
 interface HubInfo {
   id: string;
@@ -17,8 +15,6 @@ interface HubInfo {
 }
 
 export default function GlobalProjectsMap() {
-  const lang = getSavedLanguage();
-
   const hubs: HubInfo[] = [
     {
       id: "uz",

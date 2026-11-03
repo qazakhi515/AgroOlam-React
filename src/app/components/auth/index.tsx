@@ -1,40 +1,30 @@
 import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
-import { Fab, Stack, TextField } from "@mui/material";
-import styled from "styled-components";
+import {
+  Dialog,
+  DialogContent,
+  Stack,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  IconButton,
+  InputAdornment,
+  Tabs,
+  Tab,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import LoginIcon from "@mui/icons-material/Login";
-import { T } from "../../../lib/types/common";
-import { Messages } from "../../../lib/config";
-import { sweetErrorHandling } from "./../../../lib/sweetAlert";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
+import VerifiedIcon from "@mui/icons-material/Verified";
+import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
 import { LoginInput, MemberInput } from "../../../lib/types/member";
 import MemberService from "../../services/memberService";
 import { useGlobals } from "../hooks/useGlobals";
-
-const useStyles = makeStyles((theme) => ({
-  modal: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  paper: {
-    backgroundColor: theme.palette.background.paper,
-    border: "2px solid #000",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 2, 2),
-  },
-}));
-
-const ModalImg = styled.img`
-  width: 62%;
-  height: 100%;
-  border-radius: 10px;
-  background: #000;
-  margin-top: 9px;
-  margin-left: 10px;
-`;
 
 interface AuthenticationModalProps {
   signupOpen: boolean;
@@ -45,64 +35,68 @@ interface AuthenticationModalProps {
 
 export default function AuthenticationModal(props: AuthenticationModalProps) {
   const { signupOpen, loginOpen, handleSignupClose, handleLoginClose } = props;
-  const classes = useStyles();
+  const { setAuthMember } = useGlobals();
+
+  const [activeTab, setActiveTab] = useState<"login" | "signup">(
+    signupOpen ? "signup" : "login"
+  );
   const [memberNick, setMemberNick] = useState<string>("");
   const [memberPhone, setMemberPhone] = useState<string>("");
   const [memberPassword, setMemberPassword] = useState<string>("");
-  const { setAuthMember } = useGlobals();
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  /** HANDLERS **/
-  const handleUsername = (e: T) => {
-    setMemberNick(e.target.value);
-  };
+  // Sync tab with props
+  React.useEffect(() => {
+    if (signupOpen) setActiveTab("signup");
+    else if (loginOpen) setActiveTab("login");
+  }, [signupOpen, loginOpen]);
 
-  const handlePhone = (e: T) => {
-    setMemberPhone(e.target.value);
-  };
+  const isOpen = signupOpen || loginOpen;
 
-  const handlePassword = (e: T) => {
-    setMemberPassword(e.target.value);
-  };
-
-  const handlePasswordKeyDown = (e: T) => {
-    if (e.key === "Enter" && signupOpen) {
-      handleSignupRequest().then();
-    } else if (e.key === "Enter" && loginOpen) {
-      handleLoginRequest().then();
-    }
+  const handleClose = () => {
+    setMemberNick("");
+    setMemberPhone("");
+    setMemberPassword("");
+    if (signupOpen) handleSignupClose();
+    if (loginOpen) handleLoginClose();
   };
 
   const handleSignupRequest = async () => {
     try {
-      console.log("inputs:", memberNick, memberPhone, memberPassword);
-      const isFulfill =
-        memberNick !== "" && memberPhone !== "" && memberPassword !== "";
-      if (!isFulfill) throw new Error(Messages.error3);
+      if (!memberNick.trim() || !memberPhone.trim() || !memberPassword.trim()) {
+        throw new Error("Iltimos, barcha maydonlarni to'ldiring!");
+      }
+      setIsLoading(true);
 
       const signupInput: MemberInput = {
-        memberNick: memberNick,
-        memberPhone: memberPhone,
+        memberNick: memberNick.trim(),
+        memberPhone: memberPhone.trim(),
         memberPassword: memberPassword,
       };
       const member = new MemberService();
       const result = await member.signup(signupInput);
 
       setAuthMember(result);
-      handleSignupClose();
+      handleClose();
+      await sweetTopSmallSuccessAlert("Muvaffaqiyatli ro'yxatdan o'tdingiz!", 1200);
     } catch (err) {
       console.log(err);
-      handleSignupClose();
       sweetErrorHandling(err).then();
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleLoginRequest = async () => {
     try {
-      const isFulfill = memberNick !== "" && memberPassword !== "";
-      if (!isFulfill) throw new Error(Messages.error3);
+      if (!memberNick.trim() || !memberPassword.trim()) {
+        throw new Error("Iltimos, ism va parolingizni kiriting!");
+      }
+      setIsLoading(true);
 
       const loginInput: LoginInput = {
-        memberNick: memberNick,
+        memberNick: memberNick.trim(),
         memberPassword: memberPassword,
       };
 
@@ -110,127 +104,300 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
       const result = await member.login(loginInput);
 
       setAuthMember(result);
-      handleLoginClose();
+      handleClose();
+      await sweetTopSmallSuccessAlert("Xush kelibsiz! Tizimga muvaffaqiyatli kirdingiz.", 1200);
     } catch (err) {
       console.log(err);
-      handleLoginClose();
       sweetErrorHandling(err).then();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      if (activeTab === "signup") handleSignupRequest();
+      else handleLoginRequest();
     }
   };
 
   return (
-    <div>
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        className={classes.modal}
-        open={signupOpen}
-        onClose={handleSignupClose}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={signupOpen}>
-          <Stack
-            className={classes.paper}
-            direction={"row"}
-            sx={{ width: "800px" }}
+    <Dialog
+      open={isOpen}
+      onClose={handleClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: "24px",
+          overflow: "hidden",
+          boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.25)",
+        },
+      }}
+    >
+      <DialogContent sx={{ p: 0 }}>
+        <Stack direction={{ xs: "column", md: "row" }} sx={{ minHeight: 460 }}>
+          {/* Left Visual Banner */}
+          <Box
+            sx={{
+              width: { xs: "100%", md: "42%" },
+              background: "linear-gradient(145deg, #0e271d 0%, #1b4332 50%, #2d6a4f 100%)",
+              p: 4,
+              color: "#ffffff",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              position: "relative",
+              overflow: "hidden",
+            }}
           >
-            <ModalImg src={"/img/auth.webp"} alt="camera" />
-            <Stack sx={{ marginLeft: "69px", alignItems: "center" }}>
-              <h2>Signup Form</h2>
-              <TextField
-                sx={{ marginTop: "7px" }}
-                id="outlined-basic"
-                label="username"
-                variant="outlined"
-                onChange={handleUsername}
-              />
-              <TextField
-                sx={{ my: "17px" }}
-                id="outlined-basic"
-                label="phone number"
-                variant="outlined"
-                onChange={handlePhone}
-              />
-              <TextField
-                id="outlined-basic"
-                label="password"
-                variant="outlined"
-                onChange={handlePassword}
-                onKeyDown={handlePasswordKeyDown}
-              />
-              <Fab
-                sx={{ marginTop: "30px", width: "120px" }}
-                variant="extended"
-                color="primary"
-                onClick={handleSignupRequest}
-              >
-                <LoginIcon sx={{ mr: 1 }} />
-                Signup
-              </Fab>
-            </Stack>
-          </Stack>
-        </Fade>
-      </Modal>
+            <div>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                <img
+                  src="/icons/agroolam-logo.svg"
+                  alt="AgroOlam"
+                  style={{ height: 28, filter: "brightness(0) invert(1)" }}
+                  onError={(e: any) => {
+                    e.target.style.display = "none";
+                  }}
+                />
+              </Box>
 
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        className={classes.modal}
-        open={loginOpen}
-        onClose={handleLoginClose}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={loginOpen}>
-          <Stack
-            className={classes.paper}
-            direction={"row"}
-            sx={{ width: "700px" }}
-          >
-            <ModalImg src={"/img/auth.webp"} alt="camera" />
-            <Stack
+              <Typography
+                variant="h5"
+                sx={{
+                  fontFamily: "DM Sans, sans-serif",
+                  fontWeight: 800,
+                  fontSize: 22,
+                  mt: 3,
+                  lineHeight: 1.3,
+                }}
+              >
+                O'zbekistonning Yetakchi AgroTech Ekotizimi
+              </Typography>
+
+              <Typography
+                sx={{
+                  fontFamily: "DM Sans, sans-serif",
+                  fontSize: 13,
+                  color: "#a7f3d0",
+                  mt: 1.5,
+                  lineHeight: 1.5,
+                }}
+              >
+                Sertifikatlangan urug'lar, ekin dorilari, issiqxona plyonkalari va real-vaqtli AI barg patologiyasi diagnostikasi.
+              </Typography>
+            </div>
+
+            <Box sx={{ mt: 4, pt: 3, borderTop: "1px solid rgba(255, 255, 255, 0.15)" }}>
+              <Stack spacing={1}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, fontSize: 12, color: "#d1fae5" }}>
+                  <VerifiedIcon sx={{ fontSize: 16, color: "#4ade80" }} />
+                  <span>Davlat ro'yxatidan o'tgan preparatlar</span>
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, fontSize: 12, color: "#d1fae5" }}>
+                  <VerifiedIcon sx={{ fontSize: 16, color: "#4ade80" }} />
+                  <span>Respublika bo'ylab tezkor yetkazib berish</span>
+                </Box>
+              </Stack>
+            </Box>
+          </Box>
+
+          {/* Right Form */}
+          <Box sx={{ flex: 1, p: { xs: 3, md: 4.5 }, position: "relative" }}>
+            <IconButton
+              onClick={handleClose}
               sx={{
-                marginLeft: "65px",
-                marginTop: "25px",
-                alignItems: "center",
+                position: "absolute",
+                top: 16,
+                right: 16,
+                color: "#64748b",
+                "&:hover": { bgcolor: "#f1f5f9" },
               }}
             >
-              <h2>Login Form</h2>
-              <TextField
-                id="outlined-basic"
-                label="username"
-                variant="outlined"
-                sx={{ my: "10px" }}
-                onChange={handleUsername}
+              <CloseIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+
+            {/* Tabs */}
+            <Tabs
+              value={activeTab}
+              onChange={(e, val) => setActiveTab(val)}
+              sx={{
+                mb: 3,
+                minHeight: 40,
+                "& .MuiTabs-indicator": { bgcolor: "#1B4332", height: 3, borderRadius: 2 },
+              }}
+            >
+              <Tab
+                value="login"
+                label="Kirish"
+                sx={{
+                  fontFamily: "DM Sans, sans-serif",
+                  fontWeight: 700,
+                  fontSize: 15,
+                  textTransform: "none",
+                  color: activeTab === "login" ? "#1B4332" : "#64748b",
+                  minHeight: 40,
+                }}
               />
-              <TextField
-                id={"outlined-basic"}
-                label={"password"}
-                variant={"outlined"}
-                type={"password"}
-                onChange={handlePassword}
-                onKeyDown={handlePasswordKeyDown}
+              <Tab
+                value="signup"
+                label="Ro'yxatdan o'tish"
+                sx={{
+                  fontFamily: "DM Sans, sans-serif",
+                  fontWeight: 700,
+                  fontSize: 15,
+                  textTransform: "none",
+                  color: activeTab === "signup" ? "#1B4332" : "#64748b",
+                  minHeight: 40,
+                }}
               />
-              <Fab
-                sx={{ marginTop: "27px", width: "120px" }}
-                variant={"extended"}
-                color={"primary"}
-                onClick={handleLoginRequest}
+            </Tabs>
+
+            <Typography
+              variant="h6"
+              sx={{
+                fontFamily: "DM Sans, sans-serif",
+                fontWeight: 800,
+                color: "#0f172a",
+                mb: 0.5,
+              }}
+            >
+              {activeTab === "login" ? "Shaxsiy kabinetga kirish" : "Fermer sifatida ro'yxatdan o'tish"}
+            </Typography>
+            <Typography sx={{ color: "#64748b", fontSize: 13, mb: 3 }}>
+              {activeTab === "login"
+                ? "AgroOlam hisobingizga kiring va buyurtmalaringizni boshqaring"
+                : "AgroOlam ekotizimidan foydalanish uchun ma'lumotlaringizni kiriting"}
+            </Typography>
+
+            {/* Inputs */}
+            <Stack spacing={2}>
+              <TextField
+                fullWidth
+                size="small"
+                label="Fermer ismi / Loginingiz"
+                placeholder="Masalan: Sardor"
+                value={memberNick}
+                onChange={(e) => setMemberNick(e.target.value)}
+                onKeyDown={handleKeyDown}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonOutlineIcon sx={{ color: "#1B4332", fontSize: 20 }} />
+                    </InputAdornment>
+                  ),
+                  sx: { borderRadius: "12px", bgcolor: "#f8fafc" },
+                }}
+              />
+
+              {activeTab === "signup" && (
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Telefon raqamingiz"
+                  placeholder="+998 90 123 45 67"
+                  value={memberPhone}
+                  onChange={(e) => setMemberPhone(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PhoneIphoneIcon sx={{ color: "#1B4332", fontSize: 20 }} />
+                      </InputAdornment>
+                    ),
+                    sx: { borderRadius: "12px", bgcolor: "#f8fafc" },
+                  }}
+                />
+              )}
+
+              <TextField
+                fullWidth
+                size="small"
+                type={showPassword ? "text" : "password"}
+                label="Parol"
+                placeholder="••••••••"
+                value={memberPassword}
+                onChange={(e) => setMemberPassword(e.target.value)}
+                onKeyDown={handleKeyDown}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LockOutlinedIcon sx={{ color: "#1B4332", fontSize: 20 }} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        size="small"
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOffIcon sx={{ fontSize: 18 }} /> : <VisibilityIcon sx={{ fontSize: 18 }} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                  sx: { borderRadius: "12px", bgcolor: "#f8fafc" },
+                }}
+              />
+
+              <Button
+                fullWidth
+                variant="contained"
+                disabled={isLoading}
+                onClick={activeTab === "signup" ? handleSignupRequest : handleLoginRequest}
+                startIcon={activeTab === "signup" ? <HowToRegIcon /> : <LoginIcon />}
+                sx={{
+                  mt: 1,
+                  py: 1.2,
+                  bgcolor: "#1B4332",
+                  color: "#ffffff",
+                  fontFamily: "DM Sans, sans-serif",
+                  fontWeight: 700,
+                  fontSize: 14.5,
+                  borderRadius: "12px",
+                  textTransform: "none",
+                  boxShadow: "0 4px 14px -2px rgba(27, 67, 50, 0.35)",
+                  "&:hover": { bgcolor: "#2D6A4F" },
+                }}
               >
-                <LoginIcon sx={{ mr: 1 }} />
-                Login
-              </Fab>
+                {isLoading
+                  ? "Bajarilmoqda..."
+                  : activeTab === "signup"
+                  ? "Ro'yxatdan o'tish"
+                  : "Kirish"}
+              </Button>
+
+              {/* Bottom Switcher */}
+              <Box sx={{ textAlign: "center", mt: 2 }}>
+                <Typography sx={{ fontSize: 13, color: "#64748b" }}>
+                  {activeTab === "login" ? (
+                    <>
+                      Hisobingiz yo'qmi?{" "}
+                      <span
+                        style={{ color: "#1B4332", fontWeight: 700, cursor: "pointer" }}
+                        onClick={() => setActiveTab("signup")}
+                      >
+                        Ro'yxatdan o'ting
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      Allaqachon ro'yxatdan o'tganmisiz?{" "}
+                      <span
+                        style={{ color: "#1B4332", fontWeight: 700, cursor: "pointer" }}
+                        onClick={() => setActiveTab("login")}
+                      >
+                        Kirish
+                      </span>
+                    </>
+                  )}
+                </Typography>
+              </Box>
             </Stack>
-          </Stack>
-        </Fade>
-      </Modal>
-    </div>
+          </Box>
+        </Stack>
+      </DialogContent>
+    </Dialog>
   );
 }

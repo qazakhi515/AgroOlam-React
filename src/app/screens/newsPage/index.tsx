@@ -6,6 +6,7 @@ import {
   Pagination,
   Stack,
   Typography,
+  Chip,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -14,6 +15,7 @@ import { useHistory } from "react-router-dom";
 import ArticleService from "../../services/ArticleService";
 import { Article, ArticleInquiry } from "../../../lib/types/article";
 import { ArticleCategory } from "../../../lib/enums/article.enum";
+import AndijanAgroWeatherBar from "../../components/weather/AndijanAgroWeatherBar";
 import "../../../css/news.css";
 
 const categoryLabels: Record<ArticleCategory, string> = {
@@ -32,6 +34,7 @@ export default function NewsPage() {
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [page, setPage] = useState<number>(1);
+  const [totalCount, setTotalCount] = useState<number>(0);
 
   const fetchArticles = async (
     category: ArticleCategory,
@@ -47,11 +50,14 @@ export default function NewsPage() {
       search: search.trim() ? search.trim() : undefined,
     };
     const data = await articleService.getArticles(inquiry);
+    const count = articleService.getTotalArticlesCount(inquiry);
     setArticles(data);
+    setTotalCount(count);
   };
 
   useEffect(() => {
     fetchArticles(selectedCategory, searchQuery, page);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, page]);
 
   const handleSearch = () => {
@@ -101,6 +107,9 @@ export default function NewsPage() {
       </Box>
 
       <Container>
+        {/* Real-time Andijan Agro-Meteo Advisory Widget */}
+        <AndijanAgroWeatherBar />
+
         {/* Category Filters */}
         <Box className="news-categories">
           {Object.values(ArticleCategory).map((cat) => (
@@ -133,9 +142,40 @@ export default function NewsPage() {
                 <span className="article-badge">
                   {categoryLabels[item.articleCategory]}
                 </span>
+                {item.tag && (
+                  <Chip
+                    label={item.tag}
+                    size="small"
+                    sx={{
+                      position: "absolute",
+                      top: 14,
+                      right: 14,
+                      bgcolor: "rgba(16, 185, 129, 0.95)",
+                      color: "#ffffff",
+                      fontWeight: 800,
+                      fontSize: "10px",
+                      height: "22px",
+                    }}
+                  />
+                )}
               </Box>
 
               <Box className="article-card-body">
+                {item.source && (
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "#2D6A4F",
+                      fontWeight: 800,
+                      fontSize: "11.5px",
+                      mb: 0.8,
+                      display: "block",
+                    }}
+                  >
+                    {item.source}
+                  </Typography>
+                )}
+
                 <Typography className="article-card-title">
                   {item.articleTitle}
                 </Typography>
@@ -161,7 +201,7 @@ export default function NewsPage() {
         {/* Pagination */}
         <Stack alignItems="center" sx={{ mt: 4 }}>
           <Pagination
-            count={Math.max(1, Math.ceil(articles.length / 9))}
+            count={Math.max(1, Math.ceil(totalCount / 9))}
             page={page}
             onChange={(e, val) => setPage(val)}
             color="primary"

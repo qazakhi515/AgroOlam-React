@@ -34,7 +34,7 @@ interface ChatMessage {
 
 export default function AIAgronomistChat({ onAdd }: AIAgronomistChatProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [lang, setLang] = useState<Language>(getSavedLanguage());
+  const [lang] = useState<Language>(getSavedLanguage());
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isDoctorOpen, setIsDoctorOpen] = useState(false);

@@ -12,6 +12,9 @@ export interface Article {
   articleLikes: number;
   author: string;
   readingTime?: string;
+  source?: string;
+  sourceUrl?: string;
+  tag?: string;
   recommendedProducts?: {
     _id: string;
     productName: string;

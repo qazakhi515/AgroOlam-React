@@ -48,6 +48,25 @@ class ArticleService {
     }
   }
 
+  public getTotalArticlesCount(input: ArticleInquiry): number {
+    let filtered = [...initialArticles];
+    if (input.articleCategory && input.articleCategory !== ArticleCategory.ALL) {
+      filtered = filtered.filter(
+        (a) => a.articleCategory === input.articleCategory
+      );
+    }
+    if (input.search && input.search.trim().length > 0) {
+      const q = input.search.toLowerCase().trim();
+      filtered = filtered.filter(
+        (a) =>
+          a.articleTitle.toLowerCase().includes(q) ||
+          a.articleBrief.toLowerCase().includes(q) ||
+          a.articleContent.toLowerCase().includes(q)
+      );
+    }
+    return filtered.length;
+  }
+
   private filterMockArticles(input: ArticleInquiry): Article[] {
     let filtered = [...initialArticles];
 
