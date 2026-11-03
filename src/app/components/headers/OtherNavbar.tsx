@@ -80,8 +80,8 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "12px",
-                  marginRight: "32px",
+                  gap: "14px",
+                  marginRight: "48px",
                   textDecoration: "none",
                 }}
               >

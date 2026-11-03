@@ -188,8 +188,8 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "12px",
-                  marginRight: "36px",
+                  gap: "14px",
+                  marginRight: "48px",
                   textDecoration: "none",
                 }}
               >
@@ -232,7 +232,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
             <Stack
               direction="row"
               className="nav-center-links"
-              spacing={{ xs: 1.5, md: 3 }}
+              spacing={{ xs: 2, md: 3.5 }}
               alignItems="center"
               sx={{ display: { xs: "none", lg: "flex" } }}
             >
@@ -240,38 +240,6 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 <NavLink to="/" exact activeClassName="underline">
                   {t.home}
                 </NavLink>
-              </Box>
-              <Box className="hover-line">
-                <Button
-                  onClick={() => setIsDoctorOpen(true)}
-                  sx={{
-                    textTransform: "none",
-                    fontWeight: 700,
-                    fontSize: "14px",
-                    color: "#166534",
-                    p: 0,
-                    minWidth: "auto",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 0.8,
-                    "&:hover": { bgcolor: "transparent", color: "#0e381f" },
-                  }}
-                >
-                  AI Ekin Skaner
-                  <span
-                    style={{
-                      background: "#ef4444",
-                      color: "#ffffff",
-                      fontSize: "9px",
-                      fontWeight: 800,
-                      padding: "1px 6px",
-                      borderRadius: "10px",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    Jonli
-                  </span>
-                </Button>
               </Box>
               <Box className="hover-line">
                 <NavLink to="/products" activeClassName="underline">
@@ -291,18 +259,6 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 </a>
               </Box>
               <Box className="hover-line">
-                <a
-                  href="#projects"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection("projects");
-                  }}
-                  style={{ textDecoration: "none", color: "#1A2E24", fontWeight: 600, fontSize: "14px" }}
-                >
-                  Global Loyihalar
-                </a>
-              </Box>
-              <Box className="hover-line">
                 <NavLink to="/news" activeClassName="underline">
                   {t.news}
                 </NavLink>
@@ -316,7 +272,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               )}
             </Stack>
 
-            {/* 3. Actions: Plant Doctor Button, Basket, Consultation, Language, Auth */}
+            {/* 3. Actions: Plant Doctor Button, Consultation, Basket, Language, Auth */}
             <Stack direction="row" className="nav-actions-group" spacing={1.5} alignItems="center">
               {/* Andijan Real-time Agro Weather Chip */}
               <NavLink to="/news" style={{ textDecoration: "none" }}>
@@ -365,15 +321,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 </Button>
               </motion.div>
 
-              <Basket
-                cartItems={cartItems}
-                onAdd={onAdd}
-                onRemove={onRemove}
-                onDelete={onDelete}
-                onDeleteAll={onDeleteAll}
-              />
-
-              {/* Consultation Trigger Button */}
+              {/* Consultation Trigger Button (After AI Tashxis) */}
               <Box sx={{ display: { xs: "none", sm: "block" } }}>
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
                   <Button
@@ -395,6 +343,15 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   </Button>
                 </motion.div>
               </Box>
+
+              {/* Order / Basket (After Konsultatsiya) */}
+              <Basket
+                cartItems={cartItems}
+                onAdd={onAdd}
+                onRemove={onRemove}
+                onDelete={onDelete}
+                onDeleteAll={onDeleteAll}
+              />
 
               <LanguageSelector />
 
