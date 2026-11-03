@@ -187,7 +187,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   className="brand-logo"
                   src="/icons/agroolam-logo.svg"
                   alt="AgroOlam"
-                  style={{ height: 38 }}
+                  style={{ height: 42 }}
                 />
               </NavLink>
             </motion.div>

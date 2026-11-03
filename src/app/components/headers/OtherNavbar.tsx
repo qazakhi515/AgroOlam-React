@@ -79,6 +79,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                   className="brand-logo"
                   src="/icons/agroolam-logo-white.svg"
                   alt="AgroOlam"
+                  style={{ height: 42 }}
                 />
               </NavLink>
             </motion.div>

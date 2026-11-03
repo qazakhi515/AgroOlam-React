@@ -25,7 +25,7 @@ export default function Footer() {
         <Stack flexDirection={"row"} sx={{ mt: "80px", flexWrap: { xs: "wrap", md: "nowrap" } }} justifyContent="space-between">
           <Stack flexDirection={"column"} style={{ width: "360px", maxWidth: "100%" }}>
             <Box>
-              <img width={"160px"} src={"/icons/agroolam-logo-white.svg"} alt="AgroOlam" />
+              <img style={{ height: "48px", width: "auto" }} src={"/icons/agroolam-logo-white.svg"} alt="AgroOlam" />
             </Box>
             <Box className={"foot-desc-txt"} sx={{ mt: 2, color: "#a0aec0", lineHeight: 1.6 }}>
               {t.desc}

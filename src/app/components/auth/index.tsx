@@ -154,9 +154,9 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
             <div>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
                 <img
-                  src="/icons/agroolam-logo.svg"
+                  src="/icons/agroolam-logo-white.svg"
                   alt="AgroOlam"
-                  style={{ height: 28, filter: "brightness(0) invert(1)" }}
+                  style={{ height: 38 }}
                   onError={(e: any) => {
                     e.target.style.display = "none";
                   }}
