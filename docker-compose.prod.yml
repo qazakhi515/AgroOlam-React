@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: agroolam-web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:4008:80"
