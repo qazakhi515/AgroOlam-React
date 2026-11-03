@@ -71,7 +71,7 @@ export default function GlobalProjectsMap() {
   const [activeHub, setActiveHub] = useState<HubInfo>(hubs[0]);
 
   const stats = [
-    { num: "27+", labelUz: "Davlatlar", subUz: "Eksport va agromuhandislik" },
+    { num: "27+", labelUz: "Davlatlar", subUz: "Eksport va xalqaro hamkorlik" },
     { num: "2.9M+", labelUz: "Gektar Maydon", subUz: "Avtomatlashgan issiqxona maydoni" },
     { num: "87K+", labelUz: "Fermerlar", subUz: "Doimiy qoniqqan mijozlar" },
     { num: "99.4%", labelUz: "Unuvchanlik", subUz: "Hosil sifati va unuvchanlik kafolati" },
@@ -90,7 +90,7 @@ export default function GlobalProjectsMap() {
         {/* Header */}
         <Box sx={{ textAlign: "center", maxWidth: "700px", mx: "auto", mb: { xs: 5, md: 7 } }}>
           <Chip
-            label="Xalqaro Agromuhandislik Loyihalari"
+            label="Xalqaro Agro Loyihalar & Eksport"
             sx={{
               bgcolor: "#d1fae5",
               color: "#065f46",

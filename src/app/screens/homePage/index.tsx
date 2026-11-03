@@ -2,7 +2,6 @@ import React from "react";
 import QuickServicesStrip from "./QuickServicesStrip";
 import AiScannerSection from "./AiScannerSection";
 import AgroStoreSection from "./AgroStoreSection";
-import ServicesSection from "./ServicesSection";
 import GlobalProjectsMap from "./GlobalProjectsMap";
 import FarmerTestimonialCarousel from "./FarmerTestimonialCarousel";
 import FarmerConsultationSection from "./FarmerConsultationSection";
@@ -25,10 +24,7 @@ export default function HomePage({ onAdd = () => {} }: HomePageProps) {
       {/* 3. Official Agro Store & Certified Product Catalog */}
       <AgroStoreSection onAdd={onAdd} />
 
-      {/* 4. Agronomic Engineering & Modern Services */}
-      <ServicesSection />
-
-      {/* 5. Global Projects Map & Statistics */}
+      {/* 4. Global Projects Map & Statistics */}
       <GlobalProjectsMap />
 
       {/* 6. Dynamic 3D Farmer Testimonials Carousel (High-Trust Proof) */}

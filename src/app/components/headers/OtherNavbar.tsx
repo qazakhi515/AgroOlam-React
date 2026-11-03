@@ -124,7 +124,8 @@ export default function OtherNavbar(props: OtherNavbarProps) {
             <Stack
               direction="row"
               className="nav-center-links"
-              spacing={{ xs: 1.5, md: 3 }}
+              spacing={{ xs: 2, md: 3.5 }}
+              sx={{ mr: { lg: 4, xl: 6 } }}
             >
               <Box className="hover-line">
                 <NavLink to="/" exact activeClassName="underline">
@@ -168,6 +169,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
               className="nav-actions-group"
               spacing={1.5}
               alignItems="center"
+              sx={{ ml: { lg: 3, xl: 5 } }}
             >
               {/* Andijan Real-time Agro Weather Chip */}
               <NavLink to="/news" style={{ textDecoration: "none" }}>

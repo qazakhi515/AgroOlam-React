@@ -232,9 +232,9 @@ export default function HomeNavbar(props: HomeNavbarProps) {
             <Stack
               direction="row"
               className="nav-center-links"
-              spacing={{ xs: 2, md: 3.5 }}
+              spacing={{ xs: 2.5, md: 4 }}
               alignItems="center"
-              sx={{ display: { xs: "none", lg: "flex" } }}
+              sx={{ display: { xs: "none", lg: "flex" }, mr: { lg: 5, xl: 7 } }}
             >
               <Box className="hover-line">
                 <NavLink to="/" exact activeClassName="underline">
@@ -245,18 +245,6 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 <NavLink to="/products" activeClassName="underline">
                   {t.products}
                 </NavLink>
-              </Box>
-              <Box className="hover-line">
-                <a
-                  href="#services"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection("services");
-                  }}
-                  style={{ textDecoration: "none", color: "#1A2E24", fontWeight: 600, fontSize: "14px" }}
-                >
-                  Xizmatlar
-                </a>
               </Box>
               <Box className="hover-line">
                 <NavLink to="/news" activeClassName="underline">
@@ -273,7 +261,13 @@ export default function HomeNavbar(props: HomeNavbarProps) {
             </Stack>
 
             {/* 3. Actions: Plant Doctor Button, Consultation, Basket, Language, Auth */}
-            <Stack direction="row" className="nav-actions-group" spacing={1.5} alignItems="center">
+            <Stack
+              direction="row"
+              className="nav-actions-group"
+              spacing={1.5}
+              alignItems="center"
+              sx={{ ml: { lg: 3, xl: 5 } }}
+            >
               {/* Andijan Real-time Agro Weather Chip */}
               <NavLink to="/news" style={{ textDecoration: "none" }}>
                 <Box
@@ -537,20 +531,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   Ekosistemasi.
                 </Typography>
 
-                {/* Description */}
-                <Typography
-                  variant="body1"
-                  sx={{
-                    color: "#3E5A4B",
-                    fontSize: { xs: "15px", sm: "17px" },
-                    lineHeight: 1.65,
-                    maxWidth: 580,
-                  }}
-                >
-                  Issiqxonalar uchun 3 qavatli mustahkam plyonkalar, kasalliklarga chidamli F1 urug'lar,
-                  tomchilatib sug'orish tizimlari va ekin patologiyalarini soniyalarda aniqlovchi{" "}
-                  <strong style={{ color: "#1B4332" }}>AgroOlam Vision AI 4.1</strong> yordamchisi.
-                </Typography>
+
 
                 {/* Functional Agro Search Component */}
                 <Box
