@@ -480,7 +480,7 @@ export default function PaymentModal({
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
               <ReceiptIcon sx={{ color: "#558b2f", fontSize: 20 }} />
               <Typography variant="subtitle2" fontWeight={800} color="#33691e">
-                AgroOlam (agroolam.tech) Official E-Receipt / Invoice
+                AgroOlam Rasmiy E-Chek / Invoice
               </Typography>
             </Stack>
             <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>

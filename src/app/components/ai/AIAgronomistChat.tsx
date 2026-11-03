@@ -48,10 +48,10 @@ export default function AIAgronomistChat({ onAdd }: AIAgronomistChatProps) {
       sender: "bot",
       text:
         lang === "ko"
-          ? "안녕하세요! AgroOlam (agroolam.tech) 스마트 아그로노미스트입니다. 작물의 증상(잎 마름, 변색, 병해충)을 말씀해 주시면 적절한 방제법과 약제를 추천해 드립니다. (한국어, English, O'zbekcha 모두 지원)"
+          ? "안녕하세요! AgroOlam 스마트 아그로노미스트입니다. 작물의 증상(잎 마름, 변색, 병해충)을 말씀해 주시면 적절한 방제법과 약제를 추천해 드립니다. (한국어, English, O'zbekcha 모두 지원)"
           : lang === "uz"
-          ? "Assalomu alaykum! Men AgroOlam (agroolam.tech) AI Agronomiman. Ekinlaringizdagi kasallik, sarg'ayish yoki zararkunandalar haqida yozing, to'g'ri dori va o'g'itlarni tavsiya qilaman. (O'zbekcha, 한국어, English)"
-          : "Hello! I am the AgroOlam (agroolam.tech) AI Agronomist. Describe your crop symptoms, leaf discoloration, or pest issues, and I will diagnose and recommend certified treatments. (Supports English, 한국어, O'zbekcha, Русский)",
+          ? "Assalomu alaykum! Men AgroOlam AI Agronomiman. Ekinlaringizdagi kasallik, sarg'ayish yoki zararkunandalar haqida yozing, to'g'ri dori va o'g'itlarni tavsiya qilaman. (O'zbekcha, 한국어, English)"
+          : "Hello! I am the AgroOlam AI Agronomist. Describe your crop symptoms, leaf discoloration, or pest issues, and I will diagnose and recommend certified treatments. (Supports English, 한국어, O'zbekcha, Русский)",
       disclaimer:
         lang === "ko"
           ? "⚠️ 알림: AI 처방은 참고용이며, 약제 살포 전 라벨 지침을 반드시 확인하세요."

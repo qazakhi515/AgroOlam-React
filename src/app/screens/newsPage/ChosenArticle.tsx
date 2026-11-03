@@ -148,6 +148,9 @@ export default function ChosenArticle() {
             src={article.articleImage}
             alt={article.articleTitle}
             className="article-hero-image"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "/img/farm-banner.jpg";
+            }}
           />
 
           <Typography className="article-body-content">

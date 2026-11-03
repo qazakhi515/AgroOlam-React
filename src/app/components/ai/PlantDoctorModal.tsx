@@ -99,7 +99,7 @@ export const MOCK_DIAGNOSIS_SAMPLES: Record<string, DiagnosisResult> = {
     safetyWarning:
       "Kimyoviy ishlov berishda respirator va qo'lqop taqing. Hosilni uzishdan kamida 14 kun oldin purkashni to'xtating.",
     disclaimer:
-      "Tashxis AgroOlam Vision AI 4.1 (agroolam.tech) neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
+      "Tashxis AgroOlam Vision AI 4.1 neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
     recommendedProducts: [
       {
         _id: "med_ridomil_gold_1",
@@ -165,7 +165,7 @@ export const MOCK_DIAGNOSIS_SAMPLES: Record<string, DiagnosisResult> = {
     safetyWarning:
       "Oltingugurtli vositalarni havo harorati +30°C dan oshganda ishlatmang (bargni kuydirishi mumkin).",
     disclaimer:
-      "Tashxis AgroOlam Vision AI 4.1 (agroolam.tech) neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
+      "Tashxis AgroOlam Vision AI 4.1 neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
     recommendedProducts: [
       {
         _id: "med_topas_100_ec",
@@ -231,7 +231,7 @@ export const MOCK_DIAGNOSIS_SAMPLES: Record<string, DiagnosisResult> = {
     safetyWarning:
       "Bakteriozlarga qarshi faqat toza suv va misli preparatlardan me'yorida foydalaning.",
     disclaimer:
-      "Tashxis AgroOlam Vision AI 4.1 (agroolam.tech) neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
+      "Tashxis AgroOlam Vision AI 4.1 neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
     recommendedProducts: [
       {
         _id: "med_kocide_2000_1",
@@ -553,7 +553,7 @@ export default function PlantDoctorModal({
           tempAdvice: d.temp_advice || d.tempAdvice || "+24°C...+26°C",
           humidityAdvice: d.humidity_advice || d.humidityAdvice || "60% - 65%",
           disclaimer:
-            "Tashxis AgroOlam Vision AI 4.1 (agroolam.tech) neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
+            "Tashxis AgroOlam Vision AI 4.1 neyron tarmog'i va O'zbekiston Davlat Karantin Agentligi registri asosida berildi.",
           recommendedProducts: Array.isArray(d.recommended_medicines)
             ? d.recommended_medicines.map((m: any, idx: number) => ({
                 _id: `rec_med_${m.id || idx}`,
@@ -621,7 +621,7 @@ export default function PlantDoctorModal({
       .join("\n");
 
     const message =
-      `🌿 AgroOlam Vision AI 4.1 Tashxis Retsepti (agroolam.tech)\n\n` +
+      `🌿 AgroOlam Vision AI 4.1 Tashxis Retsepti\n\n` +
       `🌱 Ekin: ${diagnosis.crop}\n` +
       `⚠️ Kasallik: ${diagnosis.diseaseName}\n` +
       `🔬 Patogen: ${diagnosis.pathogen}\n` +

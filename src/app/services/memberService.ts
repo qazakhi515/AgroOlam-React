@@ -40,7 +40,7 @@ class MemberService {
         memberNick: "AgroOlam Bosh Ofisi",
         memberPhone: "+998 71 200 00 00",
         memberAddress: "Toshkent shahri, Yunusobod tumani, Agro Hub",
-        memberDesc: "AgroOlam (agroolam.tech) — O'zbekistonning birinchi sertifikatlangan agrotexnika va AI barg patologiyasi ekotizimi.",
+        memberDesc: "AgroOlam — O'zbekistonning birinchi sertifikatlangan agrotexnika va AI barg patologiyasi ekotizimi.",
         memberImage: "/icons/agroolam-logo.svg",
         memberPoints: 1000,
         createAd: new Date(),

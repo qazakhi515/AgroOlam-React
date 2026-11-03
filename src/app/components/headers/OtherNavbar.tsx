@@ -77,8 +77,8 @@ export default function OtherNavbar(props: OtherNavbarProps) {
               <NavLink to="/" className="brand-logo-wrapper">
                 <img
                   className="brand-logo"
-                  src="/icons/agroolam-logo.svg"
-                  alt="AgroOlam.tech"
+                  src="/icons/agroolam-logo-white.svg"
+                  alt="AgroOlam"
                 />
               </NavLink>
             </motion.div>

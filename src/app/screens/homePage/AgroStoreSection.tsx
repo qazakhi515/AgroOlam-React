@@ -243,7 +243,7 @@ export default function AgroStoreSection({ onAdd }: AgroStoreSectionProps) {
               }}
             >
               <VerifiedIcon sx={{ fontSize: 16 }} />
-              AgroOlam Rasmiy Ta'minot Do'koni (agroolam.tech)
+              AgroOlam Rasmiy Ta'minot Do'koni
             </Typography>
             <Typography
               variant="h3"

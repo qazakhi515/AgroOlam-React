@@ -125,7 +125,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 }}
               >
                 <AutoAwesomeIcon sx={{ fontSize: 14 }} />
-                AgroOlam Vision AI 4.1 (agroolam.tech)
+                AgroOlam Vision AI 4.1
               </Box>
               <Box sx={{ color: "rgba(255, 255, 255, 0.4)", display: { xs: "none", md: "inline" } }}>|</Box>
               <Box sx={{ color: "rgba(255, 255, 255, 0.85)", display: { xs: "none", md: "inline" } }}>
@@ -186,7 +186,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 <img
                   className="brand-logo"
                   src="/icons/agroolam-logo.svg"
-                  alt="AgroOlam.tech"
+                  alt="AgroOlam"
                   style={{ height: 38 }}
                 />
               </NavLink>

@@ -31,7 +31,7 @@ export const translations = {
       },
     },
     footer: {
-      desc: "AgroOlam (agroolam.tech) — Leading smart agricultural ecosystem delivering greenhouse films, hybrid seed technology, certified plant medicines, agro-chemicals, and AI diagnostics. Your trusted partner in high-yield farming.",
+      desc: "AgroOlam — Leading smart agricultural ecosystem delivering greenhouse films, hybrid seed technology, certified plant medicines, agro-chemicals, and AI diagnostics. Your trusted partner in high-yield farming.",
       sectionsTitle: "Sections",
       home: "Home",
       products: "Products",
@@ -43,7 +43,7 @@ export const translations = {
       phone: "+998 (71) 200-88-00",
       email: "support@agroolam.tech",
       hours: "Everyday: 08:00 - 20:00",
-      copyright: "© 2026 AgroOlam (agroolam.tech). All rights reserved.",
+      copyright: "© 2026 AgroOlam. All rights reserved.",
     },
     aiChat: {
       title: "AgroOlam AI Agronomist",
@@ -89,7 +89,7 @@ export const translations = {
       },
     },
     footer: {
-      desc: "AgroOlam (agroolam.tech) — 첨단 온실 필름, 다수확 종자, 정품 작물보호제 및 AI 병해충 원격 진단을 제공하는 스마트 농업 선도 플랫폼입니다.",
+      desc: "AgroOlam — 첨단 온실 필름, 다수확 종자, 정품 작물보호제 및 AI 병해충 원격 진단을 제공하는 스마트 농업 선도 플랫폼입니다.",
       sectionsTitle: "바로가기",
       home: "홈",
       products: "상품 목록",
@@ -101,7 +101,7 @@ export const translations = {
       phone: "+998 (71) 200-88-00",
       email: "support@agroolam.tech",
       hours: "연중무휴: 08:00 - 20:00",
-      copyright: "© 2026 AgroOlam (agroolam.tech). All rights reserved.",
+      copyright: "© 2026 AgroOlam. All rights reserved.",
     },
     aiChat: {
       title: "AgroOlam AI 스마트 아그로노미스트",
@@ -147,7 +147,7 @@ export const translations = {
       },
     },
     footer: {
-      desc: "AgroOlam (agroolam.tech) — Issiqxonalar, zamonaviy urug'chilik, agro-kimyo, sertifikatlangan dorilar va AI diagnostikasini yetkazib beruvchi yetakchi agro-platforma. Dehqon va fermerlarning ishonchli hamrohi.",
+      desc: "AgroOlam — Issiqxonalar, zamonaviy urug'chilik, agro-kimyo, sertifikatlangan dorilar va AI diagnostikasini yetkazib beruvchi yetakchi agro-platforma. Dehqon va fermerlarning ishonchli hamrohi.",
       sectionsTitle: "Bo'limlar",
       home: "Bosh sahifa",
       products: "Mahsulotlar",
@@ -159,7 +159,7 @@ export const translations = {
       phone: "+998 (71) 200-88-00",
       email: "support@agroolam.tech",
       hours: "Har kuni: 08:00 - 20:00",
-      copyright: "© 2026 AgroOlam (agroolam.tech). Barcha huquqlar himoyalangan.",
+      copyright: "© 2026 AgroOlam. Barcha huquqlar himoyalangan.",
     },
     aiChat: {
       title: "AgroOlam AI Agronom Maslahatchi",

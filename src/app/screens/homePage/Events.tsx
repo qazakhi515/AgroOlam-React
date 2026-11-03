@@ -85,6 +85,9 @@ export default function Events() {
                     src={item.articleImage}
                     alt={item.articleTitle}
                     className={"events-img"}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/img/farm-banner.jpg";
+                    }}
                   />
                 </div>
                 <Box className={"events-desc"}>

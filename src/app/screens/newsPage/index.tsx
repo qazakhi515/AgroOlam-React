@@ -78,10 +78,6 @@ export default function NewsPage() {
           <Typography className="news-header-title">
             AgroOlam Agro-Yangiliklar & Mutaxassis Maslahatlari
           </Typography>
-          <Typography className="news-header-subtitle">
-            Ekinlar parvarishi, kasalliklarning erta oldini olish, dorilarning
-            kimyoviy mosligi va serhosil urug'lar bo'yicha amaliy tavsiyalar
-          </Typography>
 
           <Box className="news-search-box">
             <SearchIcon sx={{ color: "#718096", mr: 1 }} />
@@ -138,6 +134,9 @@ export default function NewsPage() {
                   src={item.articleImage}
                   alt={item.articleTitle}
                   className="article-card-img"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "/img/farm-banner.jpg";
+                  }}
                 />
                 <span className="article-badge">
                   {categoryLabels[item.articleCategory]}
