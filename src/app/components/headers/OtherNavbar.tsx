@@ -74,13 +74,49 @@ export default function OtherNavbar(props: OtherNavbarProps) {
           <Stack className="menu">
             {/* 1. Brand Logo */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <NavLink to="/" className="brand-logo-wrapper">
+              <NavLink
+                to="/"
+                className="brand-logo-wrapper"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  marginRight: "32px",
+                  textDecoration: "none",
+                }}
+              >
                 <img
                   className="brand-logo"
-                  src="/icons/agroolam-logo-white.svg"
+                  src="/icons/agroolam-emblem.png"
                   alt="AgroOlam"
-                  style={{ height: 42 }}
+                  style={{ height: 48, width: "auto", objectFit: "contain" }}
                 />
+                <Box sx={{ display: { xs: "none", sm: "block" } }}>
+                  <Typography
+                    sx={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontWeight: 900,
+                      fontSize: "20px",
+                      color: "#ffffff",
+                      lineHeight: 1.1,
+                      letterSpacing: "-0.5px",
+                    }}
+                  >
+                    Agro<span style={{ color: "#4ade80" }}>Olam</span>
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontWeight: 700,
+                      fontSize: "9.5px",
+                      color: "#a7f3d0",
+                      letterSpacing: "1.2px",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    2024 • AgroTech
+                  </Typography>
+                </Box>
               </NavLink>
             </motion.div>
 

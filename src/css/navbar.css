@@ -304,7 +304,9 @@
   flex-direction: column;
   width: 100%;
   min-height: 270px;
-  background: linear-gradient(rgba(14, 39, 29, 0.45), rgba(14, 39, 29, 0.72)), url("/public/img/farm-banner.jpg");
+  background:
+    linear-gradient(rgba(14, 39, 29, 0.45), rgba(14, 39, 29, 0.72)),
+    url("/public/img/farm-banner.jpg");
   background-position: center 40%;
   background-size: cover;
   background-repeat: no-repeat;

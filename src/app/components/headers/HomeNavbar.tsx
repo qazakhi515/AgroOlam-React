@@ -182,13 +182,49 @@ export default function HomeNavbar(props: HomeNavbarProps) {
           <Stack className="menu" direction="row" justifyContent="space-between" alignItems="center">
             {/* 1. Brand Logo */}
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-              <NavLink to="/" className="brand-logo-wrapper">
+              <NavLink
+                to="/"
+                className="brand-logo-wrapper"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  marginRight: "36px",
+                  textDecoration: "none",
+                }}
+              >
                 <img
                   className="brand-logo"
-                  src="/icons/agroolam-logo.svg"
-                  alt="AgroOlam"
-                  style={{ height: 42 }}
+                  src="/icons/agroolam-emblem.png"
+                  alt="AgroOlam 2024"
+                  style={{ height: 48, width: "auto", objectFit: "contain" }}
                 />
+                <Box sx={{ display: { xs: "none", sm: "block" } }}>
+                  <Typography
+                    sx={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontWeight: 900,
+                      fontSize: "20px",
+                      color: "#1B4332",
+                      lineHeight: 1.1,
+                      letterSpacing: "-0.5px",
+                    }}
+                  >
+                    Agro<span style={{ color: "#2D6A4F" }}>Olam</span>
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontWeight: 700,
+                      fontSize: "9.5px",
+                      color: "#64748b",
+                      letterSpacing: "1.2px",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    2024 • AgroTech
+                  </Typography>
+                </Box>
               </NavLink>
             </motion.div>
 
@@ -830,6 +866,59 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                         +38% Yuqori Natija
                       </Typography>
                     </div>
+                  </Box>
+                </motion.div>
+
+                {/* Floating Top-Right Badge: Official AgroOlam 2024 Seal */}
+                <motion.div
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
+                  style={{
+                    position: "absolute",
+                    top: -24,
+                    right: -16,
+                    zIndex: 3,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      bgcolor: "rgba(255, 255, 255, 0.97)",
+                      backdropFilter: "blur(14px)",
+                      p: 1.4,
+                      borderRadius: "22px",
+                      border: "1.5px solid #a7f3d0",
+                      boxShadow: "0 18px 40px rgba(14, 39, 29, 0.18)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
+                    }}
+                  >
+                    <img
+                      src="/icons/agroolam-emblem.png"
+                      alt="AgroOlam 2024"
+                      style={{ height: 60, width: "auto", objectFit: "contain" }}
+                    />
+                    <Box sx={{ pr: 0.5 }}>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: "#059669",
+                          fontWeight: 800,
+                          fontSize: "10px",
+                          letterSpacing: "0.8px",
+                          textTransform: "uppercase",
+                          display: "block",
+                        }}
+                      >
+                        Rasmiy Sifat Belgisi
+                      </Typography>
+                      <Typography
+                        variant="subtitle2"
+                        sx={{ fontWeight: 900, color: "#1B4332", fontSize: "14px" }}
+                      >
+                        AgroOlam • 2024
+                      </Typography>
+                    </Box>
                   </Box>
                 </motion.div>
               </Box>

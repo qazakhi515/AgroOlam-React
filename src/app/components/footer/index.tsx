@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Container, Stack } from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { getSavedLanguage, translations } from "../../../lib/i18n";
@@ -24,8 +24,16 @@ export default function Footer() {
       <Container>
         <Stack flexDirection={"row"} sx={{ mt: "80px", flexWrap: { xs: "wrap", md: "nowrap" } }} justifyContent="space-between">
           <Stack flexDirection={"column"} style={{ width: "360px", maxWidth: "100%" }}>
-            <Box>
-              <img style={{ height: "48px", width: "auto" }} src={"/icons/agroolam-logo-white.svg"} alt="AgroOlam" />
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+              <img style={{ height: "54px", width: "auto" }} src={"/icons/agroolam-emblem.png"} alt="AgroOlam 2024" />
+              <Box>
+                <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 900, fontSize: "22px", color: "#ffffff", lineHeight: 1.1, letterSpacing: "-0.5px" }}>
+                  Agro<span style={{ color: "#4ade80" }}>Olam</span>
+                </Typography>
+                <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "10px", color: "#a7f3d0", letterSpacing: "1.2px", textTransform: "uppercase" }}>
+                  2024 • AgroTech
+                </Typography>
+              </Box>
             </Box>
             <Box className={"foot-desc-txt"} sx={{ mt: 2, color: "#a0aec0", lineHeight: 1.6 }}>
               {t.desc}
