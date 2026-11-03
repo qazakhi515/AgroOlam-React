@@ -25,7 +25,7 @@ export default function Footer() {
         <Stack flexDirection={"row"} sx={{ mt: "80px", flexWrap: { xs: "wrap", md: "nowrap" } }} justifyContent="space-between">
           <Stack flexDirection={"column"} style={{ width: "360px", maxWidth: "100%" }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-              <img style={{ height: "54px", width: "auto" }} src={"/icons/agroolam-emblem.png"} alt="AgroOlam 2024" />
+              <img style={{ height: "54px", width: "auto" }} src={"/icons/agroolam-emblem-white.png"} alt="AgroOlam 2024" />
               <Box>
                 <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 900, fontSize: "22px", color: "#ffffff", lineHeight: 1.1, letterSpacing: "-0.5px" }}>
                   Agro<span style={{ color: "#4ade80" }}>Olam</span>

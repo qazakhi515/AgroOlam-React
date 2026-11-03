@@ -87,7 +87,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
               >
                 <img
                   className="brand-logo"
-                  src="/icons/agroolam-emblem.png"
+                  src="/icons/agroolam-emblem-white.png"
                   alt="AgroOlam"
                   style={{ height: 48, width: "auto", objectFit: "contain" }}
                 />
