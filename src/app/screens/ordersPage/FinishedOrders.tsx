@@ -34,7 +34,17 @@ export default function FinishedOrders() {
   return (
     <Stack spacing={2.5}>
       {finishedOrders?.map((order: Order) => {
-        const totalUzs = (order.orderTotal * USD_TO_UZS).toLocaleString("uz-UZ");
+        const isLegacy = order.orderTotal < 1000;
+        const totalUZSNum = isLegacy ? order.orderTotal * USD_TO_UZS : order.orderTotal;
+        const totalUSDNum = isLegacy ? order.orderTotal : Math.round((order.orderTotal / USD_TO_UZS) * 10) / 10;
+        const totalUzs = totalUZSNum.toLocaleString("uz-UZ");
+        const totalUsd = totalUSDNum.toFixed(1);
+
+        const deliveryUZS = order.orderDelivery === 0
+          ? 0
+          : (order.orderDelivery < 1000 ? order.orderDelivery * USD_TO_UZS : order.orderDelivery);
+        const itemsOnlyUZS = totalUZSNum - deliveryUZS;
+
         const orderDate = order.createdAt
           ? moment(order.createdAt).format("DD.MM.YYYY, HH:mm")
           : moment().format("DD.MM.YYYY");
@@ -75,8 +85,9 @@ export default function FinishedOrders() {
                 );
                 const imagePath = getProductImage(product);
                 const productName = product?.productName || "Agromahsulot";
-                const itemTotalUSD = item.itemQuantity * item.itemPrice;
-                const itemTotalUZS = (itemTotalUSD * USD_TO_UZS).toLocaleString("uz-UZ");
+                const itemPriceUZS = item.itemPrice < 1000 ? item.itemPrice * USD_TO_UZS : item.itemPrice;
+                const itemTotalUZS = (item.itemQuantity * itemPriceUZS).toLocaleString("uz-UZ");
+                const itemTotalUSD = (item.itemQuantity * (itemPriceUZS / USD_TO_UZS)).toFixed(1);
 
                 return (
                   <Box key={item._id} className="orders-name-price">
@@ -92,13 +103,13 @@ export default function FinishedOrders() {
                     <div className="order-item-desc">
                       <p className="title-product">{productName}</p>
                       <span className="unit-price-text">
-                        ${item.itemPrice} × {item.itemQuantity} ta
+                        {itemPriceUZS.toLocaleString("uz-UZ")} so'm × {item.itemQuantity} ta
                       </span>
                     </div>
 
                     <Box className="price-box">
-                      <span className="item-usd">${itemTotalUSD}</span>
-                      <span className="item-uzs">~{itemTotalUZS} so'm</span>
+                      <span className="item-usd">{itemTotalUZS} so'm</span>
+                      <span className="item-uzs">(≈ ${itemTotalUSD})</span>
                     </Box>
                   </Box>
                 );
@@ -110,20 +121,20 @@ export default function FinishedOrders() {
               <Box className="box-total">
                 <div className="price-item">
                   <span>Mahsulotlar:</span>
-                  <strong>${order.orderTotal - order.orderDelivery}</strong>
+                  <strong>{itemsOnlyUZS.toLocaleString("uz-UZ")} so'm</strong>
                 </div>
                 <span className="divider-dot">•</span>
                 <div className="price-item">
                   <span>Yetkazish:</span>
-                  <strong style={{ color: order.orderDelivery === 0 ? "#059669" : "inherit" }}>
-                    {order.orderDelivery === 0 ? "Bepul" : `$${order.orderDelivery}`}
+                  <strong style={{ color: deliveryUZS === 0 ? "#059669" : "inherit" }}>
+                    {deliveryUZS === 0 ? "Bepul" : `${deliveryUZS.toLocaleString("uz-UZ")} so'm`}
                   </strong>
                 </div>
                 <span className="divider-dot">•</span>
                 <div className="price-item total-highlight">
                   <span>Jami to'langan:</span>
-                  <strong>${order.orderTotal}</strong>
-                  <small>({totalUzs} so'm)</small>
+                  <strong>{totalUzs} so'm</strong>
+                  <small>(≈ ${totalUsd} USD)</small>
                 </div>
               </Box>
 

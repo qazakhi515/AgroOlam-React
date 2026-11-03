@@ -26,6 +26,7 @@ import PaymentIcon from "@mui/icons-material/Payment";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import { Order } from "../../../lib/types/order";
 import { getSavedLanguage } from "../../../lib/i18n";
+import TreatmentReminderModal from "../reminders/TreatmentReminderModal";
 
 interface PaymentModalProps {
   open: boolean;
@@ -61,6 +62,7 @@ export default function PaymentModal({
   // Processing state
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isReminderOpen, setIsReminderOpen] = useState(false);
   const [transactionId, setTransactionId] = useState("");
   const [selectedProvider, setSelectedProvider] = useState<"TOSS" | "PAYME" | "CLICK" | "BANK">("TOSS");
 
@@ -74,7 +76,15 @@ export default function PaymentModal({
 
   if (!order) return null;
 
-  const totalUZS = (order.orderTotal * USD_TO_UZS_RATE).toLocaleString("uz-UZ");
+  const isLegacyUSD = order.orderTotal < 1000;
+  const numTotalUZS = isLegacyUSD ? order.orderTotal * USD_TO_UZS_RATE : order.orderTotal;
+  const numTotalUSD = isLegacyUSD ? order.orderTotal : Math.round((order.orderTotal / USD_TO_UZS_RATE) * 10) / 10;
+  const totalUZS = numTotalUZS.toLocaleString("uz-UZ");
+  const totalUSD = numTotalUSD.toFixed(1);
+
+  const deliveryUZS = order.orderDelivery === 0
+    ? (lang === "ko" ? "무료배송 ($0)" : lang === "uz" ? "Bepul (0 so'm)" : "Free ($0)")
+    : (order.orderDelivery < 1000 ? order.orderDelivery * USD_TO_UZS_RATE : order.orderDelivery).toLocaleString("uz-UZ") + " UZS";
 
   // Format international card number with spaces (4-4-4-4)
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -181,26 +191,26 @@ export default function PaymentModal({
                 <Typography variant="body2" color="text.secondary">
                   {lang === "ko" ? "배송비" : lang === "uz" ? "Yetkazib berish" : "Delivery fee"}:
                 </Typography>
-                <Typography variant="body2" fontWeight={600}>
-                  ${order.orderDelivery || 0}
+                <Typography variant="body2" fontWeight={600} color={order.orderDelivery === 0 ? "#2e7d32" : "inherit"}>
+                  {deliveryUZS}
                 </Typography>
               </Stack>
               <Divider sx={{ my: 1 }} />
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <div>
                   <Typography variant="subtitle2" fontWeight={700} color="#1b5e20">
-                    {lang === "ko" ? "총 결제 금액 (USD)" : lang === "uz" ? "Jami summa (USD)" : "Total (USD)"}:
+                    {lang === "ko" ? "총 결제 금액 (UZS)" : lang === "uz" ? "Jami to'lov (UZS)" : "Total (UZS)"}:
                   </Typography>
                   <Typography variant="h5" fontWeight={800} color="#2e7d32">
-                    ${order.orderTotal}
+                    {totalUZS} UZS
                   </Typography>
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <Typography variant="caption" color="text.secondary">
-                    {lang === "uz" ? "So'mda (UZS ekvivalenti):" : "In UZS (Approx):"}
+                    {lang === "ko" ? "달러 환산 (USD):" : lang === "uz" ? "Dollar ekvivalenti (USD):" : "In USD (Approx):"}
                   </Typography>
                   <Typography variant="subtitle1" fontWeight={700} color="#e65100">
-                    {totalUZS} UZS
+                    ${totalUSD} USD
                   </Typography>
                   <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
                     (1 USD ≈ 12,850 UZS)
@@ -447,10 +457,10 @@ export default function PaymentModal({
             >
               {isProcessing ? (
                 <CircularProgress size={22} sx={{ color: "#fff" }} />
-              ) : tabIndex === 1 ? (
-                `To'lash: ${totalUZS} UZS`
+              ) : tabIndex === 0 ? (
+                `Pay $${totalUSD} USD`
               ) : (
-                `Pay $${order.orderTotal} USD`
+                `To'lash: ${totalUZS} UZS`
               )}
             </Button>
           </DialogActions>
@@ -492,16 +502,59 @@ export default function PaymentModal({
               <Typography variant="caption" fontWeight={700}>{selectedProvider} Gateway</Typography>
             </Stack>
             <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
-              <Typography variant="caption" color="text.secondary">Order Total (USD):</Typography>
-              <Typography variant="caption" fontWeight={700}>${order.orderTotal}</Typography>
+              <Typography variant="caption" color="text.secondary">Jami to'lov (UZS):</Typography>
+              <Typography variant="caption" fontWeight={700}>{totalUZS} UZS</Typography>
             </Stack>
             <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
-              <Typography variant="caption" color="text.secondary">Total in UZS:</Typography>
-              <Typography variant="caption" fontWeight={700}>{totalUZS} UZS</Typography>
+              <Typography variant="caption" color="text.secondary">USD Equivalent:</Typography>
+              <Typography variant="caption" fontWeight={700}>${totalUSD} USD</Typography>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
               <Typography variant="caption" color="text.secondary">Timestamp:</Typography>
               <Typography variant="caption" fontWeight={700}>{new Date().toLocaleString()}</Typography>
+            </Stack>
+          </Box>
+
+          {/* Post-Purchase Treatment & Quarantine Reminder Activation */}
+          <Box
+            sx={{
+              p: 2,
+              mb: 3,
+              borderRadius: "14px",
+              bgcolor: "#f0fdf4",
+              border: "1.5px solid #86efac",
+              textAlign: "left",
+            }}
+          >
+            <Stack direction="row" spacing={1.5} alignItems="center" justifyContent="space-between" flexWrap="wrap">
+              <Box sx={{ maxWidth: 360 }}>
+                <Typography variant="subtitle2" fontWeight={800} color="#166534">
+                  ⏰ {lang === "ko" ? "2차 살포 및 수확 안전(PHI) 자동 알림" : lang === "uz" ? "2-Bosqich Purkash & Karantin Eslatmasi" : "Treatment & Quarantine Reminder"}
+                </Typography>
+                <Typography variant="caption" color="#15803d">
+                  {lang === "ko"
+                    ? "약제 살포 7일 후 2차 방제 알림과 수확 안전일 알림을 자동으로 받아보세요."
+                    : lang === "uz"
+                    ? "7 kundan so'ng 2-marta dori sepish va karantin muddati tugashini telefoningizga avtomatik eslatib turamiz."
+                    : "Receive automated SMS/Telegram reminders for 2nd spraying and safe harvest date."}
+                </Typography>
+              </Box>
+              <Button
+                size="small"
+                variant="contained"
+                onClick={() => setIsReminderOpen(true)}
+                sx={{
+                  bgcolor: "#166534",
+                  color: "#ffffff",
+                  fontWeight: 800,
+                  fontSize: "12px",
+                  borderRadius: "10px",
+                  textTransform: "none",
+                  "&:hover": { bgcolor: "#14532d" },
+                }}
+              >
+                ⏰ {lang === "ko" ? "알림 설정하기" : lang === "uz" ? "Eslatmani Yoqish" : "Activate Reminder"}
+              </Button>
             </Stack>
           </Box>
 
@@ -523,6 +576,14 @@ export default function PaymentModal({
           </Stack>
         </Box>
       )}
+
+      {/* Treatment Reminder Modal */}
+      <TreatmentReminderModal
+        open={isReminderOpen}
+        onClose={() => setIsReminderOpen(false)}
+        orderId={order?._id}
+        defaultProductName={order?.productData?.[0]?.productName || "Ridomil Gold MZ 68 WG"}
+      />
     </Dialog>
   );
 }

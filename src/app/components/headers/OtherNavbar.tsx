@@ -18,6 +18,7 @@ import { useGlobals } from "../hooks/useGlobals";
 import Basket from "./Basket";
 import LanguageSelector from "./LanguageSelector";
 import { getSavedLanguage, translations } from "../../../lib/i18n";
+import AgroWeatherOutbreakModal from "../weather/AgroWeatherOutbreakModal";
 
 interface OtherNavbarProps {
   cartItems: CartItem[];
@@ -50,6 +51,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
   const lang = getSavedLanguage();
   const t = translations[lang].nav;
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isWeatherModalOpen, setIsWeatherModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -142,34 +144,34 @@ export default function OtherNavbar(props: OtherNavbarProps) {
               sx={{ ml: { lg: 3, xl: 5 } }}
             >
               {/* Andijan Real-time Agro Weather Chip */}
-              <NavLink to="/news" style={{ textDecoration: "none" }}>
-                <Box
+              <Box
+                onClick={() => setIsWeatherModalOpen(true)}
+                sx={{
+                  display: { xs: "none", sm: "flex" },
+                  alignItems: "center",
+                  gap: 0.6,
+                  bgcolor: "rgba(255, 255, 255, 0.12)",
+                  border: "1px solid rgba(255, 255, 255, 0.25)",
+                  borderRadius: "20px",
+                  px: 1.5,
+                  py: 0.6,
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  "&:hover": { bgcolor: "rgba(255, 255, 255, 0.22)", transform: "translateY(-1px)" },
+                }}
+              >
+                <span style={{ fontSize: "14px" }}>🌤️</span>
+                <Typography
                   sx={{
-                    display: { xs: "none", sm: "flex" },
-                    alignItems: "center",
-                    gap: 0.6,
-                    bgcolor: "rgba(16, 185, 129, 0.12)",
-                    border: "1px solid rgba(16, 185, 129, 0.25)",
-                    borderRadius: "20px",
-                    px: 1.5,
-                    py: 0.6,
-                    transition: "all 0.2s ease",
-                    "&:hover": { bgcolor: "rgba(16, 185, 129, 0.22)" },
+                    fontWeight: 800,
+                    fontSize: "11px",
+                    color: "#ffffff",
+                    whiteSpace: "nowrap",
                   }}
                 >
-                  <span style={{ fontSize: "14px" }}>🌤️</span>
-                  <Typography
-                    sx={{
-                      fontWeight: 800,
-                      fontSize: "11px",
-                      color: "#1B4332",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    Andijon: +19°C
-                  </Typography>
-                </Box>
-              </NavLink>
+                  Andijon: +19°C • Meteo-Vision ⚡
+                </Typography>
+              </Box>
 
               <Basket
                 cartItems={cartItems}
@@ -266,6 +268,13 @@ export default function OtherNavbar(props: OtherNavbarProps) {
           </Stack>
         </Container>
       </motion.div>
+
+      {/* Meteo-Vision Outbreak Predictor Modal */}
+      <AgroWeatherOutbreakModal
+        open={isWeatherModalOpen}
+        onClose={() => setIsWeatherModalOpen(false)}
+        onAdd={onAdd}
+      />
     </div>
   );
 }

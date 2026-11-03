@@ -17,6 +17,7 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { Link, useHistory, useParams } from "react-router-dom";
 import ArticleService from "../../services/ArticleService";
 import { Article } from "../../../lib/types/article";
+import { ArticleCategory } from "../../../lib/enums/article.enum";
 import "../../../css/news.css";
 
 interface RouteParams {
@@ -145,11 +146,28 @@ export default function ChosenArticle() {
           </Box>
 
           <img
-            src={article.articleImage}
+            src={
+              article.articleImage ||
+              (article.articleCategory === ArticleCategory.URUG_VA_HOSIL
+                ? "/img/harvest.jpg"
+                : article.articleCategory === ArticleCategory.AGRO_TAVSIYALAR
+                ? "/img/agrolab.jpg"
+                : article.articleCategory === ArticleCategory.KASALLIKLAR
+                ? "/img/disease.jpg"
+                : "/img/farm-banner.jpg")
+            }
             alt={article.articleTitle}
             className="article-hero-image"
             onError={(e) => {
-              (e.target as HTMLImageElement).src = "/img/farm-banner.jpg";
+              const fallback =
+                article.articleCategory === ArticleCategory.URUG_VA_HOSIL
+                  ? "/img/harvest.jpg"
+                  : article.articleCategory === ArticleCategory.AGRO_TAVSIYALAR
+                  ? "/img/agrolab.jpg"
+                  : article.articleCategory === ArticleCategory.KASALLIKLAR
+                  ? "/img/disease.jpg"
+                  : "/img/farm-banner.jpg";
+              (e.target as HTMLImageElement).src = fallback;
             }}
           />
 

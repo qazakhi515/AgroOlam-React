@@ -38,15 +38,15 @@ export default function Basket(props: BasketProps) {
   const [paymentOrder, setPaymentOrder] = useState<Order | null>(null);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
-  const itemsPrice: number = cartItems.reduce(
-    (a: number, c: CartItem) => a + c.quantity * c.price,
+  const rawItemsPrice: number = cartItems.reduce(
+    (a: number, c: CartItem) => a + c.quantity * (c.price < 1000 ? c.price * USD_TO_UZS : c.price),
     0,
   );
-  // Free delivery for orders over $50
-  const shippingCost = itemsPrice === 0 ? 0 : itemsPrice < 50 ? 5 : 0;
-  const totalPriceNumber = itemsPrice + shippingCost;
-  const totalPrice = totalPriceNumber.toFixed(2);
-  const totalUzs = (totalPriceNumber * USD_TO_UZS).toLocaleString("uz-UZ");
+  // Free delivery for orders over 500,000 UZS
+  const shippingCostUZS = rawItemsPrice === 0 ? 0 : rawItemsPrice < 500000 ? 25000 : 0;
+  const totalPriceUZS = rawItemsPrice + shippingCostUZS;
+  const totalUzs = totalPriceUZS.toLocaleString("uz-UZ");
+  const totalUSD = (totalPriceUZS / USD_TO_UZS).toFixed(1);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -313,8 +313,8 @@ export default function Basket(props: BasketProps) {
                           {item.name}
                         </span>
                         <div className="product-price">
-                          <span>${item.price}</span>
-                          <span className="uzs-equiv">({(item.price * USD_TO_UZS).toLocaleString("uz-UZ")} so'm)</span>
+                          <span>{(item.price < 1000 ? item.price * USD_TO_UZS : item.price).toLocaleString("uz-UZ")} so'm</span>
+                          <span className="uzs-equiv">(≈ ${((item.price < 1000 ? item.price * USD_TO_UZS : item.price) / USD_TO_UZS).toFixed(1)})</span>
                         </div>
                       </div>
 
@@ -400,7 +400,7 @@ export default function Basket(props: BasketProps) {
             <Box className="basket-footer">
               <div className="price-summary-row">
                 <span>Mahsulotlar qiymati:</span>
-                <span style={{ fontWeight: 600, color: "#0f172a" }}>${itemsPrice.toFixed(2)}</span>
+                <span style={{ fontWeight: 600, color: "#0f172a" }}>{rawItemsPrice.toLocaleString("uz-UZ")} so'm</span>
               </div>
 
               <div className="price-summary-row">
@@ -408,17 +408,17 @@ export default function Basket(props: BasketProps) {
                   <LocalShippingOutlinedIcon sx={{ fontSize: 14, color: "#059669" }} />
                   Yetkazib berish:
                 </span>
-                <span style={{ color: shippingCost === 0 ? "#059669" : "#0f172a", fontWeight: 600 }}>
-                  {shippingCost === 0 ? "Bepul (Aksiya)" : `$${shippingCost.toFixed(2)}`}
+                <span style={{ color: shippingCostUZS === 0 ? "#059669" : "#0f172a", fontWeight: 600 }}>
+                  {shippingCostUZS === 0 ? "Bepul (Aksiya)" : `${shippingCostUZS.toLocaleString("uz-UZ")} so'm`}
                 </span>
               </div>
 
               <div className="price-total-row">
                 <div>
                   <span className="total-label">Jami to'lov:</span>
-                  <span className="total-uzs">~{totalUzs} so'm</span>
+                  <span className="total-uzs">{totalUzs} so'm</span>
                 </div>
-                <div className="total-val">${totalPrice}</div>
+                <div className="total-val">≈ ${totalUSD}</div>
               </div>
 
               {/* Action Buttons: 1. Pay with Payme/Click/Card directly, 2. Save order */}

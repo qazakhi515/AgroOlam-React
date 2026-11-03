@@ -1,10 +1,12 @@
 import React from "react";
+import { Container } from "@mui/material";
 import QuickServicesStrip from "./QuickServicesStrip";
 import AiScannerSection from "./AiScannerSection";
 import AgroStoreSection from "./AgroStoreSection";
 import GlobalProjectsMap from "./GlobalProjectsMap";
 import FarmerTestimonialCarousel from "./FarmerTestimonialCarousel";
 import FarmerConsultationSection from "./FarmerConsultationSection";
+import AndijanAgroWeatherBar from "../../components/weather/AndijanAgroWeatherBar";
 import { CartItem } from "../../../lib/types/search";
 import "../../../css/home.css";
 
@@ -17,6 +19,11 @@ export default function HomePage({ onAdd = () => {} }: HomePageProps) {
     <div className={"homepage"}>
       {/* 1. Quick Services Category Strip (4 Pills) */}
       <QuickServicesStrip />
+
+      {/* 1.5 Real-Time Agro-Meteo & Predictive Outbreak Alert Radar */}
+      <Container maxWidth="lg" sx={{ mt: 2, mb: -1 }}>
+        <AndijanAgroWeatherBar onAdd={onAdd} />
+      </Container>
 
       {/* 2. AgroOlam Vision AI 4.1 Leaf Scanner Workbench (Double-Mode) */}
       <AiScannerSection onAdd={onAdd} />

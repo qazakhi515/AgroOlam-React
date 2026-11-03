@@ -47,10 +47,10 @@ export default function Advertisement() {
               icon={<VerifiedIcon sx={{ color: "#4ade80 !important" }} />}
               label={
                 lang === "uz"
-                  ? "AgroPlant Vision AI 2.0 • Jonli Tashxis"
+                  ? "AgroOlam Vision AI 4.1 • Jonli Tashxis"
                   : lang === "ko"
-                  ? "AgroPlant Vision AI 2.0 • 병해충 원격진단"
-                  : "AgroPlant Vision AI 2.0 • Live Diagnostics"
+                  ? "AgroOlam Vision AI 4.1 • 병해충 원격진단"
+                  : "AgroOlam Vision AI 4.1 • Live Diagnostics"
               }
               sx={{
                 bgcolor: "rgba(255,255,255,0.12)",

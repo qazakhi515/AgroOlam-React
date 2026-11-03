@@ -14,13 +14,16 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { motion } from "framer-motion";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 export default function FarmerConsultationSection() {
+  const lang = getSavedLanguage();
+  const tCons = translations[lang].consultationSection;
 
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    service: "Gidroponika & NFT loyihalash",
+    service: "hydro",
     area: "",
     comment: "",
   });
@@ -126,7 +129,7 @@ export default function FarmerConsultationSection() {
               }}
             >
               <Chip
-                label="Bog'lanish & Bepul Konsultatsiya"
+                label={tCons.badge}
                 sx={{
                   bgcolor: "#d1fae5",
                   color: "#065f46",
@@ -142,10 +145,10 @@ export default function FarmerConsultationSection() {
                 color="#0E271D"
                 sx={{ fontSize: { xs: "22px", sm: "28px" }, lineHeight: 1.25, mb: 1 }}
               >
-                Issiqxonangiz holati bo'yicha bepul agronom tavsiyasini oling
+                {tCons.title}
               </Typography>
               <Typography variant="body2" color="#4D6657" sx={{ mb: 3.5, lineHeight: 1.6 }}>
-                Mutaxassisimiz 15 daqiqa ichida siz bilan bog'lanib, ekin maydoni va suv tarkibiga mos urug', dori hamda salafan hajmini bepul hisoblab beradi.
+                {tCons.desc}
               </Typography>
 
               {submitted && (
@@ -154,7 +157,7 @@ export default function FarmerConsultationSection() {
                   severity="success"
                   sx={{ mb: 3, borderRadius: "14px" }}
                 >
-                  Arizangiz muvaffaqiyatli qabul qilindi! Agronomlarimiz tez orada sizga qo'ng'iroq qilishadi.
+                  {tCons.successAlert}
                 </Alert>
               )}
 
@@ -164,7 +167,7 @@ export default function FarmerConsultationSection() {
                     <TextField
                       fullWidth
                       required
-                      label="Ism va familiyangiz"
+                      label={tCons.nameLabel}
                       size="small"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -176,7 +179,7 @@ export default function FarmerConsultationSection() {
                     <TextField
                       fullWidth
                       required
-                      label="Telefon raqamingiz"
+                      label={tCons.phoneLabel}
                       placeholder="+998 (90) 123-45-67"
                       size="small"
                       value={formData.phone}
@@ -189,25 +192,25 @@ export default function FarmerConsultationSection() {
                     <TextField
                       select
                       fullWidth
-                      label="Qiziqtirayotgan xizmat"
+                      label={tCons.serviceLabel}
                       size="small"
                       value={formData.service}
                       onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                       sx={{ bgcolor: "#fcfdf9" }}
                     >
-                      <MenuItem value="Gidroponika & NFT loyihalash">Gidroponika & NFT loyihalash</MenuItem>
-                      <MenuItem value="Kasallikka qarshi dori tanlash">Kasallikka qarshi dori tanlash</MenuItem>
-                      <MenuItem value="Gibrid urug'lar ulgurji buyurtmasi">Gibrid urug'lar ulgurji buyurtmasi</MenuItem>
-                      <MenuItem value="Issiqxona salafani hisoblash">Issiqxona salafani (plyonka) hisoblash</MenuItem>
-                      <MenuItem value="Tuproq va suv laborator tahlili">Tuproq va suv laboratoriya tahlili</MenuItem>
+                      <MenuItem value="hydro">{tCons.serviceHydro}</MenuItem>
+                      <MenuItem value="pest">{tCons.servicePest}</MenuItem>
+                      <MenuItem value="seeds">{tCons.serviceSeeds}</MenuItem>
+                      <MenuItem value="film">{tCons.serviceFilm}</MenuItem>
+                      <MenuItem value="fert">{tCons.serviceFert}</MenuItem>
                     </TextField>
                   </Grid>
 
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
-                      label="Maydon o'lchami"
-                      placeholder="Masalan: 30 sotix yoki 2 gektar"
+                      label={tCons.areaLabel}
+                      placeholder="e.g.: 30 sotix / 2 ha"
                       size="small"
                       value={formData.area}
                       onChange={(e) => setFormData({ ...formData, area: e.target.value })}
@@ -220,8 +223,8 @@ export default function FarmerConsultationSection() {
                       fullWidth
                       multiline
                       rows={3}
-                      label="Qo'shimcha izoh yoki savol"
-                      placeholder="Ekin turi, mavjud muammo yoki ehtiyojingizni qisqacha yozing..."
+                      label={tCons.commentLabel}
+                      placeholder="..."
                       value={formData.comment}
                       onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
                       sx={{ bgcolor: "#fcfdf9" }}
@@ -246,7 +249,7 @@ export default function FarmerConsultationSection() {
                           "&:hover": { bgcolor: "#1B4332" },
                         }}
                       >
-                        Arizani Yuborish & Bepul Hisoblash
+                        {tCons.submitBtn}
                       </Button>
                     </motion.div>
                   </Grid>

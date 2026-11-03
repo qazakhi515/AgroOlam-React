@@ -19,10 +19,12 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import VideocamIcon from "@mui/icons-material/Videocam";
+import ScienceIcon from "@mui/icons-material/Science";
 import { motion, AnimatePresence } from "framer-motion";
 import { CartItem } from "../../../lib/types/search";
-import { getSavedLanguage } from "../../../lib/i18n";
-import PlantDoctorModal, { MOCK_DIAGNOSIS_SAMPLES } from "../../components/ai/PlantDoctorModal";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
+import PlantDoctorModal, { getDiagnosisSamples, MOCK_DIAGNOSIS_SAMPLES } from "../../components/ai/PlantDoctorModal";
+import TankMixCompatibilityModal from "../../components/ai/TankMixCompatibilityModal";
 
 interface AiScannerSectionProps {
   onAdd: (item: CartItem) => void;
@@ -30,13 +32,16 @@ interface AiScannerSectionProps {
 
 export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
   const lang = getSavedLanguage();
+  const tAi = translations[lang].aiScanner;
   const [activeKey, setActiveKey] = useState<"tomato" | "cucumber" | "pepper">("tomato");
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [customImage, setCustomImage] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [isDoctorOpen, setIsDoctorOpen] = useState<boolean>(false);
+  const [isTankMixOpen, setIsTankMixOpen] = useState<boolean>(false);
 
-  const currentData = MOCK_DIAGNOSIS_SAMPLES[activeKey];
+  const samples = getDiagnosisSamples(lang);
+  const currentData = samples[activeKey] || MOCK_DIAGNOSIS_SAMPLES[activeKey];
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
   const handleSpeakAdvice = () => {
@@ -102,7 +107,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
         {/* Section Title Header */}
         <Box sx={{ textAlign: "center", maxWidth: "700px", mx: "auto", mb: { xs: 5, md: 7 } }}>
           <Chip
-            label="AgroOlam Vision AI 4.1 • Jonli Skaner"
+            label={tAi.badge}
             sx={{
               bgcolor: "#d1fae5",
               color: "#065f46",
@@ -122,16 +127,10 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
               mb: 1.5,
             }}
           >
-            {lang === "uz"
-              ? "Ekinlardagi kasalliklarni AI orqali aniqlang"
-              : lang === "ko"
-              ? "AI 비전 기반 농작물 병해충 원격 진단"
-              : "Diagnose Crop Pathologies Instantly with AI Vision"}
+            {tAi.title}
           </Typography>
           <Typography variant="body1" sx={{ color: "#4D6657", fontSize: { xs: "14px", md: "16px" } }}>
-            {lang === "uz"
-              ? "Quyidagi barg namunalaridan birini tanlang yoki o'z ekin rasmingizni yuklang. Skanerlash tugagach, aniq tashxis, xavf indeksi va zarur dorilar ko'rsatiladi."
-              : "Select a sample leaf or upload your farm photo. Our neural model detects lesions and recommends certified treatments."}
+            {tAi.desc}
           </Typography>
         </Box>
 
@@ -151,7 +150,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
               <Stack spacing={2.5}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                   <Typography variant="caption" sx={{ fontWeight: 800, color: "#64748b", textTransform: "uppercase" }}>
-                    Namuna bargni tanlang:
+                    {tAi.selectSampleLeaf}
                   </Typography>
                   <Stack direction="row" spacing={1}>
                     <Button
@@ -168,7 +167,23 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                         "&:hover": { bgcolor: "#a7f3d0" },
                       }}
                     >
-                      🎥 Jonli Kamera
+                      {tAi.liveCam}
+                    </Button>
+                    <Button
+                      size="small"
+                      startIcon={<ScienceIcon sx={{ fontSize: 16 }} />}
+                      onClick={() => setIsTankMixOpen(true)}
+                      sx={{
+                        color: "#166534",
+                        bgcolor: "#dcfce7",
+                        fontWeight: 700,
+                        textTransform: "none",
+                        fontSize: "12px",
+                        borderRadius: "8px",
+                        "&:hover": { bgcolor: "#bbf7d0" },
+                      }}
+                    >
+                      {lang === "uz" ? "🧪 Dori Mosligi" : lang === "ko" ? "🧪 혼용 계산기" : "🧪 Tank-Mix"}
                     </Button>
                     <Button
                       size="small"
@@ -176,7 +191,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                       onClick={() => fileInputRef.current?.click()}
                       sx={{ color: "#2D6A4F", fontWeight: 700, textTransform: "none", fontSize: "12px" }}
                     >
-                      Rasm yuklash
+                      {tAi.uploadPhoto}
                     </Button>
                   </Stack>
                   <input
@@ -208,7 +223,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                           "&:hover": { bgcolor: activeKey === "tomato" ? "#b91c1c" : "#fee2e2" },
                         }}
                       >
-                        🍅 Pomidor
+                        {tAi.tomato}
                       </Button>
                     </motion.div>
                   </Grid>
@@ -231,7 +246,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                           "&:hover": { bgcolor: activeKey === "cucumber" ? "#047857" : "#d1fae5" },
                         }}
                       >
-                        🥒 Bodring
+                        {tAi.cucumber}
                       </Button>
                     </motion.div>
                   </Grid>
@@ -254,7 +269,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                           "&:hover": { bgcolor: activeKey === "pepper" ? "#b45309" : "#fef3c7" },
                         }}
                       >
-                        🫑 Balgar
+                        {tAi.pepper}
                       </Button>
                     </motion.div>
                   </Grid>
@@ -336,7 +351,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                           fontWeight: 700,
                         }}
                       >
-                        {isScanning ? "SCANNING..." : "STATUS: ANALYZED"}
+                        {isScanning ? tAi.scanning : tAi.analyzed}
                       </Box>
                     </Stack>
 
@@ -356,7 +371,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                         maxWidth: "260px",
                       }}
                     >
-                      <div>{currentData.hudDetails?.nekroz || "Barg to'qimasi nekrozi aniqlandi"}</div>
+                      <div>{currentData.hudDetails?.nekroz || tAi.necrosisTomato}</div>
                     </Box>
 
                     <Stack direction="row" justifyContent="space-between" sx={{ color: "rgba(255,255,255,0.75)", fontFamily: "monospace", fontSize: "10px" }}>
@@ -381,7 +396,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                     "&:hover": { bgcolor: "#f2f8f4" },
                   }}
                 >
-                  Qaytadan Skanerlash Simulyatsiyasi
+                  {tAi.rescanSim}
                 </Button>
               </Stack>
             </Grid>
@@ -418,7 +433,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                           {currentData.diseaseName}
                         </Typography>
                         <Typography variant="caption" sx={{ color: "#2D6A4F", fontWeight: 700 }}>
-                          Toifa: {currentData.pathogen}
+                          {tAi.pathogenLabel} {currentData.pathogen}
                         </Typography>
                       </div>
                       <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" sx={{ gap: 1 }}>
@@ -444,11 +459,13 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                             "&:hover": { bgcolor: isSpeaking ? "#0E271D" : "#dcfce7" },
                           }}
                         >
-                          {isSpeaking ? "To'xtatish" : "🔊 Ovozli Maslahat"}
+                          {isSpeaking
+                            ? (lang === "ko" ? "중지" : lang === "uz" ? "To'xtatish" : "Stop")
+                            : (lang === "ko" ? "🔊 음성 설명" : lang === "uz" ? "🔊 Ovozli Maslahat" : "🔊 Audio Guide")}
                         </Button>
                         <Chip
                           icon={<CheckCircleIcon sx={{ fontSize: "14px !important" }} />}
-                          label={`Aniqlik: ${currentData.confidence}%`}
+                          label={`${tAi.confidenceLabel} ${currentData.confidence}%`}
                           sx={{ bgcolor: "#d1fae5", color: "#065f46", fontWeight: 800, fontSize: "11px" }}
                         />
                       </Stack>
@@ -467,7 +484,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                             <ThermostatIcon sx={{ color: "#16a34a", fontSize: 20 }} />
                             <div>
                               <Typography variant="caption" sx={{ color: "#64748b", fontWeight: 700, display: "block" }}>
-                                Harorat Tavsiyasi
+                                {lang === "ko" ? "적정 온실 온도" : lang === "uz" ? "Harorat Tavsiyasi" : "Ideal Temperature"}
                               </Typography>
                               <Typography variant="subtitle2" fontWeight={800} color="#0f172a">
                                 {currentData.tempAdvice || "+24°C...+26°C"}
@@ -483,7 +500,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                             <WaterDropIcon sx={{ color: "#2563eb", fontSize: 20 }} />
                             <div>
                               <Typography variant="caption" sx={{ color: "#64748b", fontWeight: 700, display: "block" }}>
-                                Optimal Namlik
+                                {lang === "ko" ? "적정 상대습도" : lang === "uz" ? "Optimal Namlik" : "Optimal Humidity"}
                               </Typography>
                               <Typography variant="subtitle2" fontWeight={800} color="#0f172a">
                                 {currentData.humidityAdvice || "60% - 65%"}
@@ -499,10 +516,10 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                             <OpacityIcon sx={{ color: "#059669", fontSize: 20 }} />
                             <div>
                               <Typography variant="caption" sx={{ color: "#64748b", fontWeight: 700, display: "block" }}>
-                                Sug'orish Rejimi
+                                {lang === "ko" ? "관수 방식" : lang === "uz" ? "Sug'orish Rejimi" : "Irrigation Method"}
                               </Typography>
                               <Typography variant="subtitle2" fontWeight={800} color="#0f172a">
-                                Tomchilatib sug'orish
+                                {lang === "ko" ? "점적 관수 권장" : lang === "uz" ? "Tomchilatib sug'orish" : "Drip fertigation"}
                               </Typography>
                             </div>
                           </Stack>
@@ -513,7 +530,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                     {/* Treatments Text */}
                     <Box sx={{ p: 2, borderRadius: "14px", bgcolor: "#fffbeb", border: "1px solid #fde68a", mb: 3 }}>
                       <Typography variant="caption" fontWeight={800} color="#92400e" sx={{ textTransform: "uppercase", display: "block", mb: 0.5 }}>
-                        Tavsiya etiladigan agrotexnik choralar:
+                        {tAi.treatmentLabel}
                       </Typography>
                       <Typography variant="body2" color="#78350f" sx={{ lineHeight: 1.5 }}>
                         {currentData.treatment}
@@ -524,7 +541,7 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                     <div>
                       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
                         <Typography variant="subtitle2" fontWeight={800} color="#0E271D" sx={{ textTransform: "uppercase" }}>
-                          🛒 Do'konda mavjud dori vositalari:
+                          🛒 {tAi.recommendedMedicines}
                         </Typography>
                       </Stack>
 
@@ -586,6 +603,50 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
                           </Grid>
                         ))}
                       </Grid>
+
+                      {/* Tank-Mix Compatibility Callout */}
+                      <Box
+                        sx={{
+                          mt: 2.5,
+                          p: 1.8,
+                          borderRadius: "14px",
+                          bgcolor: "#f0fdf4",
+                          border: "1px dashed #86efac",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          flexWrap: "wrap",
+                          gap: 1.5,
+                        }}
+                      >
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          <ScienceIcon sx={{ color: "#16a34a", fontSize: 22 }} />
+                          <Typography variant="caption" sx={{ fontWeight: 700, color: "#166534" }}>
+                            {lang === "uz"
+                              ? "Ushbu dorini boshqa o'g'it yoki insektitsid bilan aralashtirib sepasizmi?"
+                              : lang === "ko"
+                              ? "이 약제를 다른 비료나 살충제와 혼용하여 살포할 예정이신가요?"
+                              : "Planning to tank-mix this medicine with fertilizers or insecticides?"}
+                          </Typography>
+                        </Stack>
+                        <Button
+                          size="small"
+                          variant="contained"
+                          onClick={() => setIsTankMixOpen(true)}
+                          startIcon={<ScienceIcon sx={{ fontSize: 16 }} />}
+                          sx={{
+                            bgcolor: "#16a34a",
+                            color: "#ffffff",
+                            fontWeight: 800,
+                            fontSize: "11px",
+                            borderRadius: "10px",
+                            textTransform: "none",
+                            "&:hover": { bgcolor: "#15803d" },
+                          }}
+                        >
+                          {lang === "uz" ? "🧪 Mosligini Tekshirish" : lang === "ko" ? "🧪 혼용성 검증" : "🧪 Verify Tank Mix"}
+                        </Button>
+                      </Box>
                     </div>
                   </Box>
                 </motion.div>
@@ -599,6 +660,20 @@ export default function AiScannerSection({ onAdd }: AiScannerSectionProps) {
       <PlantDoctorModal
         open={isDoctorOpen}
         onClose={() => setIsDoctorOpen(false)}
+        onAdd={onAdd}
+      />
+
+      {/* Tank-Mix Compatibility Modal */}
+      <TankMixCompatibilityModal
+        open={isTankMixOpen}
+        onClose={() => setIsTankMixOpen(false)}
+        initialChemicalIds={
+          activeKey === "tomato"
+            ? ["ridomil_gold", "ampligo"]
+            : activeKey === "cucumber"
+            ? ["topas_100", "skor_250"]
+            : ["kocide_2000", "ampligo"]
+        }
         onAdd={onAdd}
       />
     </Box>

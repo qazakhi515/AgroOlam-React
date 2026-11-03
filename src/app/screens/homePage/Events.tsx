@@ -5,11 +5,13 @@ import SwiperCore, { Autoplay, Navigation, Pagination } from "swiper";
 import { useHistory } from "react-router-dom";
 import ArticleService from "../../services/ArticleService";
 import { Article } from "../../../lib/types/article";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
 
 export default function Events() {
   const history = useHistory();
+  const lang = getSavedLanguage();
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
@@ -38,7 +40,7 @@ export default function Events() {
           }}
         >
           <span className={"category-title"}>
-            Agro-Yangiliklar & Dolzarb Tavsiyalar
+            {translations[lang].home.newsEventsTitle}
           </span>
           <Button
             variant="outlined"
@@ -46,7 +48,7 @@ export default function Events() {
             onClick={() => history.push("/news")}
             sx={{ textTransform: "none", borderRadius: 4 }}
           >
-            Barchasini ko'rish →
+            {translations[lang].home.viewAllNews}
           </Button>
         </Box>
 

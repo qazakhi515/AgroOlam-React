@@ -33,6 +33,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 import BoltIcon from "@mui/icons-material/Bolt";
 import { motion } from "framer-motion";
 import { useParams, useHistory } from "react-router-dom";
@@ -78,6 +79,8 @@ export default function ChosenProduct(props: ChosenProductProps) {
   const { onAdd } = props;
   const { productId } = useParams<{ productId: string }>();
   const history = useHistory();
+  const lang = getSavedLanguage();
+  const tChosen = translations[lang].chosenProduct;
 
   const { setRestaurant, setChosenProduct } = actionDispatch(useDispatch());
   const { chosenProduct } = useSelector(chosenProductRetriever);
@@ -264,16 +267,16 @@ export default function ChosenProduct(props: ChosenProductProps) {
               <Stack direction="row" spacing={1.5} sx={{ mt: 3, flexWrap: "wrap", gap: 1 }}>
                 <Chip
                   icon={<VerifiedIcon sx={{ color: "#10b981 !important" }} />}
-                  label="100% Sertifikatlangan"
+                  label={tChosen.certified100}
                   sx={{ bgcolor: "#d1fae5", color: "#065f46", fontWeight: 700, fontSize: "12px" }}
                 />
                 <Chip
                   icon={<SecurityIcon sx={{ color: "#0284c7 !important" }} />}
-                  label="Xavflilik sinfi: III (Kam xavfli)"
+                  label={tChosen.hazardClass}
                   sx={{ bgcolor: "#e0f2fe", color: "#0369a1", fontWeight: 700, fontSize: "12px" }}
                 />
                 <Chip
-                  label={`Omborda: ${chosenProduct.productLeftCount} dona`}
+                  label={tChosen.inStock.replace("{n}", String(chosenProduct.productLeftCount))}
                   variant="outlined"
                   sx={{ borderColor: "#2D6A4F", color: "#2D6A4F", fontWeight: 700, fontSize: "12px" }}
                 />
@@ -308,7 +311,7 @@ export default function ChosenProduct(props: ChosenProductProps) {
                     mb: 0.5,
                   }}
                 >
-                  {chosenProduct.productCollection} • Rasmiy Distribyutsiya
+                  {chosenProduct.productCollection} • {tChosen.officialDist}
                 </Typography>
 
                 <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
@@ -346,7 +349,7 @@ export default function ChosenProduct(props: ChosenProductProps) {
                   </Typography>
                   <Stack direction="row" spacing={0.5} alignItems="center" sx={{ color: "#64748b" }}>
                     <RemoveRedEyeIcon sx={{ fontSize: 16 }} />
-                    <Typography variant="caption">{chosenProduct.productViews} marta ko'rildi</Typography>
+                    <Typography variant="caption">{chosenProduct.productViews} {tChosen.viewsCount}</Typography>
                   </Stack>
                 </Stack>
 
@@ -365,14 +368,14 @@ export default function ChosenProduct(props: ChosenProductProps) {
                 >
                   <div>
                     <Typography variant="caption" sx={{ color: "#475569", display: "block" }}>
-                      Yetkazib beruvchi do'kon:
+                      {tChosen.supplierLabel}
                     </Typography>
                     <Typography variant="subtitle2" fontWeight={800} color="#1B4332">
                       {restaurant?.memberNick || "AgroOlam Rasmiy Ta'minot Markazi"}
                     </Typography>
                   </div>
                   <Chip
-                    label="Tekshirilgan Hamkor"
+                    label={tChosen.verifiedPartner}
                     size="small"
                     sx={{ bgcolor: "#2D6A4F", color: "#fff", fontWeight: 700, fontSize: "11px" }}
                   />
@@ -381,7 +384,7 @@ export default function ChosenProduct(props: ChosenProductProps) {
                 {/* Price Display */}
                 <Box sx={{ mb: 3 }}>
                   <Typography variant="caption" sx={{ color: "#64748b", display: "block" }}>
-                    Narxi (QQS bilan):
+                    {tChosen.priceVat}
                   </Typography>
                   <Stack direction="row" spacing={1.5} alignItems="baseline">
                     <Typography variant="h3" fontWeight={900} color="#2D6A4F" sx={{ fontSize: { xs: "28px", sm: "36px" } }}>
@@ -544,7 +547,7 @@ export default function ChosenProduct(props: ChosenProductProps) {
                         "&:hover": { bgcolor: "#f0fdf4", borderColor: "#1B4332" },
                       }}
                     >
-                      Savatga Qo'shish
+                      {tChosen.addToCart}
                     </Button>
                   </motion.div>
 
@@ -568,7 +571,7 @@ export default function ChosenProduct(props: ChosenProductProps) {
                         "&:hover": { bgcolor: "#0E271D" },
                       }}
                     >
-                      ⚡ Hozir Sotib Olish ({(
+                      ⚡ {tChosen.buyNow} ({(
                         (chosenProduct.productPrice < 1000
                           ? chosenProduct.productPrice * 12850
                           : chosenProduct.productPrice) * quantity

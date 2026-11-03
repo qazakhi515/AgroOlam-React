@@ -135,11 +135,28 @@ export default function NewsPage() {
             >
               <Box className="article-card-img-wrap">
                 <img
-                  src={item.articleImage}
+                  src={
+                    item.articleImage ||
+                    (item.articleCategory === ArticleCategory.URUG_VA_HOSIL
+                      ? "/img/harvest.jpg"
+                      : item.articleCategory === ArticleCategory.AGRO_TAVSIYALAR
+                      ? "/img/agrolab.jpg"
+                      : item.articleCategory === ArticleCategory.KASALLIKLAR
+                      ? "/img/disease.jpg"
+                      : "/img/farm-banner.jpg")
+                  }
                   alt={item.articleTitle}
                   className="article-card-img"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/img/farm-banner.jpg";
+                    const fallback =
+                      item.articleCategory === ArticleCategory.URUG_VA_HOSIL
+                        ? "/img/harvest.jpg"
+                        : item.articleCategory === ArticleCategory.AGRO_TAVSIYALAR
+                        ? "/img/agrolab.jpg"
+                        : item.articleCategory === ArticleCategory.KASALLIKLAR
+                        ? "/img/disease.jpg"
+                        : "/img/farm-banner.jpg";
+                    (e.target as HTMLImageElement).src = fallback;
                   }}
                 />
                 <span className="article-badge">

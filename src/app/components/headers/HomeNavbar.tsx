@@ -30,6 +30,7 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import PhoneIcon from "@mui/icons-material/Phone";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PlantDoctorModal from "../ai/PlantDoctorModal";
+import AgroWeatherOutbreakModal from "../weather/AgroWeatherOutbreakModal";
 
 interface HomeNavbarProps {
   cartItems: CartItem[];
@@ -63,8 +64,10 @@ export default function HomeNavbar(props: HomeNavbarProps) {
   const { authMember } = useGlobals();
   const lang = getSavedLanguage();
   const t = translations[lang].nav;
+  const tHome = translations[lang].home;
 
   const [isDoctorOpen, setIsDoctorOpen] = useState(false);
+  const [isWeatherModalOpen, setIsWeatherModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -249,27 +252,27 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               sx={{ ml: { lg: 3, xl: 5 } }}
             >
               {/* Andijan Real-time Agro Weather Chip */}
-              <NavLink to="/news" style={{ textDecoration: "none" }}>
-                <Box
-                  sx={{
-                    display: { xs: "none", sm: "flex" },
-                    alignItems: "center",
-                    gap: 0.6,
-                    bgcolor: "rgba(16, 185, 129, 0.12)",
-                    border: "1px solid rgba(16, 185, 129, 0.25)",
-                    borderRadius: "20px",
-                    px: 1.5,
-                    py: 0.6,
-                    transition: "all 0.2s ease",
-                    "&:hover": { bgcolor: "rgba(16, 185, 129, 0.22)" },
-                  }}
-                >
-                  <span style={{ fontSize: "14px" }}>🌤️</span>
-                  <Typography sx={{ fontWeight: 800, fontSize: "11px", color: "#1B4332", whiteSpace: "nowrap" }}>
-                    Andijon: +19°C
-                  </Typography>
-                </Box>
-              </NavLink>
+              <Box
+                onClick={() => setIsWeatherModalOpen(true)}
+                sx={{
+                  display: { xs: "none", sm: "flex" },
+                  alignItems: "center",
+                  gap: 0.6,
+                  bgcolor: "rgba(16, 185, 129, 0.12)",
+                  border: "1px solid rgba(16, 185, 129, 0.25)",
+                  borderRadius: "20px",
+                  px: 1.5,
+                  py: 0.6,
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  "&:hover": { bgcolor: "rgba(16, 185, 129, 0.22)", transform: "translateY(-1px)" },
+                }}
+              >
+                <span style={{ fontSize: "14px" }}>🌤️</span>
+                <Typography sx={{ fontWeight: 800, fontSize: "11px", color: "#1B4332", whiteSpace: "nowrap" }}>
+                  Andijon: +19°C • Meteo-Vision ⚡
+                </Typography>
+              </Box>
 
               {/* Consultation Trigger Button */}
               <Box sx={{ display: { xs: "none", sm: "block" } }}>
@@ -459,7 +462,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                       boxShadow: "0 0 8px #10b981",
                     }}
                   />
-                  Gollandiya & Yapon Gibrid Urug'lari va Agro-Dori Ta'minoti
+                  {tHome.heroBadge}
                 </Box>
 
                 {/* Main Headline */}
@@ -473,7 +476,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                     letterSpacing: "-1px",
                   }}
                 >
-                  Yuqori Hosildor Issiqxonalar va <br />
+                  {tHome.heroTitle1} <br />
                   <span
                     style={{
                       fontFamily: "'Playfair Display', Georgia, serif",
@@ -482,12 +485,10 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                       color: "#2D6A4F",
                     }}
                   >
-                    Zamonaviy AgroTexnologiyalar
+                    {tHome.heroTitle2}
                   </span>{" "}
-                  Ekosistemasi.
+                  {tHome.heroTitle3}
                 </Typography>
-
-
 
                 {/* Functional Agro Search Component */}
                 <Box
@@ -509,7 +510,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                     <SearchIcon sx={{ fontSize: 24 }} />
                   </Box>
                   <InputBase
-                    placeholder="Masalan: F1 Pomidor urug'i, Ridomil Gold, 150mkr plyonka..."
+                    placeholder={tHome.searchPlaceholder}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     sx={{
@@ -535,7 +536,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                       flexShrink: 0,
                     }}
                   >
-                    Qidirish
+                    {tHome.searchBtn}
                   </Button>
                 </Box>
 
@@ -559,7 +560,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                         "&:hover": { bgcolor: "#143527" },
                       }}
                     >
-                      AI Ekinni Skanerlash
+                      {tHome.scanBtn}
                     </Button>
                   </motion.div>
 
@@ -584,7 +585,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                           },
                         }}
                       >
-                        Do'kon Katalogi
+                        {tHome.catalogBtn}
                       </Button>
                     </motion.div>
                   </NavLink>
@@ -595,13 +596,13 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <VerifiedUserIcon sx={{ color: "#059669", fontSize: 20 }} />
                     <Typography variant="caption" sx={{ fontWeight: 800, color: "#1e293b", fontSize: "12px" }}>
-                      100% Sertifikatlangan O'zbekiston Registri
+                      {tHome.registryBadge}
                     </Typography>
                   </Stack>
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <LocalShippingIcon sx={{ color: "#059669", fontSize: 20 }} />
                     <Typography variant="caption" sx={{ fontWeight: 800, color: "#1e293b", fontSize: "12px" }}>
-                      Respublika bo'ylab tezkor yetkazish
+                      {tHome.fastDeliveryBadge}
                     </Typography>
                   </Stack>
                 </Stack>
@@ -772,6 +773,13 @@ export default function HomeNavbar(props: HomeNavbarProps) {
       <PlantDoctorModal
         open={isDoctorOpen}
         onClose={() => setIsDoctorOpen(false)}
+        onAdd={onAdd}
+      />
+
+      {/* Meteo-Vision Outbreak Predictor Modal */}
+      <AgroWeatherOutbreakModal
+        open={isWeatherModalOpen}
+        onClose={() => setIsWeatherModalOpen(false)}
         onAdd={onAdd}
       />
     </div>

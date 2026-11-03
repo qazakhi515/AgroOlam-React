@@ -16,6 +16,7 @@ import OrderService from "../../services/OrdersService";
 import { OrderStatus } from "../../../lib/enums/order.enum";
 import { Order } from "../../../lib/types/order";
 import { sweetTopSuccessAlert, sweetErrorHandling } from "../../../lib/sweetAlert";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 interface AgroStoreSectionProps {
   onAdd: (item: CartItem) => void;
@@ -110,7 +111,7 @@ const AGRO_PRODUCTS_CATALOG: DemoAgroProduct[] = [
     rating: 4.7,
     priceUzs: 210000,
     priceUsd: 16.6,
-    image: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?auto=format&fit=crop&w=600&q=80",
+    image: "/img/products/score.webp",
     desc: "Un-shudring va zang kasalliklarini 24 soat ichida to'xtatuvchi jahon etaloni.",
   },
   {
@@ -122,7 +123,7 @@ const AGRO_PRODUCTS_CATALOG: DemoAgroProduct[] = [
     rating: 4.8,
     priceUzs: 85000,
     priceUsd: 6.7,
-    image: "https://images.unsplash.com/photo-1516253593875-bd7ba052fbc5?auto=format&fit=crop&w=600&q=80",
+    image: "/img/products/fungisit.jpg",
     desc: "Bakterial kuyish va dog'lanishlarga qarshi arzon va samarali misli dori.",
   },
   {
@@ -135,7 +136,7 @@ const AGRO_PRODUCTS_CATALOG: DemoAgroProduct[] = [
     priceUzs: 450000,
     oldPriceUzs: 520000,
     priceUsd: 35.7,
-    image: "https://images.unsplash.com/photo-1558441719-74a622a55856?auto=format&fit=crop&w=600&q=80",
+    image: "/img/products/smart_sensor.jpg",
     desc: "Harorat va namlikni real vaqtda o'lchab, Telegramga ogohlantirish yuboradi.",
   },
 ];
@@ -196,17 +197,20 @@ export default function AgroStoreSection({ onAdd }: AgroStoreSectionProps) {
     }
   };
 
+  const lang = getSavedLanguage();
+  const tStore = translations[lang].storeSection;
+
   const filteredProducts =
     activeCategory === "all"
       ? AGRO_PRODUCTS_CATALOG
       : AGRO_PRODUCTS_CATALOG.filter((p) => p.category === activeCategory);
 
   const filterTabs = [
-    { key: "all", label: "Barchasi" },
-    { key: "seeds", label: "Urug'lar (Seeds)" },
-    { key: "medicine", label: "Dori-Darmon & O'g'it" },
-    { key: "film", label: "Issiqxona Salafanlari" },
-    { key: "tools", label: "Sug'orish & Asboblar" },
+    { key: "all", label: tStore.catAll },
+    { key: "seeds", label: tStore.catSeeds },
+    { key: "medicine", label: tStore.catMedicine },
+    { key: "film", label: tStore.catFilm },
+    { key: "tools", label: tStore.catTools },
   ];
 
   return (
@@ -243,7 +247,7 @@ export default function AgroStoreSection({ onAdd }: AgroStoreSectionProps) {
               }}
             >
               <VerifiedIcon sx={{ fontSize: 16 }} />
-              AgroOlam Rasmiy Ta'minot Do'koni
+              {tStore.badge}
             </Typography>
             <Typography
               variant="h3"
@@ -255,7 +259,7 @@ export default function AgroStoreSection({ onAdd }: AgroStoreSectionProps) {
                 mt: 1,
               }}
             >
-              Sertifikatlangan Urug'lar, Himoya Vositalari & Jihozlar
+              {tStore.title}
             </Typography>
           </div>
 
@@ -506,7 +510,7 @@ export default function AgroStoreSection({ onAdd }: AgroStoreSectionProps) {
                                 price: prod.priceUzs,
                                 image: prod.image,
                               });
-                              sweetTopSuccessAlert("Savatga qo'shildi!");
+                              sweetTopSuccessAlert(tStore.addedToCart);
                             }}
                             sx={{
                               borderColor: "#2D6A4F",
@@ -516,7 +520,7 @@ export default function AgroStoreSection({ onAdd }: AgroStoreSectionProps) {
                               borderRadius: "10px",
                               "&:hover": { borderColor: "#1B4332", bgcolor: "#f0fdf4" },
                             }}
-                            title="Savatga qo'shish"
+                            title={tStore.buyNow}
                           >
                             <AddIcon sx={{ fontSize: 18 }} />
                           </Button>
@@ -541,7 +545,7 @@ export default function AgroStoreSection({ onAdd }: AgroStoreSectionProps) {
                               "&:hover": { bgcolor: "#0E271D" },
                             }}
                           >
-                            Xarid
+                            {tStore.buyNow}
                           </Button>
                         </motion.div>
                       </Stack>
@@ -575,7 +579,7 @@ export default function AgroStoreSection({ onAdd }: AgroStoreSectionProps) {
                   },
                 }}
               >
-                Barcha 1,200+ Agro Mahsulotlar Katalogini Ko'rish
+                {tStore.viewFullCatalog}
               </Button>
             </motion.div>
           </NavLink>

@@ -33,6 +33,7 @@ import VerifiedIcon from "@mui/icons-material/Verified";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import BoltIcon from "@mui/icons-material/Bolt";
+import ScienceIcon from "@mui/icons-material/Science";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "@reduxjs/toolkit";
@@ -46,6 +47,7 @@ import { ProductCollection, ProductSize, ProductStatus } from "../../../lib/enum
 import { serverApi } from "../../../lib/config";
 import { CartItem } from "../../../lib/types/search";
 import PlantDoctorModal from "../../components/ai/PlantDoctorModal";
+import TankMixCompatibilityModal from "../../components/ai/TankMixCompatibilityModal";
 import WishlistService from "../../services/WishlistService";
 import PaymentModal from "../../components/payment/PaymentModal";
 import OrderService from "../../services/OrdersService";
@@ -203,6 +205,186 @@ export const CERTIFIED_AGRO_PRODUCTS: Product[] = [
     productDesc: "ADEPIDYN innovatsion molekulasi asosidagi eng yangi fungitsid. Alternarioz, kladosporioz va zangga qarshi jahon etaloni.",
     productImages: ["/img/products/Syngenta-Miravis-Duo.webp"],
     productViews: 3410,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_revus_250_sc",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Revus 250 SC Tizimli Fungitsid (Syngenta, 1 L)",
+    productPrice: 135000,
+    productLeftCount: 50,
+    productSize: ProductSize.NORMAL,
+    productVolume: 1.0,
+    productDesc: "Mandipropamid 250 g/l. Pomidor va kartoshka fitoftorasiga qarshi yomg'ir yuvishiga o'ta chidamli LOK-FLOV tizimli fungitsid.",
+    productImages: ["/img/products/fungisit.jpg"],
+    productViews: 2150,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_quadris_250_sc",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Quadris 250 SC Universal Fungitsid (Syngenta, 1 L)",
+    productPrice: 160000,
+    productLeftCount: 42,
+    productSize: ProductSize.NORMAL,
+    productVolume: 1.0,
+    productDesc: "Azoksistrobin 250 g/l. Sabzavot, poliz va uzumdagi peronosporoz, un-shudring va alternariozga qarshi universal strobilurin fungitsid.",
+    productImages: ["/img/products/Syngenta-Miravis-Duo.webp"],
+    productViews: 2680,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_luna_tranquility",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Luna Tranquility SC Fungitsid (Bayer, 1 L)",
+    productPrice: 210000,
+    productLeftCount: 38,
+    productSize: ProductSize.NORMAL,
+    productVolume: 1.0,
+    productDesc: "Fluopiram 125 g/l + Pirimetanil 375 g/l. Uzum, shaftoli va sabzavotlardagi kulrang chirish (Botrytis), oidium va parshaga qarshi innovatsion himoya.",
+    productImages: ["/img/products/lunatranquilty.jpeg"],
+    productViews: 3120,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_switch_62_wg",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Switch 62.5 WG Granula Fungitsid (Syngenta, 1 kg)",
+    productPrice: 195000,
+    productLeftCount: 44,
+    productSize: ProductSize.NORMAL,
+    productVolume: 1.0,
+    productDesc: "Tsiprodinil 375 g/kg + Flyudioksonil 250 g/kg. Mevalar chirishi, qulupnay, uzum va pomidordagi monilioz va botritisga qarshi jahon standarti.",
+    productImages: ["/img/products/switch.jpg"],
+    productViews: 2890,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_bravo_500_sc",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Bravo 500 SC Kontakt Fungitsid (Syngenta, 1 L)",
+    productPrice: 115000,
+    productLeftCount: 65,
+    productSize: ProductSize.NORMAL,
+    productVolume: 1.0,
+    productDesc: "Xlorotalonil 500 g/l. Fitoftora va alternariozga qarshi barg yuzasiga qalin himoya qatlami hosil qiluvchi kontakt fungitsid.",
+    productImages: ["/img/products/BravoZNC.webp"],
+    productViews: 1940,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_proclaim_05_sg",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Proclaim 05 SG Insektitsid (Syngenta, 250 gr)",
+    productPrice: 130000,
+    productLeftCount: 58,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.25,
+    productDesc: "Emamektin benzoat 50 g/kg. Pomidor kuyasi (Tuta), g'o'za va tunlam qurtlariga qarshi biologik asosli translaminar insektitsid.",
+    productImages: ["/img/products/Proclaim-05-SG-250g.jpg"],
+    productViews: 2750,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_envidor_240_sc",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Envidor 240 SC Akaritsid (Bayer, 1 L)",
+    productPrice: 175000,
+    productLeftCount: 36,
+    productSize: ProductSize.NORMAL,
+    productVolume: 1.0,
+    productDesc: "Spirodiklofen 240 g/l. Barcha turdagi o'rgimchakkanalarning tuxumlari, lichinkalari va urg'ochilariga qarshi 30 kunlik mustahkam himoya.",
+    productImages: ["/img/products/envidor.jpg"],
+    productViews: 2210,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_teppeki_50_wg",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Teppeki 50 WG Tizimli Insektitsid (Belchim, 140 gr)",
+    productPrice: 155000,
+    productLeftCount: 48,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.14,
+    productDesc: "Flonikamid 500 g/kg. Shira (tlya), oqqanot va tripslarning oziqlanishini 1 soatda to'xtatuvchi selektiv vosita. Foydali arilarga zararsiz.",
+    productImages: ["/img/products/teppeki.webp"],
+    productViews: 3590,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_belt_480_sc",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Belt 480 SC Qurtlarga Qarshi Insektitsid (Bayer, 1 L)",
+    productPrice: 165000,
+    productLeftCount: 35,
+    productSize: ProductSize.NORMAL,
+    productVolume: 1.0,
+    productDesc: "Flyubendiamid 480 g/l. Tuta absoluta, tunlam va meva xo'r kapalak qurtlariga qarshi innovatsion mushak blokatori.",
+    productImages: ["/img/products/Belt-SC-480-1Ltr.webp"],
+    productViews: 2900,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_aliette_80_wg",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Aliette 80 WG Tizimli Bakteritsid (Bayer, 1 kg)",
+    productPrice: 140000,
+    productLeftCount: 52,
+    productSize: ProductSize.NORMAL,
+    productVolume: 1.0,
+    productDesc: "Fosetil-Al 800 g/kg. Ikki tomonlama (ildizdan bargga, bargdan ildizga) to'liq singuvchi bakterioz va peronosporoz fungitsidi.",
+    productImages: ["/img/products/alliete.jpeg"],
+    productViews: 2630,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_cuproxat_345_sc",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Cuproxat 345 SC Suyuq Misli Fungitsid (Nufarm, 1 L)",
+    productPrice: 95000,
+    productLeftCount: 60,
+    productSize: ProductSize.NORMAL,
+    productVolume: 1.0,
+    productDesc: "Uch asosli mis sulfati 345 g/l. Mevali bog'lar va sabzavotlar uchun o'simlikni kuydirmaydigan, o'ta nozik dispersion misli fungitsid.",
+    productImages: ["/img/products/cuproxat.jpeg"],
+    productViews: 2180,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "agro_aktara_25_wg",
+    productCollection: ProductCollection.FERTILIZERS,
+    productStatus: ProductStatus.PROCESS,
+    productName: "Aktara 25 WG Tizimli Insektitsid (Syngenta, 250 gr)",
+    productPrice: 85000,
+    productLeftCount: 75,
+    productSize: ProductSize.NORMAL,
+    productVolume: 0.25,
+    productDesc: "Tiametoksam 250 g/kg. Ildiz orqali va bargdan so'ruvchi shira, trips, oqqanot va kolorado qo'ng'iziga qarshi tizimli insektitsid.",
+    productImages: ["/img/products/Actara-25.webp"],
+    productViews: 3880,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -648,6 +830,7 @@ export default function Products(props: ProductsProps) {
   const [aiLoading, setAiLoading] = useState<boolean>(false);
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [isDoctorOpen, setIsDoctorOpen] = useState<boolean>(false);
+  const [isTankMixOpen, setIsTankMixOpen] = useState<boolean>(false);
   const [cartSuccessFeedback, setCartSuccessFeedback] = useState<string | null>(null);
 
   // Like & Wishlist Persistence
@@ -1153,7 +1336,7 @@ export default function Products(props: ProductsProps) {
                 <Stack direction="row" spacing={1} alignItems="center">
                   <FilterListIcon sx={{ color: "#2D6A4F", fontSize: 20 }} />
                   <Typography variant="h6" sx={{ fontWeight: 800, color: "#0E271D", fontSize: "16px" }}>
-                    Katalog Filtrlari
+                    {t.filterCatalog}
                   </Typography>
                 </Stack>
                 <Button
@@ -1168,14 +1351,14 @@ export default function Products(props: ProductsProps) {
                     minWidth: "auto",
                   }}
                 >
-                  Tozalash
+                  {t.clear}
                 </Button>
               </Stack>
 
               {/* 1. Category Tree */}
               <div>
                 <Typography variant="caption" sx={{ fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", mb: 1.5, display: "block" }}>
-                  Ekin & Ta'minot Turlari
+                  {t.cropSupplyTypes}
                 </Typography>
                 <Stack spacing={1}>
                   {categoriesList.map((cat, idx) => {
@@ -1236,7 +1419,7 @@ export default function Products(props: ProductsProps) {
               {/* 2. Sort By Select */}
               <div>
                 <Typography variant="caption" sx={{ fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", mb: 1, display: "block" }}>
-                  Saralash Tartibi
+                  {t.sortBy}
                 </Typography>
                 <Select
                   size="small"
@@ -1251,25 +1434,25 @@ export default function Products(props: ProductsProps) {
                     "& .MuiOutlinedInput-notchedOutline": { borderColor: "#c2dfce" },
                   }}
                 >
-                  <MenuItem value="createdAt">🆕 Eng yangilar (Sana)</MenuItem>
-                  <MenuItem value="productPrice_asc">💲 Narxi: Arzonroqdan</MenuItem>
-                  <MenuItem value="productPrice_desc">💎 Narxi: Qimmatroqdan</MenuItem>
-                  <MenuItem value="productViews">👁️ Eng ko'p ko'rilgan</MenuItem>
+                  <MenuItem value="createdAt">🆕 {t.sortNewestDate}</MenuItem>
+                  <MenuItem value="productPrice_asc">💲 {t.sortPriceLow}</MenuItem>
+                  <MenuItem value="productPrice_desc">💎 {t.sortPriceHigh}</MenuItem>
+                  <MenuItem value="productViews">👁️ {t.sortViews}</MenuItem>
                 </Select>
               </div>
 
               {/* 3. Price Range Presets */}
               <div>
                 <Typography variant="caption" sx={{ fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", mb: 1.5, display: "block" }}>
-                  Narx Diapazoni (UZS)
+                  {t.priceRange}
                 </Typography>
                 <Stack spacing={1}>
                   {[
-                    { key: "all", label: "Barchasi" },
-                    { key: "under100k", label: "100,000 UZS gacha" },
-                    { key: "100k-500k", label: "100,000 - 500,000 UZS" },
-                    { key: "500k-2m", label: "500,000 - 2,000,000 UZS" },
-                    { key: "above2m", label: "2,000,000 UZS dan yuqori" },
+                    { key: "all", label: t.priceAll },
+                    { key: "under100k", label: t.under100k },
+                    { key: "100k-500k", label: t.from100kTo500k },
+                    { key: "500k-2m", label: t.from500kTo2m },
+                    { key: "above2m", label: t.above2m },
                   ].map((preset) => {
                     const isSelected = selectedPriceFilter === preset.key;
                     return (
@@ -1311,7 +1494,7 @@ export default function Products(props: ProductsProps) {
                   }
                   label={
                     <Typography variant="body2" sx={{ fontWeight: 700, fontSize: "13px", color: "#1e293b" }}>
-                      Faqat omborda mavjudlari
+                      {t.inStockOnly}
                     </Typography>
                   }
                 />
@@ -1329,10 +1512,10 @@ export default function Products(props: ProductsProps) {
                 }}
               >
                 <Typography variant="subtitle2" sx={{ fontWeight: 800, mb: 0.5 }}>
-                  Bargda kasallik bormi?
+                  {t.leafPromoTitle}
                 </Typography>
                 <Typography variant="caption" sx={{ color: "#a7f3d0", display: "block", mb: 2, lineHeight: 1.4 }}>
-                  AgroOlam Vision AI 4.1 orqali 3 soniyada tashxis qo'ying va to'g'ri dorini tanlang.
+                  {t.leafPromoDesc}
                 </Typography>
                 <Button
                   size="small"
@@ -1350,7 +1533,33 @@ export default function Products(props: ProductsProps) {
                     "&:hover": { bgcolor: "#22c55e" },
                   }}
                 >
-                  AI Skanerni Ishga Tushirish
+                  {t.launchAiScanner}
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => setIsTankMixOpen(true)}
+                  startIcon={<ScienceIcon />}
+                  sx={{
+                    mt: 1.2,
+                    borderColor: "rgba(167, 243, 208, 0.4)",
+                    color: "#a7f3d0",
+                    borderRadius: "12px",
+                    fontWeight: 800,
+                    fontSize: "11px",
+                    textTransform: "none",
+                    width: "100%",
+                    "&:hover": {
+                      bgcolor: "rgba(74, 222, 128, 0.15)",
+                      borderColor: "#4ade80",
+                    },
+                  }}
+                >
+                  {lang === "uz"
+                    ? "🧪 Dori Mosligi (Tank-Mix)"
+                    : lang === "ko"
+                    ? "🧪 농약 혼용성 계산기"
+                    : "🧪 Tank-Mix Checker"}
                 </Button>
               </Box>
             </Stack>
@@ -1376,14 +1585,14 @@ export default function Products(props: ProductsProps) {
               }}
             >
               <Typography variant="body2" sx={{ fontWeight: 800, color: "#1e293b" }}>
-                Topildi: <span style={{ color: "#2D6A4F" }}>{displayedProducts.length}</span> ta sertifikatlangan mahsulot
+                {t.foundCount.replace("{n}", String(displayedProducts.length))}
               </Typography>
 
               {/* Active Filter Chips */}
               <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 0.5 }}>
                 {productSearch.productCollection && (
                   <Chip
-                    label={`Kategoriya: ${productSearch.productCollection}`}
+                    label={`${t.categoryLabel}: ${productSearch.productCollection}`}
                     size="small"
                     onDelete={() => handleCollectionSelect(undefined)}
                     sx={{ bgcolor: "#dcfce7", color: "#166534", fontWeight: 700 }}
@@ -1391,7 +1600,7 @@ export default function Products(props: ProductsProps) {
                 )}
                 {productSearch.search && (
                   <Chip
-                    label={`Qidiruv: "${productSearch.search}"`}
+                    label={`${t.searchLabel}: "${productSearch.search}"`}
                     size="small"
                     onDelete={() => {
                       setSearchText("");
@@ -1402,7 +1611,7 @@ export default function Products(props: ProductsProps) {
                 )}
                 {selectedPriceFilter !== "all" && (
                   <Chip
-                    label="Narx filtri faol"
+                    label={t.activePriceFilter}
                     size="small"
                     onDelete={() => setSelectedPriceFilter("all")}
                     sx={{ bgcolor: "#fef3c7", color: "#92400e", fontWeight: 700 }}
@@ -1786,7 +1995,10 @@ export default function Products(props: ProductsProps) {
                   )}
                 />
                 <Typography variant="caption" sx={{ color: "#64748b", fontWeight: 600 }}>
-                  Jami {displayedProducts.length} ta mahsulot • Sahifa {currentPage} / {totalPages}
+                  {t.totalProducts
+                    .replace("{total}", String(displayedProducts.length))
+                    .replace("{page}", String(currentPage))
+                    .replace("{pages}", String(totalPages))}
                 </Typography>
               </Box>
             )}
@@ -1800,19 +2012,19 @@ export default function Products(props: ProductsProps) {
       <Container maxWidth="xl" sx={{ mt: 10 }}>
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Typography variant="caption" sx={{ fontWeight: 800, color: "#2D6A4F", textTransform: "uppercase", letterSpacing: "1.5px" }}>
-            Rasmiy Vakillik
+            {t.officialPartnersBadge}
           </Typography>
           <Typography variant="h4" sx={{ fontWeight: 900, color: "#0E271D", mt: 0.5 }}>
-            Sertifikatlangan Agro-Hamkorlar & Jahon Brendlari
+            {t.officialPartnersTitle}
           </Typography>
         </Box>
 
         <Grid container spacing={3}>
           {[
-            { name: "Syngenta Agro", tag: "Gibrid Urug'lar & Tizimli Fungitsidlar", badge: "Shveytsariya" },
-            { name: "Bayer CropScience", tag: "Innovatsion O'simlik Himoya Vositalari", badge: "Germaniya" },
-            { name: "IFODA Agro Kimyo", tag: "Mahalliy Iqlimga Moslashtirilgan Dorilar", badge: "O'zbekiston" },
-            { name: "Yara International", tag: "Mineral NPK va Tomchilatish O'g'itlari", badge: "Norvegiya" },
+            { name: "Syngenta Agro", tag: t.partnerSyngentaTag, badge: t.countrySwitz },
+            { name: "Bayer CropScience", tag: t.partnerBayerTag, badge: t.countryGermany },
+            { name: "IFODA Agro Kimyo", tag: t.partnerIfodaTag, badge: t.countryUzbekistan },
+            { name: "Yara International", tag: t.partnerYaraTag, badge: t.countryNorway },
           ].map((partner, idx) => (
             <Grid item xs={12} sm={6} md={3} key={idx}>
               <Box
@@ -1844,7 +2056,7 @@ export default function Products(props: ProductsProps) {
                 </div>
                 <Stack direction="row" spacing={0.5} justifyContent="center" alignItems="center" sx={{ mt: 2, color: "#2D6A4F" }}>
                   <VerifiedIcon sx={{ fontSize: 16 }} />
-                  <Typography variant="caption" sx={{ fontWeight: 700 }}>100% Sertifikatlangan</Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 700 }}>{t.certified100}</Typography>
                 </Stack>
               </Box>
             </Grid>
@@ -1856,6 +2068,13 @@ export default function Products(props: ProductsProps) {
       <PlantDoctorModal
         open={isDoctorOpen}
         onClose={() => setIsDoctorOpen(false)}
+        onAdd={onAdd}
+      />
+
+      {/* Tank-Mix Chemical Compatibility Modal */}
+      <TankMixCompatibilityModal
+        open={isTankMixOpen}
+        onClose={() => setIsTankMixOpen(false)}
         onAdd={onAdd}
       />
 

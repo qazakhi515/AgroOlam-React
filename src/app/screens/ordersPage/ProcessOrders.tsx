@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Stack, Typography, Button, Chip } from "@mui/material";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
@@ -13,6 +13,8 @@ import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/swee
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import TreatmentReminderModal from "../../components/reminders/TreatmentReminderModal";
 import moment from "moment";
 
 const USD_TO_UZS = 12850;
@@ -30,6 +32,8 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
   const { setValue } = props;
   const { authMember, setOrderBuilder } = useGlobals();
   const { processOrders } = useSelector(processOrdersRetriever);
+  const [isReminderOpen, setIsReminderOpen] = useState<boolean>(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   const finishOrderHandler = async (orderId: string) => {
     try {
@@ -63,7 +67,17 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
   return (
     <Stack spacing={2.5}>
       {processOrders?.map((order: Order) => {
-        const totalUzs = (order.orderTotal * USD_TO_UZS).toLocaleString("uz-UZ");
+        const isLegacy = order.orderTotal < 1000;
+        const totalUZSNum = isLegacy ? order.orderTotal * USD_TO_UZS : order.orderTotal;
+        const totalUSDNum = isLegacy ? order.orderTotal : Math.round((order.orderTotal / USD_TO_UZS) * 10) / 10;
+        const totalUzs = totalUZSNum.toLocaleString("uz-UZ");
+        const totalUsd = totalUSDNum.toFixed(1);
+
+        const deliveryUZS = order.orderDelivery === 0
+          ? 0
+          : (order.orderDelivery < 1000 ? order.orderDelivery * USD_TO_UZS : order.orderDelivery);
+        const itemsOnlyUZS = totalUZSNum - deliveryUZS;
+
         const orderDate = order.createdAt
           ? moment(order.createdAt).format("DD.MM.YYYY, HH:mm")
           : moment().format("DD.MM.YYYY");
@@ -104,8 +118,9 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
                 );
                 const imagePath = getProductImage(product);
                 const productName = product?.productName || "Agromahsulot";
-                const itemTotalUSD = item.itemQuantity * item.itemPrice;
-                const itemTotalUZS = (itemTotalUSD * USD_TO_UZS).toLocaleString("uz-UZ");
+                const itemPriceUZS = item.itemPrice < 1000 ? item.itemPrice * USD_TO_UZS : item.itemPrice;
+                const itemTotalUZS = (item.itemQuantity * itemPriceUZS).toLocaleString("uz-UZ");
+                const itemTotalUSD = (item.itemQuantity * (itemPriceUZS / USD_TO_UZS)).toFixed(1);
 
                 return (
                   <Box key={item._id} className="orders-name-price">
@@ -121,13 +136,13 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
                     <div className="order-item-desc">
                       <p className="title-product">{productName}</p>
                       <span className="unit-price-text">
-                        ${item.itemPrice} × {item.itemQuantity} ta
+                        {itemPriceUZS.toLocaleString("uz-UZ")} so'm × {item.itemQuantity} ta
                       </span>
                     </div>
 
                     <Box className="price-box">
-                      <span className="item-usd">${itemTotalUSD}</span>
-                      <span className="item-uzs">~{itemTotalUZS} so'm</span>
+                      <span className="item-usd">{itemTotalUZS} so'm</span>
+                      <span className="item-uzs">(≈ ${itemTotalUSD})</span>
                     </Box>
                   </Box>
                 );
@@ -139,24 +154,44 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
               <Box className="box-total">
                 <div className="price-item">
                   <span>Mahsulotlar:</span>
-                  <strong>${order.orderTotal - order.orderDelivery}</strong>
+                  <strong>{itemsOnlyUZS.toLocaleString("uz-UZ")} so'm</strong>
                 </div>
                 <span className="divider-dot">•</span>
                 <div className="price-item">
                   <span>Yetkazish:</span>
-                  <strong style={{ color: order.orderDelivery === 0 ? "#059669" : "inherit" }}>
-                    {order.orderDelivery === 0 ? "Bepul" : `$${order.orderDelivery}`}
+                  <strong style={{ color: deliveryUZS === 0 ? "#059669" : "inherit" }}>
+                    {deliveryUZS === 0 ? "Bepul" : `${deliveryUZS.toLocaleString("uz-UZ")} so'm`}
                   </strong>
                 </div>
                 <span className="divider-dot">•</span>
                 <div className="price-item total-highlight">
                   <span>Jami:</span>
-                  <strong>${order.orderTotal}</strong>
-                  <small>({totalUzs} so'm)</small>
+                  <strong>{totalUzs} so'm</strong>
+                  <small>(≈ ${totalUsd} USD)</small>
                 </div>
               </Box>
 
-              <div className="order-action-btns">
+              <div className="order-action-btns" style={{ display: "flex", gap: "8px" }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<NotificationsActiveIcon sx={{ fontSize: 16 }} />}
+                  onClick={() => {
+                    setSelectedOrder(order);
+                    setIsReminderOpen(true);
+                  }}
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 700,
+                    borderRadius: "8px",
+                    borderColor: "#16a34a",
+                    color: "#16a34a",
+                    fontSize: "12px",
+                    "&:hover": { bgcolor: "#f0fdf4", borderColor: "#15803d" },
+                  }}
+                >
+                  ⏰ Davolash Eslatmasi
+                </Button>
                 <Button
                   variant="contained"
                   size="small"
@@ -171,6 +206,14 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
           </Box>
         );
       })}
+
+      {/* Treatment Reminder Modal */}
+      <TreatmentReminderModal
+        open={isReminderOpen}
+        onClose={() => setIsReminderOpen(false)}
+        orderId={selectedOrder?._id}
+        defaultProductName={selectedOrder?.productData?.[0]?.productName || "Ridomil Gold MZ 68 WG"}
+      />
 
       {(!processOrders || processOrders.length === 0) && (
         <Box className="empty-orders-card">

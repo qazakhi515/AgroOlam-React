@@ -2,66 +2,90 @@ import React, { useState } from "react";
 import { Box, Container, Typography, Stack, Grid, Chip } from "@mui/material";
 import PublicIcon from "@mui/icons-material/Public";
 import { motion, AnimatePresence } from "framer-motion";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 interface HubInfo {
   id: string;
-  country: string;
-  city: string;
-  titleUz: string;
-  detailUz: string;
+  country: { uz: string; en: string; ko: string };
+  city: { uz: string; en: string; ko: string };
+  title: { uz: string; en: string; ko: string };
+  detail: { uz: string; en: string; ko: string };
   metric: string;
   x: string;
   y: string;
 }
 
 export default function GlobalProjectsMap() {
+  const lang = getSavedLanguage();
+  const tGlobal = translations[lang].globalProjects;
+
   const hubs: HubInfo[] = [
     {
       id: "uz",
-      country: "O'zbekiston",
-      city: "Toshkent",
-      titleUz: "Toshkent Bosh Hab",
-      detailUz: "450 Gektar Zamonaviy Issiqxona Majmuasi va AI Diagnostika Markazi",
+      country: { uz: "O'zbekiston", en: "Uzbekistan", ko: "우즈베키스탄" },
+      city: { uz: "Toshkent", en: "Tashkent", ko: "타슈켄트" },
+      title: { uz: "Toshkent Bosh Hab", en: "Tashkent Central Hub", ko: "타슈켄트 중앙 허브" },
+      detail: {
+        uz: "450 Gektar Zamonaviy Issiqxona Majmuasi va AI Diagnostika Markazi",
+        en: "450-Hectare Smart Greenhouse Complex & AI Diagnostic Center",
+        ko: "450헥타르 첨단 스마트 온실 단지 및 AI 원격 진단 센터",
+      },
       metric: "450 ga",
       x: "64%",
       y: "34%",
     },
     {
       id: "nl",
-      country: "Niderlandiya",
-      city: "Westland",
-      titleUz: "Westland R&D Hab",
-      detailUz: "Gibrid urug'lar genetikasi va mikroklimat avtomatizatsiyasi laboratoriyasi",
+      country: { uz: "Niderlandiya", en: "Netherlands", ko: "네덜란드" },
+      city: { uz: "Westland", en: "Westland", ko: "웨스트랜드" },
+      title: { uz: "Westland R&D Hab", en: "Westland R&D Hub", ko: "웨스트랜드 R&D 허브" },
+      detail: {
+        uz: "Gibrid urug'lar genetikasi va mikroklimat avtomatizatsiyasi laboratoriyasi",
+        en: "Hybrid seed genetics and greenhouse microclimate automation laboratory",
+        ko: "하이브리드 종자 유전 육종 및 온실 마이크로기후 자동화 연구소",
+      },
       metric: "R&D Seeds",
       x: "51%",
       y: "24%",
     },
     {
       id: "kr",
-      country: "Janubiy Koreya",
-      city: "Jeonbuk",
-      titleUz: "Jeonbuk Smart Farm",
-      detailUz: "Vertikal qulupnay yetishtirish va IoT sensor monitoring tarmog'i",
+      country: { uz: "Janubiy Koreya", en: "South Korea", ko: "대한민국" },
+      city: { uz: "Jeonbuk", en: "Jeonbuk", ko: "전북" },
+      title: { uz: "Jeonbuk Smart Farm", en: "Jeonbuk Smart Farm", ko: "전북 스마트팜" },
+      detail: {
+        uz: "Vertikal qulupnay yetishtirish va IoT sensor monitoring tarmog'i",
+        en: "Vertical strawberry hydroponics and IoT sensor monitoring network",
+        ko: "수직 밀폐형 딸기 수경재배 및 첨단 IoT 센서 통합 제어망",
+      },
       metric: "Vertical IoT",
       x: "82%",
       y: "35%",
     },
     {
       id: "es",
-      country: "Ispaniya",
-      city: "Almeria",
-      titleUz: "Almeria Diffuz Qoplama",
-      detailUz: "Yevropaning eng yirik quyoshli issiqxonalar zonasi diffuz plyonkalar ta'minoti",
+      country: { uz: "Ispaniya", en: "Spain", ko: "스페인" },
+      city: { uz: "Almeria", en: "Almeria", ko: "알메리아" },
+      title: { uz: "Almeria Diffuz Qoplama", en: "Almeria Diffuse Coating", ko: "알메리아 산란광 코팅" },
+      detail: {
+        uz: "Yevropaning eng yirik quyoshli issiqxonalar zonasi diffuz plyonkalar ta'minoti",
+        en: "3-layer thermal diffuse film supply for Europe's largest solar greenhouse basin",
+        ko: "유럽 최대 온실 단지 전용 3중 산란광 보온 필름 공급",
+      },
       metric: "Solar Film",
       x: "48%",
       y: "32%",
     },
     {
       id: "ae",
-      country: "BAA",
-      city: "Dubay",
-      titleUz: "Dubay Cho'l Gidroponikasi",
-      detailUz: "Cho'l iqlimida suv tejovchi aeroponika va mikroklimat sovutish tizimlari",
+      country: { uz: "BAA", en: "UAE", ko: "아랍에미리트" },
+      city: { uz: "Dubay", en: "Dubai", ko: "두바이" },
+      title: { uz: "Dubay Cho'l Gidroponikasi", en: "Dubai Desert Hydroponics", ko: "두바이 사막 수경재배" },
+      detail: {
+        uz: "Cho'l iqlimida suv tejovchi aeroponika va mikroklimat sovutish tizimlari",
+        en: "Desert-grade water-saving aeroponics and evaporative micro-cooling",
+        ko: "사막 기후 맞춤 절수형 에어로포닉스 및 초미립자 냉각 제어",
+      },
       metric: "Desert Aero",
       x: "62%",
       y: "41%",
@@ -71,10 +95,10 @@ export default function GlobalProjectsMap() {
   const [activeHub, setActiveHub] = useState<HubInfo>(hubs[0]);
 
   const stats = [
-    { num: "27+", labelUz: "Davlatlar", subUz: "Eksport va xalqaro hamkorlik" },
-    { num: "2.9M+", labelUz: "Gektar Maydon", subUz: "Avtomatlashgan issiqxona maydoni" },
-    { num: "87K+", labelUz: "Fermerlar", subUz: "Doimiy qoniqqan mijozlar" },
-    { num: "99.4%", labelUz: "Unuvchanlik", subUz: "Hosil sifati va unuvchanlik kafolati" },
+    { num: "27+", label: tGlobal.statCountries, sub: tGlobal.statCountriesSub },
+    { num: "2.9M+", label: tGlobal.statHectares, sub: tGlobal.statHectaresSub },
+    { num: "87K+", label: tGlobal.statFarmers, sub: tGlobal.statFarmersSub },
+    { num: "99.4%", label: tGlobal.statYield, sub: tGlobal.statYieldSub },
   ];
 
   return (
@@ -90,7 +114,7 @@ export default function GlobalProjectsMap() {
         {/* Header */}
         <Box sx={{ textAlign: "center", maxWidth: "700px", mx: "auto", mb: { xs: 5, md: 7 } }}>
           <Chip
-            label="Xalqaro Agro Loyihalar & Eksport"
+            label={tGlobal.badge}
             sx={{
               bgcolor: "#d1fae5",
               color: "#065f46",
@@ -110,10 +134,10 @@ export default function GlobalProjectsMap() {
               mb: 1.5,
             }}
           >
-            International Hydroponic Cultivation Projects
+            {tGlobal.title}
           </Typography>
           <Typography variant="body1" sx={{ color: "#4D6657", fontSize: { xs: "14px", md: "16px" } }}>
-            AgroOlam texnologiyalari O'zbekistondan tortib Yevropa va Osiyo agro-parklarigacha muvaffaqiyatli tatbiq etilmoqda. Xaritadagi faol hablar ustiga bosing.
+            {tGlobal.desc}
           </Typography>
         </Box>
 
@@ -244,10 +268,10 @@ export default function GlobalProjectsMap() {
                   </Box>
                   <div>
                     <Typography variant="subtitle2" fontWeight={800} color="#0E271D">
-                      {activeHub.city}, {activeHub.country}
+                      {activeHub.city[lang]}, {activeHub.country[lang]}
                     </Typography>
                     <Typography variant="caption" sx={{ color: "#475569", display: "block", lineHeight: 1.4 }}>
-                      {activeHub.detailUz}
+                      {activeHub.detail[lang]}
                     </Typography>
                   </div>
                 </Stack>
@@ -280,10 +304,10 @@ export default function GlobalProjectsMap() {
                     {s.num}
                   </Typography>
                   <Typography variant="subtitle2" fontWeight={800} color="#0E271D" sx={{ mt: 0.5 }}>
-                    {s.labelUz}
+                    {s.label}
                   </Typography>
                   <Typography variant="caption" color="#64748b" sx={{ display: "block", mt: 0.5, fontSize: "11px" }}>
-                    {s.subUz}
+                    {s.sub}
                   </Typography>
                 </Box>
               </motion.div>
