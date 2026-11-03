@@ -126,6 +126,9 @@
   transition: transform 0.2s ease;
   cursor: pointer;
   object-fit: cover;
+  overflow: hidden;
+  background-color: #1b4332;
+  display: block;
 }
 
 .home-navbar a,

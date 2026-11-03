@@ -11,7 +11,7 @@ import { Settings } from "./Settings";
 import { useGlobals } from "../../components/hooks/useGlobals";
 import { useHistory } from "react-router-dom";
 import { MemberType } from "../../../lib/enums/member.enum";
-import { serverApi } from "../../../lib/config";
+import { getMemberImageSrc } from "../../../lib/config";
 import TelegramAlertCard from "../../components/telegram/TelegramAlertCard";
 import { getSavedLanguage, translations } from "../../../lib/i18n";
 import "../../../css/userPage.css";
@@ -28,11 +28,7 @@ export default function UserPage() {
     return null;
   }
 
-  const memberImg = authMember.memberImage
-    ? (authMember.memberImage.startsWith("http")
-        ? authMember.memberImage
-        : `${serverApi}/${authMember.memberImage}`)
-    : "/icons/default-user.svg";
+  const memberImg = getMemberImageSrc(authMember.memberImage);
 
   return (
     <div className="user-page">

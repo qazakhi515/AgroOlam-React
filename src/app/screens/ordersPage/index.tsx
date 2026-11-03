@@ -22,7 +22,7 @@ import { OrderStatus } from "../../../lib/enums/order.enum";
 import { MemberType } from "../../../lib/enums/member.enum";
 import OrderService from "../../services/OrdersService";
 import { useGlobals } from "../../components/hooks/useGlobals";
-import { serverApi } from "../../../lib/config";
+import { getMemberImageSrc } from "../../../lib/config";
 import TelegramAlertCard from "../../components/telegram/TelegramAlertCard";
 import { retrievePausedOrders, retrieveProcessOrders, retrieveFinishedOrders } from "./selector";
 import { getSavedLanguage, translations } from "../../../lib/i18n";
@@ -74,11 +74,7 @@ export default function OrdersPage() {
     setValue(newValue);
   };
 
-  const memberImg = authMember?.memberImage
-    ? (authMember.memberImage.startsWith("http")
-        ? authMember.memberImage
-        : `${serverApi}/${authMember.memberImage}`)
-    : "/icons/default-user.svg";
+  const memberImg = getMemberImageSrc(authMember?.memberImage);
 
   return (
     <div className="order-page">

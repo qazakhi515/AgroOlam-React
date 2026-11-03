@@ -145,45 +145,54 @@ class MemberService {
   }
 
   public async updateMember(input: MemberUpdateInput): Promise<Member> {
+    let remoteMember: Member | null = null;
     try {
       const formData = new FormData();
       formData.append("memberNick", input.memberNick || "");
       formData.append("memberPhone", input.memberPhone || "");
       formData.append("memberAddress", input.memberAddress || "");
       formData.append("memberDesc", input.memberDesc || "");
-      if (input.memberImage) {
+      if (input.memberImage && typeof input.memberImage !== "string") {
         formData.append("memberImage", input.memberImage);
       }
       const url = this.path + "/member/update";
       const result = await axios.post(url, formData, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
-        timeout: 6000,
+        timeout: 4000,
       });
 
-      const member: Member = result.data.member;
-      localStorage.setItem("memberData", JSON.stringify(member));
-      return member;
+      remoteMember = result.data.member;
     } catch (err: any) {
       console.warn("Backend updateMember unreachable, saving to local session:", err);
       if (err.response?.data?.message) {
         throw new Error(err.response.data.message);
       }
-
-      const existing = localStorage.getItem("memberData");
-      const current = existing ? JSON.parse(existing) : {};
-      const updated: Member = {
-        ...current,
-        memberNick: input.memberNick || current.memberNick || "Fermer",
-        memberPhone: input.memberPhone || current.memberPhone || "+998 90 123 45 67",
-        memberAddress: input.memberAddress || current.memberAddress || "O'zbekiston",
-        memberDesc: input.memberDesc || current.memberDesc || "",
-        updateAd: new Date(),
-      };
-
-      localStorage.setItem("memberData", JSON.stringify(updated));
-      return updated;
     }
+
+    const existing = localStorage.getItem("memberData");
+    const current = existing ? JSON.parse(existing) : {};
+
+    // Choose the best image to persist:
+    const persistedImage =
+      (remoteMember && remoteMember.memberImage) ||
+      input.memberImageBase64 ||
+      (typeof input.memberImage === "string" ? input.memberImage : current.memberImage) ||
+      "/icons/default-user.svg";
+
+    const updated: Member = {
+      ...current,
+      ...(remoteMember || {}),
+      memberNick: input.memberNick || remoteMember?.memberNick || current.memberNick || "Fermer",
+      memberPhone: input.memberPhone || remoteMember?.memberPhone || current.memberPhone || "+998 90 123 45 67",
+      memberAddress: input.memberAddress || remoteMember?.memberAddress || current.memberAddress || "O'zbekiston",
+      memberDesc: input.memberDesc || remoteMember?.memberDesc || current.memberDesc || "",
+      memberImage: persistedImage,
+      updateAd: new Date(),
+    };
+
+    localStorage.setItem("memberData", JSON.stringify(updated));
+    return updated;
   }
 }
 

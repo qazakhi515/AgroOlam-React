@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { NavLink, useHistory } from "react-router-dom";
 import { motion } from "framer-motion";
-import { serverApi } from "../../../lib/config";
+import { getMemberImageSrc } from "../../../lib/config";
 import { CartItem } from "../../../lib/types/search";
 import { useGlobals } from "../hooks/useGlobals";
 import Basket from "./Basket";
@@ -332,13 +332,13 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}>
                   <img
                     className="user-avatar"
-                    src={
-                      authMember?.memberImage
-                        ? `${serverApi}/${authMember?.memberImage}`
-                        : "/icons/default-user.svg"
-                    }
-                    alt="User Profile"
+                    src={getMemberImageSrc(authMember?.memberImage)}
+                    alt={authMember?.memberNick || "Fermer"}
                     onClick={handleLogoutClick}
+                    onError={(e: any) => {
+                      e.target.onerror = null;
+                      e.target.src = "/icons/default-user.svg";
+                    }}
                   />
                 </motion.div>
               )}

@@ -6,7 +6,7 @@ import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import YardIcon from "@mui/icons-material/Yard";
 import { useGlobals } from "../../components/hooks/useGlobals";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MemberUpdateInput } from "../../../lib/types/member";
 import { T } from "../../../lib/types/common";
 import {
@@ -14,7 +14,7 @@ import {
   sweetTopSmallSuccessAlert,
 } from "../../../lib/sweetAlert";
 import { getSavedLanguage, translations } from "../../../lib/i18n";
-import { Messages, serverApi } from "../../../lib/config";
+import { Messages, getMemberImageSrc, compressAvatarImage } from "../../../lib/config";
 import MemberService from "../../services/memberService";
 
 const COMMON_CROPS = [
@@ -47,12 +47,14 @@ export function Settings() {
   const lang = getSavedLanguage();
   const t = translations[lang].member;
   const [memberImage, setMemberImage] = useState<string>(
-    authMember?.memberImage
-      ? (authMember.memberImage.startsWith("http")
-          ? authMember.memberImage
-          : `${serverApi}/${authMember.memberImage}`)
-      : "/icons/default-user.svg",
+    getMemberImageSrc(authMember?.memberImage),
   );
+
+  useEffect(() => {
+    if (authMember?.memberImage) {
+      setMemberImage(getMemberImageSrc(authMember.memberImage));
+    }
+  }, [authMember?.memberImage]);
 
   const [memberUpdateInput, setMemberUpdateInput] = useState<MemberUpdateInput>({
     memberNick: authMember?.memberNick || "",
@@ -116,7 +118,7 @@ export function Settings() {
     }
   };
 
-  const handleImageViewer = (e: T) => {
+  const handleImageViewer = async (e: T) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -126,9 +128,22 @@ export function Settings() {
     if (!validateImageTypes.includes(fileType)) {
       sweetErrorHandling(Messages.error5).then();
     } else {
-      memberUpdateInput.memberImage = file;
-      setMemberUpdateInput({ ...memberUpdateInput });
-      setMemberImage(URL.createObjectURL(file));
+      try {
+        const compressedBase64 = await compressAvatarImage(file);
+        setMemberImage(compressedBase64);
+        setMemberUpdateInput({
+          ...memberUpdateInput,
+          memberImage: file,
+          memberImageBase64: compressedBase64,
+        });
+      } catch (err) {
+        console.warn("Avatar compression failed:", err);
+        setMemberImage(URL.createObjectURL(file));
+        setMemberUpdateInput({
+          ...memberUpdateInput,
+          memberImage: file,
+        });
+      }
     }
   };
 
