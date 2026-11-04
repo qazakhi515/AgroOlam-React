@@ -111,6 +111,30 @@ class AgroDiagnosisDatabaseService {
       .filter((m): m is AgroMedicine => Boolean(m));
   }
 
+  public getMedicineImage(id: string): string {
+    const map: Record<string, string> = {
+      ridomil_gold: "/img/products/RidomilGoldSL_Gallon_ChemicalWarehouse_512x512.webp",
+      infinito: "/img/products/bayerdori.jpg",
+      ampligo: "/img/products/fungisit.jpg",
+      koragen: "/img/products/Belt-SC-480-1Ltr.webp",
+      topas: "/img/products/score.webp",
+      quadris: "/img/products/Syngenta-Miravis-Duo.webp",
+      aktara: "/img/products/Actara-25.webp",
+      teppeki: "/img/products/teppeki.webp",
+      vertimek: "/img/products/vertimec.webp",
+      envidor: "/img/products/envidor.jpg",
+      proclaim: "/img/products/Proclaim-05-SG-250g.jpg",
+      luna_tranquility: "/img/products/lunatranquilty.jpeg",
+      aliett: "/img/products/alliete.jpeg",
+      kuporoksat: "/img/products/cuproxat.jpeg",
+      previkur_energy: "/img/products/bayerdori.jpg",
+      xom_copper: "/img/products/cuproxat.jpeg",
+      kumulus: "/img/products/fungisit.jpg",
+      fitosporin: "/img/products/gomus.jpg",
+    };
+    return map[id] || "/img/products/fungisit.jpg";
+  }
+
   /**
    * Convert agro medicine database entry into a Product model compatible with Cart and Shop
    */
@@ -125,9 +149,7 @@ class AgroDiagnosisDatabaseService {
       productSize: ProductSize.NORMAL,
       productVolume: 0.5,
       productDesc: `${medicine.description} Faol modda: ${medicine.activeSubstance}. Tavsiya dozasi: ${medicine.dosagePer10LWater}. PHI: ${medicine.preHarvestIntervalDays} kun.`,
-      productImages: [
-        "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=600&q=80",
-      ],
+      productImages: [this.getMedicineImage(medicine.id)],
       productViews: 450,
       createdAt: new Date(),
       updatedAt: new Date(),

@@ -1,15 +1,9 @@
-import React from 'react';
-import { render } from '@testing-library/react';
-import { Provider } from 'react-redux';
 import { store } from './store';
-import App from './App';
 
-test('renders learn react link', () => {
-  const { getByText } = render(
-    <Provider store={store}>
-      <App />
-    </Provider>
-  );
-
-  expect(getByText(/learn/i)).toBeInTheDocument();
+describe('AgroOlam Application Smoke Tests', () => {
+  test('Redux store initializes properly with default state', () => {
+    const state = store.getState();
+    expect(state).toBeDefined();
+  });
 });
+

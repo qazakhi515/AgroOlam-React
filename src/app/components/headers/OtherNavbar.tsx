@@ -169,7 +169,11 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  Andijon: +19°C • Meteo-Vision ⚡
+                  {lang === "ko"
+                    ? "안디잔: +19°C • 메테오 비전 ⚡"
+                    : lang === "en"
+                    ? "Andijan: +19°C • Meteo-Vision ⚡"
+                    : "Andijon: +19°C • Meteo-Vision ⚡"}
                 </Typography>
               </Box>
 

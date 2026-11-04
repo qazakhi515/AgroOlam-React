@@ -92,7 +92,8 @@ export default function GlobalProjectsMap() {
     },
   ];
 
-  const [activeHub, setActiveHub] = useState<HubInfo>(hubs[0]);
+  const [activeHubId, setActiveHubId] = useState<string>("uz");
+  const activeHub = hubs.find((h) => h.id === activeHubId) || hubs[0];
 
   const stats = [
     { num: "27+", label: tGlobal.statCountries, sub: tGlobal.statCountriesSub },
@@ -181,7 +182,7 @@ export default function GlobalProjectsMap() {
             return (
               <Box
                 key={hub.id}
-                onClick={() => setActiveHub(hub)}
+                onClick={() => setActiveHubId(hub.id)}
                 sx={{
                   position: "absolute",
                   left: hub.x,
@@ -276,7 +277,7 @@ export default function GlobalProjectsMap() {
                   </div>
                 </Stack>
                 <Chip
-                  label={activeHub.metric}
+                  label={lang === "uz" ? activeHub.metric : activeHub.metric.replace("ga", "ha")}
                   size="small"
                   sx={{ bgcolor: "#2D6A4F", color: "#fff", fontWeight: 800, fontSize: "11px", flexShrink: 0 }}
                 />

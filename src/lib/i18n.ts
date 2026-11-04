@@ -271,8 +271,8 @@ export const translations = {
     },
     aiChat: {
       title: "AgroOlam AI Agronomist",
-      subtitle: "Instant disease diagnosis & treatment (KO / EN / UZ / RU)",
-      placeholder: "Ask in Korean, English, Uzbek or Russian...",
+      subtitle: "Smart Pathology Diagnosis & Prescriptions",
+      placeholder: "Ask about crop diseases, dosage, or pests...",
       send: "Send",
       quickPrompts: [
         "Tomato leaves turning yellow",
@@ -583,8 +583,8 @@ export const translations = {
     },
     aiChat: {
       title: "AgroOlam AI 스마트 아그로노미스트",
-      subtitle: "실시간 병해충 진단 및 농약 처방 (한국어 / EN / UZ / RU)",
-      placeholder: "한국어, 영어, 우즈벡어로 증상을 입력하세요...",
+      subtitle: "실시간 병해충 진단 및 정밀 처방",
+      placeholder: "작물 증상, 병해충, 희석 배수를 질문하세요...",
       send: "전송",
       quickPrompts: [
         "토마토 잎이 누렇게 변해요 (질병 진단)",
@@ -895,8 +895,8 @@ export const translations = {
     },
     aiChat: {
       title: "AgroOlam AI Agronom Maslahatchi",
-      subtitle: "Barg kasalliklari tashxisi va davolash (UZ / KO / EN / RU)",
-      placeholder: "O'zbekcha, koreyscha yoki inglizcha yozing...",
+      subtitle: "Barg patologiyasi tashxisi va dori me'yorlari",
+      placeholder: "Ekin kasalligi, dori dozasi yoki zararkunandalar haqida so'rang...",
       send: "Yuborish",
       quickPrompts: [
         "Pomidor barglari sarg'ayyapti",

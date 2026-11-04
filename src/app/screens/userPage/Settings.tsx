@@ -70,7 +70,12 @@ export function Settings() {
   };
 
   const memberPhoneHandler = (e: T) => {
-    memberUpdateInput.memberPhone = e.target.value;
+    const raw = e.target.value;
+    let sanitized = raw.replace(/[^0-9+\s()-]/g, "");
+    if (sanitized.indexOf("+") > 0) {
+      sanitized = sanitized[0] + sanitized.slice(1).replace(/\+/g, "");
+    }
+    memberUpdateInput.memberPhone = sanitized;
     setMemberUpdateInput({ ...memberUpdateInput });
   };
 
@@ -105,6 +110,11 @@ export function Settings() {
         !memberUpdateInput.memberPhone
       ) {
         throw new Error("Iltimos, ism va telefon raqamingizni to'ldiring!");
+      }
+
+      const digitsOnly = memberUpdateInput.memberPhone.replace(/\D/g, "");
+      if (digitsOnly.length < 9 || digitsOnly.length > 15) {
+        throw new Error("Iltimos, to'g'ri telefon raqami kiriting! (Kamida 9 ta raqam bo'lishi kerak)");
       }
 
       const member = new MemberService();

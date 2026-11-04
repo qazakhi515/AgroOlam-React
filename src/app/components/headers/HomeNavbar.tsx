@@ -132,7 +132,11 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               </Box>
               <Box sx={{ color: "rgba(255, 255, 255, 0.4)", display: { xs: "none", md: "inline" } }}>|</Box>
               <Box sx={{ color: "rgba(255, 255, 255, 0.85)", display: { xs: "none", md: "inline" } }}>
-                Issiqxona salafanlari & F1 urug'lariga bahorgi 15% chegirma!
+                {lang === "ko"
+                  ? "봄맞이 스마트 온실 필름 & F1 하이브리드 종자 15% 특별 할인!"
+                  : lang === "en"
+                  ? "Spring 15% Discount on Greenhouse Films & Certified F1 Seeds!"
+                  : "Issiqxona salafanlari & F1 urug'lariga bahorgi 15% chegirma!"}
               </Box>
             </Stack>
 
@@ -164,8 +168,16 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   fontSize: "11px",
                 }}
               >
-                <span style={{ color: "#4ade80", fontWeight: 800 }}>Toshkent</span>
-                <span style={{ color: "rgba(255, 255, 255, 0.7)" }}>• +22°C Namlik: 64%</span>
+                <span style={{ color: "#4ade80", fontWeight: 800 }}>
+                  {lang === "ko" ? "타슈켄트" : lang === "en" ? "Tashkent" : "Toshkent"}
+                </span>
+                <span style={{ color: "rgba(255, 255, 255, 0.7)" }}>
+                  {lang === "ko"
+                    ? "• +22°C 습도: 64%"
+                    : lang === "en"
+                    ? "• +22°C Humidity: 64%"
+                    : "• +22°C Namlik: 64%"}
+                </span>
               </Box>
             </Stack>
           </Stack>
@@ -270,7 +282,11 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               >
                 <span style={{ fontSize: "14px" }}>🌤️</span>
                 <Typography sx={{ fontWeight: 800, fontSize: "11px", color: "#1B4332", whiteSpace: "nowrap" }}>
-                  Andijon: +19°C • Meteo-Vision ⚡
+                  {lang === "ko"
+                    ? "안디잔: +19°C • 메테오 비전 ⚡"
+                    : lang === "en"
+                    ? "Andijan: +19°C • Meteo-Vision ⚡"
+                    : "Andijon: +19°C • Meteo-Vision ⚡"}
                 </Typography>
               </Box>
 
@@ -292,7 +308,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                       "&:hover": { bgcolor: "#143527" },
                     }}
                   >
-                    Konsultatsiya
+                    {t.consultation || (lang === "ko" ? "상담 신청" : lang === "en" ? "Consultation" : "Konsultatsiya")}
                   </Button>
                 </motion.div>
               </Box>
@@ -683,15 +699,23 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                       </Box>
                       <div>
                         <Typography variant="subtitle2" sx={{ fontWeight: 800, color: "#0f172a", fontSize: "13px" }}>
-                          Issiqxona Avtomatik Mikroklimat
+                          {lang === "ko"
+                            ? "온실 자동 마이크로기후 제어"
+                            : lang === "en"
+                            ? "Automated Greenhouse Microclimate"
+                            : "Issiqxona Avtomatik Mikroklimat"}
                         </Typography>
                         <Typography variant="caption" sx={{ color: "#2D6A4F", fontWeight: 700, fontSize: "11px" }}>
-                          T: +24.2°C • Tuproq namligi: 72%
+                          {lang === "ko"
+                            ? "T: +24.2°C • 토양 수분: 72%"
+                            : lang === "en"
+                            ? "T: +24.2°C • Soil Moisture: 72%"
+                            : "T: +24.2°C • Tuproq namligi: 72%"}
                         </Typography>
                       </div>
                     </Stack>
                     <Chip
-                      label="Optimal"
+                      label={lang === "ko" ? "최적 (Optimal)" : "Optimal"}
                       size="small"
                       sx={{
                         bgcolor: "#10b981",
@@ -755,10 +779,18 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                           display: "block",
                         }}
                       >
-                        Hosildorlik O'sishi
+                        {lang === "ko"
+                          ? "수확량 증대율"
+                          : lang === "en"
+                          ? "Yield Increase"
+                          : "Hosildorlik O'sishi"}
                       </Typography>
                       <Typography variant="subtitle2" sx={{ fontWeight: 900, color: "#1B4332", fontSize: "14px" }}>
-                        +38% Yuqori Natija
+                        {lang === "ko"
+                          ? "+38% 생산성 향상"
+                          : lang === "en"
+                          ? "+38% Higher Output"
+                          : "+38% Yuqori Natija"}
                       </Typography>
                     </div>
                   </Box>

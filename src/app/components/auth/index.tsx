@@ -62,11 +62,38 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
     if (loginOpen) handleLoginClose();
   };
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    // Allow only digits, +, spaces, parentheses and dashes - filter out any letters or symbols
+    let sanitized = rawValue.replace(/[^0-9+\s()-]/g, "");
+    if (sanitized.indexOf("+") > 0) {
+      sanitized = sanitized[0] + sanitized.slice(1).replace(/\+/g, "");
+    }
+    setMemberPhone(sanitized);
+  };
+
   const handleSignupRequest = async () => {
     try {
       if (!memberNick.trim() || !memberPhone.trim() || !memberPassword.trim()) {
         throw new Error("Iltimos, barcha maydonlarni to'ldiring!");
       }
+
+      // 1. Digits count validation (E.164 international standard: 9 to 15 digits)
+      const digitsOnly = memberPhone.replace(/\D/g, "");
+      if (digitsOnly.length < 9 || digitsOnly.length > 15) {
+        throw new Error(
+          "Iltimos, to'g'ri telefon raqamini kiriting! (Kamida 9 ta raqam bo'lishi kerak, masalan: +998 90 123 45 67)"
+        );
+      }
+
+      // 2. Strict regex format check (Prevents random characters or ill-formed input)
+      const phoneRegex = /^\+?[0-9]{1,4}?[-.\s]?\(?[0-9]{1,4}?\)?[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,9}$/;
+      if (!phoneRegex.test(memberPhone.trim())) {
+        throw new Error(
+          "Telefon raqami formati noto'g'ri! Faqat raqamlar va '+' belgisidan foydalaning."
+        );
+      }
+
       setIsLoading(true);
 
       const signupInput: MemberInput = {
@@ -298,8 +325,13 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                   label="Telefon raqamingiz"
                   placeholder="+998 90 123 45 67"
                   value={memberPhone}
-                  onChange={(e) => setMemberPhone(e.target.value)}
+                  onChange={handlePhoneChange}
                   onKeyDown={handleKeyDown}
+                  inputProps={{
+                    inputMode: "tel",
+                    pattern: "[0-9+() -]*",
+                  }}
+                  helperText="Faqat raqamlar (Masalan: +998 90 123 45 67)"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
