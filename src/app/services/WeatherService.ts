@@ -46,14 +46,26 @@ export interface DailyAgroForecast {
 export interface AgroWeatherData {
   regionId: string;
   city: string;
+  cityUz: string;
+  cityEn: string;
+  cityKo: string;
   region: string;
+  regionUz: string;
+  regionEn: string;
+  regionKo: string;
   temperature: number;
   humidity: number;
   windSpeed: number;
   rainProb: number;
   condition: string;
+  conditionUz: string;
+  conditionEn: string;
+  conditionKo: string;
   icon: string;
   agroAdvice: string;
+  agroAdviceUz: string;
+  agroAdviceEn: string;
+  agroAdviceKo: string;
   statusLevel: "optimal" | "warning" | "caution";
   lastUpdated: string;
   outbreakAlerts: AgroOutbreakAlert[];
@@ -350,34 +362,58 @@ class WeatherService {
         const outbreakAlerts = this.calculateOutbreakRisks(temp, hum, currentRainProb);
 
         let statusLevel: "optimal" | "warning" | "caution" = "optimal";
-        let advice = "Ob-havo qulay: ekinlar fotosintezi va meva o'sishi me'yorida davom etmoqda.";
+        let adviceUz = "Ob-havo qulay: ekinlar fotosintezi va meva o'sishi me'yorida davom etmoqda.";
+        let adviceEn = "Optimal weather: crop photosynthesis and fruit development progressing smoothly.";
+        let adviceKo = "최적 기상 조건: 작물 광합성 활발 및 정상 생육 진행 중.";
+
         let icon = "🌤️";
-        let condition = "Qulay iqlim";
+        let conditionUz = "Qulay iqlim";
+        let conditionEn = "Favorable Climate";
+        let conditionKo = "적정 기후";
 
         if (outbreakAlerts.some((a) => a.riskLevel === "high")) {
           statusLevel = "warning";
           icon = "⚠️";
-          condition = "Yuqori patologiya xavfi";
-          advice = outbreakAlerts[0].urgencyAdviceUz;
+          conditionUz = "Yuqori patologiya xavfi";
+          conditionEn = "High Pathology Risk";
+          conditionKo = "병해충 고위험";
+          const highAlert = outbreakAlerts.find((a) => a.riskLevel === "high") || outbreakAlerts[0];
+          adviceUz = highAlert.urgencyAdviceUz;
+          adviceEn = highAlert.urgencyAdviceEn;
+          adviceKo = highAlert.urgencyAdviceKo;
         } else if (hum >= 75) {
           statusLevel = "warning";
           icon = "💧";
-          condition = "Yuqori namlik";
-          advice = "Havoda namlik yuqori: Fitoftoroz va chirish kasalliklarining oldini olish uchun shamollatish zarur!";
+          conditionUz = "Yuqori namlik";
+          conditionEn = "High Humidity";
+          conditionKo = "과습 주의";
+          adviceUz = "Havoda namlik yuqori: Fitoftoroz va chirish kasalliklarining oldini olish uchun shamollatish zarur!";
+          adviceEn = "High humidity detected: Ventilate greenhouse immediately to prevent late blight and fungal rots!";
+          adviceKo = "높은 습도 감지: 역병 및 잿빛곰팡이병 예방을 위해 즉시 온실 환기 시설을 가동하세요!";
         } else if (temp <= 5) {
           statusLevel = "caution";
           icon = "❄️";
-          condition = "Sovuq havo oqimi";
-          advice = "Qora sovuq xavfi: Isitish tizimlari va 3 qavatli salafan germetikligini tekshiring!";
+          conditionUz = "Sovuq havo oqimi";
+          conditionEn = "Cold Air Wave";
+          conditionKo = "저온 한파";
+          adviceUz = "Qora sovuq xavfi: Isitish tizimlari va 3 qavatli salafan germetikligini tekshiring!";
+          adviceEn = "Frost alert: Inspect heating systems and verify 3-layer film hermetic seal!";
+          adviceKo = "서리 및 냉해 경보: 난방 설비를 점검하고 3중 온실 필름 밀폐 상태를 확인하세요!";
         } else if (wind >= 10) {
           statusLevel = "caution";
           icon = "💨";
-          condition = "Kuchli shamol";
-          advice = "Shamol plyonkalarni shikastlamasligi uchun ventilyatsiyani yoping va tirgovichlarni mustahkamlang!";
+          conditionUz = "Kuchli shamol";
+          conditionEn = "Strong Winds";
+          conditionKo = "강풍 주의";
+          adviceUz = "Shamol plyonkalarni shikastlamasligi uchun ventilyatsiyani yoping va tirgovichlarni mustahkamlang!";
+          adviceEn = "High winds: Close side vents and reinforce film anchors to prevent tearing!";
+          adviceKo = "강풍 감지: 필름 파손 방지를 위해 측창을 닫고 온실 고정 밴드를 보강하세요!";
         } else {
           statusLevel = "optimal";
           icon = "☀️";
-          condition = "Quyoshli, optimal";
+          conditionUz = "Quyoshli, optimal";
+          conditionEn = "Sunny & Optimal";
+          conditionKo = "맑음, 최적 생육";
         }
 
         // Build 7-day forecast
@@ -437,14 +473,26 @@ class WeatherService {
         return {
           regionId: region.id,
           city: region.nameUz,
+          cityUz: region.nameUz,
+          cityEn: region.nameEn,
+          cityKo: region.nameKo,
           region: region.regionUz,
+          regionUz: region.regionUz,
+          regionEn: region.regionEn,
+          regionKo: region.regionKo,
           temperature: temp,
           humidity: hum,
           windSpeed: wind,
           rainProb: currentRainProb,
-          condition,
+          condition: conditionUz,
+          conditionUz,
+          conditionEn,
+          conditionKo,
           icon,
-          agroAdvice: advice,
+          agroAdvice: adviceUz,
+          agroAdviceUz: adviceUz,
+          agroAdviceEn: adviceEn,
+          agroAdviceKo: adviceKo,
           statusLevel,
           lastUpdated: new Date().toLocaleTimeString("uz-UZ", {
             hour: "2-digit",
@@ -479,22 +527,40 @@ class WeatherService {
 
     const outbreakAlerts = this.calculateOutbreakRisks(temp, hum, rainProb);
 
+    const isWarning = hum >= 75;
     return {
       regionId: region.id,
       city: region.nameUz,
+      cityUz: region.nameUz,
+      cityEn: region.nameEn,
+      cityKo: region.nameKo,
       region: region.regionUz,
+      regionUz: region.regionUz,
+      regionEn: region.regionEn,
+      regionKo: region.regionKo,
       temperature: temp,
       humidity: hum,
       windSpeed: wind,
       rainProb,
-      condition: hum >= 75 ? "Yuqori namlik (Xavf)" : "Qulay iqlim",
-      icon: hum >= 75 ? "💧" : "🌤️",
-      agroAdvice:
-        hum >= 75
-          ? "⚠️ Havoda namlik yuqori: Pomidor va bodringda fitoftoroz va un-shudring xavfi 85%! Darchalarni ochib shamollating va Ridomil Gold purkash tavsiya etiladi."
-          : "Ob-havo me'yorida: odatiy agrotexnik parvarish va tomchilatib sug'orishni davom ettirish mumkin.",
-      statusLevel: hum >= 75 ? "warning" : "optimal",
-      lastUpdated: "Hozirgi vaqt",
+      condition: isWarning ? "Yuqori namlik (Xavf)" : "Qulay iqlim",
+      conditionUz: isWarning ? "Yuqori namlik (Xavf)" : "Qulay iqlim",
+      conditionEn: isWarning ? "High Humidity (Risk)" : "Optimal Climate",
+      conditionKo: isWarning ? "과습 주의 (위험)" : "적정 기후",
+      icon: isWarning ? "💧" : "🌤️",
+      agroAdvice: isWarning
+        ? "⚠️ Havoda namlik yuqori: Pomidor va bodringda fitoftoroz va un-shudring xavfi 85%! Darchalarni ochib shamollating va Ridomil Gold purkash tavsiya etiladi."
+        : "Ob-havo me'yorida: odatiy agrotexnik parvarish va tomchilatib sug'orishni davom ettirish mumkin.",
+      agroAdviceUz: isWarning
+        ? "⚠️ Havoda namlik yuqori: Pomidor va bodringda fitoftoroz va un-shudring xavfi 85%! Darchalarni ochib shamollating va Ridomil Gold purkash tavsiya etiladi."
+        : "Ob-havo me'yorida: odatiy agrotexnik parvarish va tomchilatib sug'orishni davom ettirish mumkin.",
+      agroAdviceEn: isWarning
+        ? "⚠️ High humidity detected: 85% risk of blight and powdery mildew on tomatoes/cucumbers! Ventilate and apply Ridomil Gold."
+        : "Weather is normal: standard agronomic care and drip irrigation may proceed.",
+      agroAdviceKo: isWarning
+        ? "⚠️ 높은 습도 감지: 토마토 및 오이 역병/흰가루병 발병 위험 85%! 온실 측창을 개방하여 환기하고 리도밀골드 살포를 권장합니다."
+        : "기상 조건 양호: 통상적인 생육 관리 및 점적 관수를 지속하세요.",
+      statusLevel: isWarning ? "warning" : "optimal",
+      lastUpdated: new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" }),
       outbreakAlerts,
       sevenDayForecast: [
         {

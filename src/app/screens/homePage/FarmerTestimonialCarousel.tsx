@@ -104,27 +104,28 @@ export default function FarmerTestimonialCarousel() {
         </Typography>
 
         {/* Star Rating + Label */}
-        <Stack direction="row" spacing={0.8} alignItems="center">
+        <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 0.8 }}>
           <Rating
             value={item.rating}
             readOnly
             size="small"
             sx={{
               color: "#3B82F6",
-              fontSize: { xs: "15px", sm: "16px" },
+              fontSize: { xs: "13px", sm: "15px" },
             }}
           />
           <Typography
             variant="caption"
             sx={{
               color: "#6B7280",
-              fontSize: "12px",
-              fontWeight: 500,
+              fontSize: "11px",
+              fontWeight: 600,
+              whiteSpace: "nowrap",
             }}
           >
             {item.ratingLabel}
           </Typography>
-        </Stack>
+        </Box>
       </Box>
 
       {/* Right Column: Avatar with outer ring, Uppercase Name, Role */}
@@ -135,18 +136,19 @@ export default function FarmerTestimonialCarousel() {
           alignItems: "center",
           textAlign: "center",
           flexShrink: 0,
-          minWidth: { xs: 130, sm: 155 },
+          width: { xs: "100%", sm: 140 },
+          maxWidth: { xs: "100%", sm: 145 },
         }}
       >
         {/* Outer Circular Ring with Padding matching screenshot */}
         <Box
           sx={{
-            p: "5px",
+            p: "4px",
             borderRadius: "50%",
             border: "1.5px solid #BFDBFE",
             bgcolor: "#FFFFFF",
             display: "inline-block",
-            mb: 1.2,
+            mb: 1,
             boxShadow: isCenter ? "0 4px 14px rgba(59, 130, 246, 0.15)" : "none",
             transition: "all 0.3s ease",
           }}
@@ -156,8 +158,8 @@ export default function FarmerTestimonialCarousel() {
             src={item.avatar}
             alt={item.name}
             sx={{
-              width: { xs: 70, sm: 84 },
-              height: { xs: 70, sm: 84 },
+              width: { xs: 64, sm: 76 },
+              height: { xs: 64, sm: 76 },
               borderRadius: "50%",
               objectFit: "cover",
               display: "block",
@@ -171,11 +173,15 @@ export default function FarmerTestimonialCarousel() {
           sx={{
             fontWeight: 800,
             color: "#3B82F6",
-            fontSize: "13.5px",
-            letterSpacing: "0.5px",
+            fontSize: "13px",
+            letterSpacing: "0.4px",
             textTransform: "uppercase",
             lineHeight: 1.2,
-            mb: 0.4,
+            mb: 0.3,
+            width: "100%",
+            maxWidth: 140,
+            textAlign: "center",
+            wordBreak: "break-word",
           }}
         >
           {item.name}
@@ -186,9 +192,14 @@ export default function FarmerTestimonialCarousel() {
           variant="caption"
           sx={{
             color: "#9CA3AF",
-            fontSize: "11.5px",
+            fontSize: "11px",
             fontWeight: 500,
-            lineHeight: 1.2,
+            lineHeight: 1.35,
+            width: "100%",
+            maxWidth: 140,
+            textAlign: "center",
+            display: "block",
+            wordBreak: "break-word",
           }}
         >
           {item.role}

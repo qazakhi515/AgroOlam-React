@@ -217,7 +217,7 @@ Batafsil: https://agroolam.tech`;
                         {weatherData.temperature > 0 ? `+${weatherData.temperature}` : weatherData.temperature}°C
                       </Typography>
                       <Typography variant="caption" sx={{ color: "#6b7280", fontWeight: 700 }}>
-                        {weatherData.condition} • {weatherData.lastUpdated}
+                        {lang === "ko" ? (weatherData.conditionKo || weatherData.condition) : lang === "en" ? (weatherData.conditionEn || weatherData.condition) : weatherData.conditionUz || weatherData.condition} • {weatherData.lastUpdated}
                       </Typography>
                     </div>
                   </Box>
@@ -261,7 +261,7 @@ Batafsil: https://agroolam.tech`;
                   <strong style={{ color: weatherData.statusLevel === "warning" ? "#b45309" : "#15803d" }}>
                     🌱 {lang === "ko" ? "스마트 농업 가이드:" : lang === "uz" ? "Agronom Tavsiyasi:" : "Agronomic Advisory:"}
                   </strong>{" "}
-                  {weatherData.agroAdvice}
+                  {lang === "ko" ? (weatherData.agroAdviceKo || weatherData.agroAdvice) : lang === "en" ? (weatherData.agroAdviceEn || weatherData.agroAdvice) : weatherData.agroAdviceUz || weatherData.agroAdvice}
                 </Typography>
               </Box>
             </Box>

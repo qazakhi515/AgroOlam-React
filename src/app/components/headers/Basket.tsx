@@ -3,7 +3,6 @@ import { Box, Button, Stack, IconButton, Badge, Menu, Typography } from "@mui/ma
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
@@ -19,6 +18,7 @@ import { chemicalIncompatibilities, ChemicalRule } from "../../../lib/data/agroR
 import PaymentModal from "../payment/PaymentModal";
 import { Order } from "../../../lib/types/order";
 import { OrderStatus } from "../../../lib/enums/order.enum";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 interface BasketProps {
   cartItems: CartItem[];
@@ -34,6 +34,8 @@ export default function Basket(props: BasketProps) {
   const { cartItems, onAdd, onRemove, onDelete, onDeleteAll } = props;
   const { authMember, setAuthMember, setOrderBuilder } = useGlobals();
   const history = useHistory();
+  const lang = getSavedLanguage();
+  const t = translations[lang]?.basket || translations.uz.basket;
 
   const [paymentOrder, setPaymentOrder] = useState<Order | null>(null);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
@@ -134,7 +136,7 @@ export default function Basket(props: BasketProps) {
       setOrderBuilder(new Date());
       setIsPaymentOpen(false);
 
-      await sweetTopSmallSuccessAlert("To'lov muvaffaqiyatli amalga oshirildi! Buyurtma yetkazishga o'tdi.", 1800);
+      await sweetTopSmallSuccessAlert(t.paymentSuccess, 1800);
       history.push("/orders");
     } catch (err) {
       console.log("Payment success handler error:", err);
@@ -152,7 +154,7 @@ export default function Basket(props: BasketProps) {
 
       onDeleteAll();
       setOrderBuilder(new Date());
-      await sweetTopSmallSuccessAlert("Buyurtma yaratildi! To'lov kutilmoqda.", 1500);
+      await sweetTopSmallSuccessAlert(t.orderCreatedSuccess, 1500);
       history.push("/orders");
     } catch (err) {
       console.log("Error in proceedOrderHandler:", err);
@@ -232,8 +234,8 @@ export default function Basket(props: BasketProps) {
           {/* Top Header */}
           <Box className="all-check-box">
             <div className="basket-title-wrap">
-              <span>🌱 AgroOlam Savati</span>
-              <span className="basket-count-badge">{totalQuantity} ta</span>
+              <span>{t.title}</span>
+              <span className="basket-count-badge">{totalQuantity} {t.itemsCount}</span>
             </div>
 
             {cartItems.length > 0 && (
@@ -243,7 +245,7 @@ export default function Basket(props: BasketProps) {
                 onClick={() => onDeleteAll()}
               >
                 <DeleteOutlineIcon sx={{ fontSize: 14 }} />
-                <span>Tozalash</span>
+                <span>{t.clearAll}</span>
               </button>
             )}
           </Box>
@@ -266,10 +268,10 @@ export default function Basket(props: BasketProps) {
                 <ShoppingBagOutlinedIcon sx={{ fontSize: 30, color: "#1B4332" }} />
               </div>
               <Typography sx={{ fontFamily: "DM Sans", fontWeight: 700, fontSize: 16, color: "#0f172a" }}>
-                Savatingiz bo'sh
+                {t.emptyTitle}
               </Typography>
               <Typography sx={{ fontFamily: "DM Sans", fontSize: 12.5, color: "#64748b", mt: 0.5, maxWidth: 260 }}>
-                Issiqxona uchun urug'lar, dorilar yoki tizimlarni tanlang va xaridni amalga oshiring.
+                {t.emptyDesc}
               </Typography>
               <Button
                 variant="outlined"
@@ -288,7 +290,7 @@ export default function Basket(props: BasketProps) {
                   "&:hover": { bgcolor: "#ECFDF5", borderColor: "#1B4332" },
                 }}
               >
-                Agro-Marketga o'tish
+                {t.goToShop}
               </Button>
             </Box>
           ) : (
@@ -313,7 +315,7 @@ export default function Basket(props: BasketProps) {
                           {item.name}
                         </span>
                         <div className="product-price">
-                          <span>{(item.price < 1000 ? item.price * USD_TO_UZS : item.price).toLocaleString("uz-UZ")} so'm</span>
+                          <span>{(item.price < 1000 ? item.price * USD_TO_UZS : item.price).toLocaleString("uz-UZ")} {t.som}</span>
                           <span className="uzs-equiv">(≈ ${((item.price < 1000 ? item.price * USD_TO_UZS : item.price) / USD_TO_UZS).toFixed(1)})</span>
                         </div>
                       </div>
@@ -322,7 +324,7 @@ export default function Basket(props: BasketProps) {
                         <button
                           type="button"
                           onClick={() => onRemove(item)}
-                          title="Kamaytirish"
+                          title={t.decrease}
                         >
                           <RemoveIcon sx={{ fontSize: 13 }} />
                         </button>
@@ -330,7 +332,7 @@ export default function Basket(props: BasketProps) {
                         <button
                           type="button"
                           onClick={() => onAdd(item)}
-                          title="Ko'paytirish"
+                          title={t.increase}
                         >
                           <AddIcon sx={{ fontSize: 13 }} />
                         </button>
@@ -338,7 +340,7 @@ export default function Basket(props: BasketProps) {
 
                       <span
                         className="item-delete-btn"
-                        title="O'chirish"
+                        title={t.deleteItem}
                         onClick={() => onDelete(item)}
                       >
                         <DeleteOutlineIcon sx={{ fontSize: 18 }} />
@@ -399,24 +401,24 @@ export default function Basket(props: BasketProps) {
           {cartItems.length > 0 && (
             <Box className="basket-footer">
               <div className="price-summary-row">
-                <span>Mahsulotlar qiymati:</span>
-                <span style={{ fontWeight: 600, color: "#0f172a" }}>{rawItemsPrice.toLocaleString("uz-UZ")} so'm</span>
+                <span>{t.itemsTotal}</span>
+                <span style={{ fontWeight: 600, color: "#0f172a" }}>{rawItemsPrice.toLocaleString("uz-UZ")} {t.som}</span>
               </div>
 
               <div className="price-summary-row">
                 <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   <LocalShippingOutlinedIcon sx={{ fontSize: 14, color: "#059669" }} />
-                  Yetkazib berish:
+                  {t.delivery}
                 </span>
                 <span style={{ color: shippingCostUZS === 0 ? "#059669" : "#0f172a", fontWeight: 600 }}>
-                  {shippingCostUZS === 0 ? "Bepul (Aksiya)" : `${shippingCostUZS.toLocaleString("uz-UZ")} so'm`}
+                  {shippingCostUZS === 0 ? t.freePromo : `${shippingCostUZS.toLocaleString("uz-UZ")} ${t.som}`}
                 </span>
               </div>
 
               <div className="price-total-row">
                 <div>
-                  <span className="total-label">Jami to'lov:</span>
-                  <span className="total-uzs">{totalUzs} so'm</span>
+                  <span className="total-label">{t.totalPayment}</span>
+                  <span className="total-uzs">{totalUzs} {t.som}</span>
                 </div>
                 <div className="total-val">≈ ${totalUSD}</div>
               </div>
@@ -432,7 +434,7 @@ export default function Basket(props: BasketProps) {
                   }}
                 >
                   <CreditCardIcon sx={{ fontSize: 18 }} />
-                  <span>To'lov qilish (Payme / Click / Karta)</span>
+                  <span>{t.checkoutBtn}</span>
                 </button>
 
                 <Button
@@ -449,7 +451,7 @@ export default function Basket(props: BasketProps) {
                     "&:hover": { bgcolor: "#f8fafc", borderColor: "#1B4332", color: "#1B4332" },
                   }}
                 >
-                  Buyurtma sifatida saqlash →
+                  {t.saveOrderBtn}
                 </Button>
               </Stack>
             </Box>

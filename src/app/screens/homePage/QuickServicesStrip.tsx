@@ -60,6 +60,8 @@ export default function QuickServicesStrip() {
     <Box
       sx={{
         width: "100%",
+        maxWidth: "100%",
+        overflow: "hidden",
         bgcolor: "#0E271D",
         color: "#fff",
         py: 3.5,
@@ -68,7 +70,7 @@ export default function QuickServicesStrip() {
         boxShadow: "inset 0 2px 8px rgba(0,0,0,0.4)",
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" sx={{ overflow: "hidden" }}>
         <Grid container spacing={2}>
           {services.map((item, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
