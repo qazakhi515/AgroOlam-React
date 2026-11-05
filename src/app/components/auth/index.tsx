@@ -25,6 +25,7 @@ import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/swee
 import { LoginInput, MemberInput } from "../../../lib/types/member";
 import MemberService from "../../services/memberService";
 import { useGlobals } from "../hooks/useGlobals";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 interface AuthenticationModalProps {
   signupOpen: boolean;
@@ -36,6 +37,8 @@ interface AuthenticationModalProps {
 export default function AuthenticationModal(props: AuthenticationModalProps) {
   const { signupOpen, loginOpen, handleSignupClose, handleLoginClose } = props;
   const { setAuthMember } = useGlobals();
+  const lang = getSavedLanguage();
+  const t = translations[lang]?.auth || translations.uz.auth;
 
   const [activeTab, setActiveTab] = useState<"login" | "signup">(
     signupOpen ? "signup" : "login"
@@ -75,23 +78,19 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
   const handleSignupRequest = async () => {
     try {
       if (!memberNick.trim() || !memberPhone.trim() || !memberPassword.trim()) {
-        throw new Error("Iltimos, barcha maydonlarni to'ldiring!");
+        throw new Error(t.errFillAll);
       }
 
       // 1. Digits count validation (E.164 international standard: 9 to 15 digits)
       const digitsOnly = memberPhone.replace(/\D/g, "");
       if (digitsOnly.length < 9 || digitsOnly.length > 15) {
-        throw new Error(
-          "Iltimos, to'g'ri telefon raqamini kiriting! (Kamida 9 ta raqam bo'lishi kerak, masalan: +998 90 123 45 67)"
-        );
+        throw new Error(t.errPhoneDigits);
       }
 
       // 2. Strict regex format check (Prevents random characters or ill-formed input)
       const phoneRegex = /^\+?[0-9]{1,4}?[-.\s]?\(?[0-9]{1,4}?\)?[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,9}$/;
       if (!phoneRegex.test(memberPhone.trim())) {
-        throw new Error(
-          "Telefon raqami formati noto'g'ri! Faqat raqamlar va '+' belgisidan foydalaning."
-        );
+        throw new Error(t.errPhoneRegex);
       }
 
       setIsLoading(true);
@@ -106,7 +105,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
 
       setAuthMember(result);
       handleClose();
-      await sweetTopSmallSuccessAlert("Muvaffaqiyatli ro'yxatdan o'tdingiz!", 1200);
+      await sweetTopSmallSuccessAlert(t.successSignup, 1200);
     } catch (err) {
       console.log(err);
       sweetErrorHandling(err).then();
@@ -118,7 +117,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
   const handleLoginRequest = async () => {
     try {
       if (!memberNick.trim() || !memberPassword.trim()) {
-        throw new Error("Iltimos, ism va parolingizni kiriting!");
+        throw new Error(t.errLoginCreds);
       }
       setIsLoading(true);
 
@@ -132,7 +131,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
 
       setAuthMember(result);
       handleClose();
-      await sweetTopSmallSuccessAlert("Xush kelibsiz! Tizimga muvaffaqiyatli kirdingiz.", 1200);
+      await sweetTopSmallSuccessAlert(t.successLogin, 1200);
     } catch (err) {
       console.log(err);
       sweetErrorHandling(err).then();
@@ -200,7 +199,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                   lineHeight: 1.3,
                 }}
               >
-                O'zbekistonning Yetakchi AgroTech Ekotizimi
+                {t.bannerTitle}
               </Typography>
 
               <Typography
@@ -212,7 +211,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                   lineHeight: 1.5,
                 }}
               >
-                Sertifikatlangan urug'lar, ekin dorilari, issiqxona plyonkalari va real-vaqtli AI barg patologiyasi diagnostikasi.
+                {t.bannerDesc}
               </Typography>
             </div>
 
@@ -220,11 +219,11 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
               <Stack spacing={1}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, fontSize: 12, color: "#d1fae5" }}>
                   <VerifiedIcon sx={{ fontSize: 16, color: "#4ade80" }} />
-                  <span>Davlat ro'yxatidan o'tgan preparatlar</span>
+                  <span>{t.feature1}</span>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, fontSize: 12, color: "#d1fae5" }}>
                   <VerifiedIcon sx={{ fontSize: 16, color: "#4ade80" }} />
-                  <span>Respublika bo'ylab tezkor yetkazib berish</span>
+                  <span>{t.feature2}</span>
                 </Box>
               </Stack>
             </Box>
@@ -257,7 +256,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
             >
               <Tab
                 value="login"
-                label="Kirish"
+                label={t.tabLogin}
                 sx={{
                   fontFamily: "DM Sans, sans-serif",
                   fontWeight: 700,
@@ -269,7 +268,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
               />
               <Tab
                 value="signup"
-                label="Ro'yxatdan o'tish"
+                label={t.tabSignup}
                 sx={{
                   fontFamily: "DM Sans, sans-serif",
                   fontWeight: 700,
@@ -290,12 +289,10 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                 mb: 0.5,
               }}
             >
-              {activeTab === "login" ? "Shaxsiy kabinetga kirish" : "Fermer sifatida ro'yxatdan o'tish"}
+              {activeTab === "login" ? t.titleLogin : t.titleSignup}
             </Typography>
             <Typography sx={{ color: "#64748b", fontSize: 13, mb: 3 }}>
-              {activeTab === "login"
-                ? "AgroOlam hisobingizga kiring va buyurtmalaringizni boshqaring"
-                : "AgroOlam ekotizimidan foydalanish uchun ma'lumotlaringizni kiriting"}
+              {activeTab === "login" ? t.subLogin : t.subSignup}
             </Typography>
 
             {/* Inputs */}
@@ -303,8 +300,8 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
               <TextField
                 fullWidth
                 size="small"
-                label="Fermer ismi / Loginingiz"
-                placeholder="Masalan: Sardor"
+                label={t.nameLabel}
+                placeholder={t.namePlaceholder}
                 value={memberNick}
                 onChange={(e) => setMemberNick(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -322,8 +319,8 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                 <TextField
                   fullWidth
                   size="small"
-                  label="Telefon raqamingiz"
-                  placeholder="+998 90 123 45 67"
+                  label={t.phoneLabel}
+                  placeholder={t.phonePlaceholder}
                   value={memberPhone}
                   onChange={handlePhoneChange}
                   onKeyDown={handleKeyDown}
@@ -331,7 +328,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                     inputMode: "tel",
                     pattern: "[0-9+() -]*",
                   }}
-                  helperText="Faqat raqamlar (Masalan: +998 90 123 45 67)"
+                  helperText={t.phoneHelper}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -347,8 +344,8 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                 fullWidth
                 size="small"
                 type={showPassword ? "text" : "password"}
-                label="Parol"
-                placeholder="••••••••"
+                label={t.passwordLabel}
+                placeholder={t.passwordPlaceholder}
                 value={memberPassword}
                 onChange={(e) => setMemberPassword(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -394,10 +391,10 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                 }}
               >
                 {isLoading
-                  ? "Bajarilmoqda..."
+                  ? t.loadingBtn
                   : activeTab === "signup"
-                  ? "Ro'yxatdan o'tish"
-                  : "Kirish"}
+                  ? t.submitSignup
+                  : t.submitLogin}
               </Button>
 
               {/* Bottom Switcher */}
@@ -405,22 +402,22 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                 <Typography sx={{ fontSize: 13, color: "#64748b" }}>
                   {activeTab === "login" ? (
                     <>
-                      Hisobingiz yo'qmi?{" "}
+                      {t.noAccount}{" "}
                       <span
                         style={{ color: "#1B4332", fontWeight: 700, cursor: "pointer" }}
                         onClick={() => setActiveTab("signup")}
                       >
-                        Ro'yxatdan o'ting
+                        {t.toSignup}
                       </span>
                     </>
                   ) : (
                     <>
-                      Allaqachon ro'yxatdan o'tganmisiz?{" "}
+                      {t.hasAccount}{" "}
                       <span
                         style={{ color: "#1B4332", fontWeight: 700, cursor: "pointer" }}
                         onClick={() => setActiveTab("login")}
                       >
-                        Kirish
+                        {t.toLogin}
                       </span>
                     </>
                   )}

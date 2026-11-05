@@ -20,6 +20,8 @@ import Basket from "./Basket";
 import LanguageSelector from "./LanguageSelector";
 import { getSavedLanguage, translations } from "../../../lib/i18n";
 import Logout from "@mui/icons-material/Logout";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import { MemberType } from "../../../lib/enums/member.enum";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import SearchIcon from "@mui/icons-material/Search";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
@@ -379,6 +381,18 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
+                {authMember?.memberType === MemberType.RESTAURANT && (
+                  <MenuItem
+                    component="a"
+                    href="/admin"
+                    sx={{ color: "#1B4332", fontWeight: 700 }}
+                  >
+                    <ListItemIcon>
+                      <AdminPanelSettingsIcon fontSize="small" sx={{ color: "#1B4332" }} />
+                    </ListItemIcon>
+                    Admin Panel
+                  </MenuItem>
+                )}
                 <MenuItem onClick={handleLogoutRequest} sx={{ color: "#dc2626", fontWeight: 700 }}>
                   <ListItemIcon>
                     <Logout fontSize="small" sx={{ color: "#dc2626" }} />

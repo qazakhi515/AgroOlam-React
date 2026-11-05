@@ -1,4 +1,6 @@
 import { Logout } from "@mui/icons-material";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import { MemberType } from "../../../lib/enums/member.enum";
 import {
   Box,
   Button,
@@ -258,6 +260,18 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
+                {authMember?.memberType === MemberType.RESTAURANT && (
+                  <MenuItem
+                    component="a"
+                    href="/admin"
+                    sx={{ color: "#4ade80", fontWeight: 700 }}
+                  >
+                    <ListItemIcon>
+                      <AdminPanelSettingsIcon fontSize="small" sx={{ color: "#4ade80" }} />
+                    </ListItemIcon>
+                    Admin Panel
+                  </MenuItem>
+                )}
                 <MenuItem
                   onClick={handleLogoutRequest}
                   sx={{ color: "#f87171", fontWeight: 600 }}

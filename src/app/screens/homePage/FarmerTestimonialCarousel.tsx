@@ -10,6 +10,7 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { motion, AnimatePresence } from "framer-motion";
+import { getSavedLanguage, translations } from "../../../lib/i18n";
 
 interface Testimonial {
   id: string;
@@ -21,69 +22,15 @@ interface Testimonial {
   ratingLabel: string;
 }
 
-const TESTIMONIALS: Testimonial[] = [
-  {
-    id: "test-1",
-    name: "SARAH HOHN",
-    role: "Issiqxona Rahbari, Andijon",
-    avatar:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
-    quote:
-      "AgroOlam Vision AI 4.1 barg skaneri orqali pomidordagi fitoftorani erta bosqichda aniqlab, 15 sotix hosilimizni to'liq saqlab qoldik. Tavsiya qilingan dori 2 kunda yetib keldi!",
-    rating: 5,
-    ratingLabel: "(A'lo Hosil)",
-  },
-  {
-    id: "test-2",
-    name: "EMMA SUSAH",
-    role: "Agronom Mutaxassis, Samarqand",
-    avatar:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80",
-    quote:
-      "150 mkr 3 qavatli termo-diffuz plyonka va F1 gibrid bodring urug'lari qattiq qora sovuqda ham ichki haroratni ushlab berdi. Mahsulotlar sertifikatlangan, dori vositalari 100% original.",
-    rating: 5,
-    ratingLabel: "(Best Design)",
-  },
-  {
-    id: "test-3",
-    name: "LENA JAKSON",
-    role: "Bog'dorchilik Ustasi, Farg'ona",
-    avatar:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80",
-    quote:
-      "Dori ziddiyatlari kalkulyatori orqali xato aralashmalardan qutuldik. Avvallari dorilarni noto'g'ri aralashtirib barg kuydirar edik, endi har bir purkash ilmiy hisob-kitob asosida qilinadi.",
-    rating: 5,
-    ratingLabel: "(Yuqori Hosil)",
-  },
-  {
-    id: "test-4",
-    name: "AKMALBEK SAIDOV",
-    role: "Intensiv Dehqon, Namangan",
-    avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
-    quote:
-      "Un-shudringga qarshi Syngenta va Bayer preparatlarini to'g'ridan-to'g'ri AgroOlam platformasidan buyurtma qildim. 1 kunda yetkazib berishdi, to'lovni Payme orqali bir zumda qildim.",
-    rating: 5,
-    ratingLabel: "(Tezkor Xizmat)",
-  },
-  {
-    id: "test-5",
-    name: "BAHODIR RAHMATULLAYEV",
-    role: "«Agro-Gold» Rahbari, Buxoro",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80",
-    quote:
-      "Salafan qalinligi va dori dozasini sotix bo'yicha hisoblab beruvchi kalkulyator dehqonlar uchun ayni muddao. Bir mavsumda o'g'it xarajatlaridan 12% tejab, unumdorlikni oshirdik.",
-    rating: 5,
-    ratingLabel: "(Ilmiy Yondashuv)",
-  },
-];
-
 export default function FarmerTestimonialCarousel() {
+  const lang = getSavedLanguage();
+  const t = translations[lang]?.testimonials || translations.uz.testimonials;
+  const testimonials = t.items;
+
   const [activeIndex, setActiveIndex] = useState<number>(1);
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  const total = TESTIMONIALS.length;
+  const total = testimonials.length;
 
   const handlePrev = () => {
     setActiveIndex((prev) => (prev - 1 + total) % total);
@@ -104,9 +51,9 @@ export default function FarmerTestimonialCarousel() {
   const prevIndex = (activeIndex - 1 + total) % total;
   const nextIndex = (activeIndex + 1) % total;
 
-  const activeItem = TESTIMONIALS[activeIndex];
-  const prevItem = TESTIMONIALS[prevIndex];
-  const nextItem = TESTIMONIALS[nextIndex];
+  const activeItem = testimonials[activeIndex] || testimonials[0];
+  const prevItem = testimonials[prevIndex] || testimonials[0];
+  const nextItem = testimonials[nextIndex] || testimonials[0];
 
   // Helper renderer for consistent 2-column card layout matching user's design
   const renderCardContent = (item: Testimonial, isCenter: boolean = false) => (
@@ -277,16 +224,16 @@ export default function FarmerTestimonialCarousel() {
               mb: 1.2,
             }}
           >
-            Trust Our Costumer
+            {t.title}
           </Typography>
 
-          {/* Line with Dot & Subtitle: — • Dont take Our word For it */}
+          {/* Line with Dot & Subtitle */}
           <Stack
             direction="row"
             alignItems="center"
             justifyContent="center"
             spacing={1}
-            sx={{ mb: 1 }}
+            sx={{ mb: 1, px: 2 }}
           >
             <Box
               sx={{
@@ -312,7 +259,7 @@ export default function FarmerTestimonialCarousel() {
                 fontWeight: 500,
               }}
             >
-              Dont take Our word For it • Fermerlarimiz erishgan real natijalarga ishoning
+              {t.subtitle}
             </Typography>
           </Stack>
         </Box>
@@ -463,7 +410,7 @@ export default function FarmerTestimonialCarousel() {
           spacing={1}
           sx={{ mt: 4 }}
         >
-          {TESTIMONIALS.map((_, idx) => (
+          {testimonials.map((_, idx) => (
             <Box
               key={idx}
               onClick={() => setActiveIndex(idx)}
