@@ -1,5 +1,8 @@
 .homepage {
   width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  position: relative;
   height: auto;
 }
 /*Statistics*/

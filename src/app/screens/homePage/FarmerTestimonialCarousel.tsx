@@ -335,16 +335,20 @@ export default function FarmerTestimonialCarousel() {
                 zIndex: 3,
                 maxWidth: 620,
                 width: "100%",
+                flex: 1,
+                minWidth: 0,
               }}
             >
               <Box
                 sx={{
                   bgcolor: "#FFFFFF",
                   borderRadius: "22px",
-                  p: { xs: 3, sm: 3.8 },
+                  p: { xs: 2.2, sm: 3.8 },
                   boxShadow:
                     "0 18px 45px rgba(0, 0, 0, 0.07), 0 2px 10px rgba(0, 0, 0, 0.03)",
                   border: "1px solid #E5E7EB",
+                  boxSizing: "border-box",
+                  width: "100%",
                 }}
               >
                 {renderCardContent(activeItem, true)}

@@ -62,6 +62,8 @@ export default function AndijanAgroWeatherBar({
           p: { xs: 2, sm: 2.2 },
           mb: 3.5,
           boxShadow: "0 4px 16px rgba(0,0,0,0.03)",
+          overflow: "hidden",
+          maxWidth: "100%",
         }}
       >
         <Stack
@@ -71,22 +73,30 @@ export default function AndijanAgroWeatherBar({
           justifyContent="space-between"
         >
           {/* Left: Location & Real-Time Meteo Stats */}
-          <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap" sx={{ gap: 1.5 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography sx={{ fontSize: 28, lineHeight: 1 }}>{weather.icon}</Typography>
-              <div>
-                <Typography
-                  variant="subtitle2"
+          <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap" sx={{ gap: 1.5, maxWidth: "100%" }}>
+            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5, minWidth: 0, maxWidth: "100%" }}>
+              <Typography sx={{ fontSize: 28, lineHeight: 1, flexShrink: 0, mt: 0.3 }}>{weather.icon}</Typography>
+              <Box sx={{ minWidth: 0, maxWidth: "100%" }}>
+                <Box
                   sx={{
-                    fontWeight: 900,
-                    color: "#0E271D",
                     display: "flex",
                     alignItems: "center",
+                    flexWrap: "wrap",
                     gap: 0.8,
-                    fontSize: "14px",
+                    mb: 0.5,
                   }}
                 >
-                  📍 {weather.city} Agro-Meteo
+                  <Typography
+                    component="span"
+                    sx={{
+                      fontWeight: 900,
+                      color: "#0E271D",
+                      fontSize: "14px",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    📍 {weather.city} Agro-Meteo
+                  </Typography>
                   <Chip
                     label={lang === "ko" ? "실시간 기상" : lang === "uz" ? "Jonli Ob-Havo" : "Live Weather"}
                     size="small"
@@ -107,19 +117,28 @@ export default function AndijanAgroWeatherBar({
                         color: "#ffffff",
                         fontWeight: 800,
                         fontSize: "10px",
-                        height: "20px",
+                        height: "auto",
+                        minHeight: "20px",
+                        py: 0.2,
+                        maxWidth: "100%",
+                        "& .MuiChip-label": {
+                          whiteSpace: { xs: "normal", sm: "nowrap" },
+                          textOverflow: "ellipsis",
+                          lineHeight: 1.25,
+                          px: 1,
+                        },
                       }}
                     />
                   )}
-                </Typography>
-                <Typography variant="caption" sx={{ color: "#64748b", fontSize: "11px" }}>
+                </Box>
+                <Typography variant="caption" sx={{ color: "#64748b", fontSize: "11px", display: "block" }}>
                   {weather.region} • Soat: {weather.lastUpdated}
                 </Typography>
-              </div>
+              </Box>
             </Box>
 
             {/* Quick Stats Pills */}
-            <Stack direction="row" spacing={1} sx={{ pl: { md: 2 }, borderLeft: { md: "1px solid #e2e8f0" } }}>
+            <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 1, pl: { md: 2 }, borderLeft: { md: "1px solid #e2e8f0" } }}>
               <Tooltip title={lang === "uz" ? "Havo harorati" : lang === "ko" ? "기온" : "Temperature"}>
                 <Box
                   sx={{

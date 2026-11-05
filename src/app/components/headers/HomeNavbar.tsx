@@ -747,24 +747,23 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 <motion.div
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-                  style={{
-                    position: "absolute",
-                    top: -18,
-                    left: -14,
-                    zIndex: 2,
-                  }}
                 >
                   <Box
                     sx={{
+                      position: "absolute",
+                      top: { xs: 8, sm: -18 },
+                      left: { xs: 8, sm: -14 },
+                      zIndex: 2,
                       bgcolor: "rgba(255, 255, 255, 0.96)",
                       backdropFilter: "blur(10px)",
-                      p: 1.8,
+                      p: { xs: 1.2, sm: 1.8 },
                       borderRadius: "18px",
                       border: "1px solid #c2dfce",
                       boxShadow: "0 12px 30px rgba(14, 39, 29, 0.15)",
                       display: "flex",
                       alignItems: "center",
                       gap: 1.5,
+                      maxWidth: { xs: "calc(100% - 24px)", sm: "none" },
                     }}
                   >
                     <Box

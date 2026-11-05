@@ -21,7 +21,7 @@ export default function HomePage({ onAdd = () => {} }: HomePageProps) {
       <QuickServicesStrip />
 
       {/* 1.5 Real-Time Agro-Meteo & Predictive Outbreak Alert Radar */}
-      <Container maxWidth="lg" sx={{ mt: 2, mb: -1 }}>
+      <Container maxWidth="lg" sx={{ mt: 2, mb: -1, overflow: "hidden", px: { xs: 2, sm: 3 } }}>
         <AndijanAgroWeatherBar onAdd={onAdd} />
       </Container>
 
