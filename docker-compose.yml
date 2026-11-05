@@ -1,36 +1,14 @@
 version: '3.8'
 
 services:
-  backend:
+  web:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: agroplant-backend
+    container_name: agroolam-web
     restart: always
-    environment:
-      - PORT=3006
-      - NODE_ENV=production
-      - MONGO_URL=${MONGO_URL}
-      - SESSION_SECRET=${SESSION_SECRET:-agroplant_production_key_2026}
-    volumes:
-      - agro_uploads:/app/uploads
     ports:
-      - "3006:3006"
-    networks:
-      - agro-net
-
-  frontend:
-    build:
-      context: ../AgroPlant-React
-      dockerfile: Dockerfile
-    container_name: agroplant-frontend
-    restart: always
-    depends_on:
-      - backend
-    ports:
-      - "80:80"
-    networks:
-      - agro-net
+      - "127.0.0.1:4008:80"
 
   ai-service:
     build:
@@ -42,13 +20,4 @@ services:
       - "8000:8000"
     volumes:
       - ./ai-service/weights:/app/weights
-    networks:
-      - agro-net
 
-networks:
-  agro-net:
-    driver: bridge
-
-volumes:
-  agro_uploads:
-    driver: local
