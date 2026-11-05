@@ -904,31 +904,42 @@ export default function Products(props: ProductsProps) {
     }
   }, [urlSearchQuery]);
 
-  // Request backend products, merge with rich certified agro dataset so user always sees full catalog
+  // Request backend products: live products from MongoDB, exclude PAUSED/DELETED products, fallback to certified catalog if offline
   useEffect(() => {
     const productService = new ProductService();
     productService
-      .getProducts(productSearch)
+      .getProducts({ ...productSearch, limit: 100 })
       .then((data) => {
         let combined: Product[] = [];
         if (data && data.length > 0) {
-          combined = [...data];
-        }
-        // Merge certified products with real images
-        for (const cp of CERTIFIED_AGRO_PRODUCTS) {
-          const exists = combined.some(
-            (item) =>
-              item._id === cp._id ||
-              item.productName.toLowerCase().trim() === cp.productName.toLowerCase().trim()
+          // If live backend products exist, show only active PROCESS products (exclude PAUSE and DELETE)
+          combined = data.filter(
+            (item) => item.productStatus === ProductStatus.PROCESS || !item.productStatus
           );
-          if (!exists) {
-            combined.push(cp);
-          }
+        } else {
+          // Fallback to offline catalog if backend returns empty
+          combined = [...CERTIFIED_AGRO_PRODUCTS];
         }
 
         let filtered = combined;
         if (productSearch.productCollection) {
-          filtered = filtered.filter((p) => p.productCollection === productSearch.productCollection);
+          filtered = filtered.filter((p) => {
+            if (productSearch.productCollection === ProductCollection.FERTILIZERS) {
+              return (
+                p.productCollection === ProductCollection.FERTILIZERS ||
+                p.productCollection === ("FERTILIZER" as any) ||
+                p.productCollection === ("PESTICIDE" as any)
+              );
+            }
+            if (productSearch.productCollection === ProductCollection.TOOLS) {
+              return (
+                p.productCollection === ProductCollection.TOOLS ||
+                p.productCollection === ("SUPLIMENT" as any) ||
+                p.productCollection === ("EQUIPMENT" as any)
+              );
+            }
+            return p.productCollection === productSearch.productCollection;
+          });
         }
         if (productSearch.search && productSearch.search.trim().length > 0) {
           const q = productSearch.search.trim().toLowerCase();
@@ -1066,17 +1077,34 @@ export default function Products(props: ProductsProps) {
     }
   };
 
+  const activeCatalog = storeProducts && storeProducts.length > 0 ? storeProducts : CERTIFIED_AGRO_PRODUCTS;
+  const countAll = activeCatalog.length;
+  const countGreenhouse = activeCatalog.filter((p) => p.productCollection === ProductCollection.OTHER).length;
+  const countFertilizers = activeCatalog.filter(
+    (p) =>
+      p.productCollection === ProductCollection.FERTILIZERS ||
+      p.productCollection === ("FERTILIZER" as any) ||
+      p.productCollection === ("PESTICIDE" as any)
+  ).length;
+  const countTools = activeCatalog.filter(
+    (p) =>
+      p.productCollection === ProductCollection.TOOLS ||
+      p.productCollection === ("SUPLIMENT" as any) ||
+      p.productCollection === ("EQUIPMENT" as any)
+  ).length;
+  const countSeeds = activeCatalog.filter((p) => p.productCollection === ProductCollection.SEEDS).length;
+
   const categoriesList: {
     key: ProductCollection | undefined;
     label: string;
     icon: React.ReactNode;
     count: number;
   }[] = [
-    { key: undefined, label: t.catAll, icon: "🌿", count: CERTIFIED_AGRO_PRODUCTS.length },
-    { key: ProductCollection.OTHER, label: t.catGreenhouse, icon: <GreenhouseLogo />, count: 5 },
-    { key: ProductCollection.FERTILIZERS, label: t.catFertilizers, icon: "💊", count: 13 },
-    { key: ProductCollection.TOOLS, label: t.catIrrigation, icon: "💧", count: 8 },
-    { key: ProductCollection.SEEDS, label: t.catSeeds, icon: "🌱", count: 7 },
+    { key: undefined, label: t.catAll, icon: "🌿", count: countAll },
+    { key: ProductCollection.OTHER, label: t.catGreenhouse, icon: <GreenhouseLogo />, count: countGreenhouse },
+    { key: ProductCollection.FERTILIZERS, label: t.catFertilizers, icon: "💊", count: countFertilizers },
+    { key: ProductCollection.TOOLS, label: t.catIrrigation, icon: "💧", count: countTools },
+    { key: ProductCollection.SEEDS, label: t.catSeeds, icon: "🌱", count: countSeeds },
   ];
 
   return (
